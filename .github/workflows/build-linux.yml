@@ -1,4 +1,4 @@
-name: Build Linux .deb
+name: Build Linux packages
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-deb:
+  build-linux:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -14,7 +14,7 @@ jobs:
       - name: Install Linux dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev libsecret-1-dev
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev libsecret-1-dev libfuse2
 
       - uses: subosito/flutter-action@v2
         with:
@@ -27,11 +27,17 @@ jobs:
       - name: Install Fastforge
         run: dart pub global activate fastforge
 
-      - name: Build .deb package
-        run: fastforge package --platform linux --targets deb
+      - name: Build Linux packages
+        run: fastforge package --platform linux --targets deb,appimage
 
       - name: Upload .deb artifact
         uses: actions/upload-artifact@v4
         with:
-          name: nostr-mail-linux-deb
+          name: nmail-linux-deb
           path: dist/**/*.deb
+
+      - name: Upload AppImage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nmail-linux-appimage
+          path: dist/**/*.AppImage
