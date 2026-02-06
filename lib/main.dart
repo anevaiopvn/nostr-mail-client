@@ -4,8 +4,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
+import 'package:ndk_flutter/ndk_flutter.dart';
 import 'package:ndk_rust_verifier/ndk_rust_verifier.dart';
-import 'package:nostr_widgets/l10n/app_localizations.dart' as nostr_widgets;
+import 'package:ndk_flutter/l10n/app_localizations.dart' as ndk_flutter;
 import 'package:sembast_cache_manager/sembast_cache_manager.dart';
 import 'package:system_theme/system_theme.dart';
 import 'package:toastification/toastification.dart';
@@ -66,6 +67,8 @@ void main() async {
     ),
   );
   Get.put(ndk, permanent: true);
+  final ndkFlutter = NdkFlutter(ndk: ndk);
+  Get.put(ndkFlutter, permanent: true);
 
   // Initialize theme service
   await Get.putAsync(() => ThemeService().init(), permanent: true);
@@ -109,7 +112,7 @@ class MainApp extends StatelessWidget {
           themeMode: initialThemeMode,
           locale: const Locale('en'),
           localizationsDelegates: [
-            nostr_widgets.AppLocalizations.delegate,
+            ndk_flutter.AppLocalizations.delegate,
             FlutterQuillLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,

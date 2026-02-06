@@ -50,7 +50,7 @@ class SettingsController extends GetxController {
   void onInit() {
     super.onInit();
     _loadSettings();
-    _authSubscription = Get.find<Ndk>().accounts.stateChanges.listen(
+    _authSubscription = Get.find<Ndk>().accounts.authStateChanges.listen(
       (_) => _loadSettings(),
     );
   }

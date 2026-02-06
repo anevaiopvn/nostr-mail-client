@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nostr_widgets/nostr_widgets.dart';
+import 'package:ndk_flutter/ndk_flutter.dart';
 
 import '../../controllers/auth_controller.dart';
 import '../../utils/responsive_helper.dart';
@@ -40,7 +40,7 @@ class LoginView extends GetView<AuthController> {
                   ),
                   const SizedBox(height: 48),
                   NLogin(
-                    ndk: controller.ndk,
+                    ndkFlutter: controller.ndkFlutter,
                     onLoggedIn: () {
                       controller.onLoggedIn();
                       Get.offAllNamed('/inbox');

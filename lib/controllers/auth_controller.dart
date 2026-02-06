@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
-import 'package:nostr_widgets/nostr_widgets.dart';
+import 'package:ndk_flutter/ndk_flutter.dart';
 
 import '../services/nostr_mail_service.dart';
 
@@ -11,7 +11,8 @@ class AuthController extends GetxController {
   final isLoggedIn = false.obs;
   final Rxn<Metadata> userMetadata = Rxn<Metadata>();
 
-  Ndk get ndk => Get.find<Ndk>();
+  Ndk get ndk => Get.find();
+  NdkFlutter get ndkFlutter => Get.find();
 
   @override
   void onInit() {
@@ -22,7 +23,7 @@ class AuthController extends GetxController {
   Future<void> _checkAuth() async {
     isLoading.value = true;
     try {
-      await nRestoreAccounts(ndk);
+      await ndkFlutter.restoreAccountsState();
 
       if (ndk.accounts.getPublicKey() != null) {
         _nostrMailService.initClient();
@@ -56,7 +57,7 @@ class AuthController extends GetxController {
     isLoading.value = true;
     try {
       await _nostrMailService.logout();
-      await nSaveAccountsState(ndk);
+      await ndkFlutter.saveAccountsState();
       isLoggedIn.value = false;
       userMetadata.value = null;
     } finally {
