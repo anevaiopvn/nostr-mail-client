@@ -107,6 +107,18 @@ class InboxController extends GetxController {
     }
   }
 
+  Future<void> resync() async {
+    if (isSyncing.value) return;
+
+    isSyncing.value = true;
+    try {
+      await _nostrMailService.client.resync();
+      await _loadEmails();
+    } finally {
+      isSyncing.value = false;
+    }
+  }
+
   Future<void> moveToTrash(String id) async {
     await _nostrMailService.client.moveToTrash(id);
     await _loadEmails();

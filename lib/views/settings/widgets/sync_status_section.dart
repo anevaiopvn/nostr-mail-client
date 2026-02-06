@@ -33,12 +33,12 @@ class _SyncStatusSectionState extends State<SyncStatusSection> {
     }
   }
 
-  Future<void> _sync() async {
+  Future<void> _resync() async {
     if (_isSyncing) return;
     setState(() => _isSyncing = true);
     try {
       final nostrMailService = Get.find<NostrMailService>();
-      await nostrMailService.client.sync();
+      await nostrMailService.client.resync();
       await _loadData();
     } finally {
       if (mounted) {
@@ -100,19 +100,20 @@ class _SyncStatusSectionState extends State<SyncStatusSection> {
               ),
             ),
           ),
+        // TODO: add description explaining when to use Resync
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: SizedBox(
             width: double.infinity,
             child: OutlinedButton(
-              onPressed: _isSyncing ? null : _sync,
+              onPressed: _isSyncing ? null : _resync,
               child: _isSyncing
                   ? const SizedBox(
                       width: 16,
                       height: 16,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Sync'),
+                  : const Text('Resync'),
             ),
           ),
         ),
