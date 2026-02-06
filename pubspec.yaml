@@ -1,7 +1,7 @@
 name: nostr_mail_client
 description: "Everyone has an email address but nobody own it. Nostr solve this."
 publish_to: 'none'
-version: 0.4.0
+version: 0.4.1
 
 environment:
   sdk: ^3.10.8
@@ -31,7 +31,7 @@ dependencies:
   system_theme: ^3.2.0
   flutter_svg: ^2.2.3
   window_manager: ^0.5.1
-  file_picker: ^10.3.9
+  file_picker: ^10.3.10
   ndk_flutter: ^0.0.1
 
 dev_dependencies:

@@ -634,7 +634,7 @@ class SettingsView extends StatelessWidget {
     BuildContext context,
     SettingsController controller,
   ) async {
-    final result = await FilePicker.pickFiles(
+    final result = await FilePicker.platform.pickFiles(
       type: FileType.image,
       allowMultiple: false,
     );
@@ -813,7 +813,7 @@ class SettingsView extends StatelessWidget {
     BuildContext context,
     SettingsController controller,
   ) async {
-    final result = await FilePicker.pickFiles(
+    final result = await FilePicker.platform.pickFiles(
       type: FileType.image,
       allowMultiple: false,
       withData: true,
