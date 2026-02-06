@@ -14,3 +14,4 @@ keywords:
 categories:
   - Network
   - Email
+startup_wm_class: app.nostrmail.client
