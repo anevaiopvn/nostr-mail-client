@@ -5,6 +5,7 @@ maintainer:
   email: npub1kg4sdvz3l4fr99n2jdz2vdxe2mpacva87hkdetv76ywacsfq5leqquw5te
 priority: optional
 section: mail
+installed_size: 35000
 icon: icons/original_transparent_3x.png
 keywords:
   - nostr
