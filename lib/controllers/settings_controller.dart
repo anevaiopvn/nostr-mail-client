@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
+import 'package:ndk_flutter/ndk_flutter.dart';
 import 'package:ndk_rust_verifier/ndk_rust_verifier.dart';
 
 import '../services/nostr_mail_service.dart';
@@ -113,7 +114,7 @@ class SettingsController extends GetxController {
       switchableVerifier.setDelegate(NoVerifier());
     } else {
       switchableVerifier.setDelegate(
-        kIsWeb ? Bip340EventVerifier() : RustEventVerifier(),
+        kIsWeb ? WebEventVerifier() : RustEventVerifier(),
       );
     }
   }

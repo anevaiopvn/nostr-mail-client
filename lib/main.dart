@@ -53,7 +53,7 @@ void main() async {
         SettingsController.skipEventVerificationKey,
       ) ??
       false;
-  final defaultVerifier = kIsWeb ? Bip340EventVerifier() : RustEventVerifier();
+  final defaultVerifier = kIsWeb ? WebEventVerifier() : RustEventVerifier();
   final switchableVerifier = SwitchableVerifier(
     skipVerification ? NoVerifier() : defaultVerifier,
   );
