@@ -633,10 +633,10 @@ packages:
     dependency: "direct main"
     description:
       name: ndk
-      sha256: "720188a7ac7d0e0b3fca83fe5f1706d74eb3b7d2dac3496c3bd1bba4f87c7689"
+      sha256: "5fe22a383770efd4d8fede334e767a7eeea4ea30bcbc147ad714ff97699c91c8"
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.1-dev.10"
+    version: "0.7.1-dev.11"
   ndk_amber:
     dependency: transitive
     description:
@@ -952,10 +952,10 @@ packages:
     dependency: "direct main"
     description:
       name: sembast_cache_manager
-      sha256: "507f76bdd99e81f04a94edaf4f6b0ec83ce3b74752644ced361bffaf6dfb55dd"
+      sha256: "2b4a2f48988e9ad943765ddf70033d691f8fe53067fc3f0427ca2c3abc9f1ade"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.7-dev.10"
+    version: "1.0.7-dev.11"
   sembast_web:
     dependency: "direct main"
     description:
