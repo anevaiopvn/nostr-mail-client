@@ -100,7 +100,7 @@ class InboxController extends GetxController {
 
     isSyncing.value = true;
     try {
-      await _nostrMailService.client.sync();
+      await _nostrMailService.client.fetchRecent();
       await _loadEmails();
     } finally {
       isSyncing.value = false;

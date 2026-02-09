@@ -17,7 +17,7 @@ dependencies:
   path_provider: ^2.1.5
   sembast: ^3.8.6
   toastification: ^3.0.3
-  nostr_mail: ^1.4.1
+  nostr_mail: ^1.4.2
   ndk_rust_verifier: ^0.5.0
   sembast_cache_manager: ^1.0.7-dev.11
   http: ^1.6.0
