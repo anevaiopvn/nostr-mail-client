@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:nostr_mail/nostr_mail.dart';
 import 'package:toastification/toastification.dart';
 
+import '../../app/routes/app_routes.dart';
 import '../../controllers/auth_controller.dart';
 import '../../controllers/inbox_controller.dart';
 import '../../utils/responsive_helper.dart';
@@ -246,7 +247,7 @@ class InboxView extends GetView<InboxController> {
               () => EmailTile(
                 key: ValueKey('${email.id}_${controller.currentFolder.value}'),
                 email: email,
-                onTap: () => Get.toNamed('/email', arguments: email.id),
+                onTap: () => Get.toNamed(AppRoutes.email, arguments: email.id),
                 isSelected: controller.isSelected(email.id),
                 onToggleSelect: () => controller.toggleSelection(email.id),
                 onReply: () => _replyTo(email),
@@ -339,7 +340,7 @@ class InboxView extends GetView<InboxController> {
           IconButton(
             icon: const Icon(Icons.settings),
             tooltip: 'Settings',
-            onPressed: () => Get.toNamed('/settings'),
+            onPressed: () => Get.toNamed(AppRoutes.settings),
           ),
           const SizedBox(width: 8),
           Builder(
@@ -359,7 +360,7 @@ class InboxView extends GetView<InboxController> {
                   const Divider(height: 1),
                   MenuItemButton(
                     leadingIcon: const Icon(Icons.person_outline),
-                    onPressed: () => Get.toNamed('/profile'),
+                    onPressed: () => Get.toNamed(AppRoutes.profile),
                     child: const Text('Profile'),
                   ),
                   MenuItemButton(
@@ -383,7 +384,7 @@ class InboxView extends GetView<InboxController> {
                     leadingIcon: const Icon(Icons.logout, color: Colors.red),
                     onPressed: () {
                       Get.find<AuthController>().logout();
-                      Get.offAllNamed('/login');
+                      Get.offAllNamed(AppRoutes.login);
                     },
                     child: const Text(
                       'Logout',
@@ -410,7 +411,7 @@ class InboxView extends GetView<InboxController> {
       ),
       drawer: const AppDrawer(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.toNamed('/compose'),
+        onPressed: () => Get.toNamed(AppRoutes.compose),
         backgroundColor: colorScheme.primary,
         child: Icon(Icons.edit, color: colorScheme.onPrimary),
       ),
@@ -419,11 +420,17 @@ class InboxView extends GetView<InboxController> {
   }
 
   void _replyTo(Email email) {
-    Get.toNamed('/compose', arguments: {'email': email, 'mode': 'reply'});
+    Get.toNamed(
+      AppRoutes.compose,
+      arguments: {'email': email, 'mode': 'reply'},
+    );
   }
 
   void _forward(Email email) {
-    Get.toNamed('/compose', arguments: {'email': email, 'mode': 'forward'});
+    Get.toNamed(
+      AppRoutes.compose,
+      arguments: {'email': email, 'mode': 'forward'},
+    );
   }
 
   void _deleteEmail(BuildContext context, Email email) {

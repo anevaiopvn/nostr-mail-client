@@ -6,6 +6,7 @@ import 'package:ndk/ndk.dart';
 import 'package:nostr_mail/nostr_mail.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../app/routes/app_routes.dart';
 import '../../controllers/inbox_controller.dart';
 import '../../controllers/settings_controller.dart';
 import '../../services/nostr_mail_service.dart';
@@ -283,7 +284,7 @@ class _EmailViewState extends State<EmailView> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Get.toNamed(
-          '/compose',
+          AppRoutes.compose,
           arguments: {'email': email, 'mode': 'reply'},
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,

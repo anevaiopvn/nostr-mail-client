@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:toastification/toastification.dart';
 
+import '../../app/routes/app_routes.dart';
 import '../../controllers/auth_controller.dart';
 import '../../utils/platform_helper.dart';
 import 'layout_constants.dart';
@@ -46,7 +47,7 @@ class LeftRail extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.settings),
             tooltip: 'Settings',
-            onPressed: () => Get.toNamed('/settings'),
+            onPressed: () => Get.toNamed(AppRoutes.settings),
           ),
           // Account menu
           const _AccountMenuButton(),
@@ -170,7 +171,7 @@ class _AccountMenuButton extends StatelessWidget {
         const Divider(height: 1),
         MenuItemButton(
           leadingIcon: const Icon(Icons.person_outline),
-          onPressed: () => Get.toNamed('/profile'),
+          onPressed: () => Get.toNamed(AppRoutes.profile),
           child: const Text('Profile'),
         ),
         MenuItemButton(
@@ -194,7 +195,7 @@ class _AccountMenuButton extends StatelessWidget {
           leadingIcon: const Icon(Icons.logout, color: Colors.red),
           onPressed: () {
             Get.find<AuthController>().logout();
-            Get.offAllNamed('/login');
+            Get.offAllNamed(AppRoutes.login);
           },
           child: const Text('Logout', style: TextStyle(color: Colors.red)),
         ),

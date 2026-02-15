@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:toastification/toastification.dart';
 
+import '../../../app/routes/app_routes.dart';
 import '../../../controllers/auth_controller.dart';
 import '../../../controllers/inbox_controller.dart';
 
@@ -122,7 +123,7 @@ class AppDrawer extends StatelessWidget {
                         GestureDetector(
                           onTap: () {
                             Navigator.pop(context);
-                            Get.toNamed('/profile');
+                            Get.toNamed(AppRoutes.profile);
                           },
                           child: Stack(
                             children: [
@@ -202,7 +203,7 @@ class AppDrawer extends StatelessWidget {
                     child: FilledButton.icon(
                       onPressed: () {
                         Navigator.pop(context);
-                        Get.toNamed('/compose');
+                        Get.toNamed(AppRoutes.compose);
                       },
                       icon: const Icon(Icons.edit),
                       label: const Text('Compose'),
@@ -245,7 +246,7 @@ class AppDrawer extends StatelessWidget {
               ),
               onTap: () {
                 Navigator.pop(context);
-                Get.toNamed('/settings');
+                Get.toNamed(AppRoutes.settings);
               },
             ),
           ),
@@ -259,7 +260,7 @@ class AppDrawer extends StatelessWidget {
               ),
               onTap: () {
                 Get.find<AuthController>().logout();
-                Get.offAllNamed('/login');
+                Get.offAllNamed(AppRoutes.login);
               },
             ),
           ),

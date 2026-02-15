@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../app/routes/app_routes.dart';
 import '../../../controllers/inbox_controller.dart';
 
 class AppSidebar extends StatelessWidget {
@@ -19,7 +20,7 @@ class AppSidebar extends StatelessWidget {
             child: SizedBox(
               width: double.infinity,
               child: FilledButton.icon(
-                onPressed: () => Get.toNamed('/compose'),
+                onPressed: () => Get.toNamed(AppRoutes.compose),
                 icon: const Icon(Icons.edit),
                 label: const Text('Compose'),
               ),

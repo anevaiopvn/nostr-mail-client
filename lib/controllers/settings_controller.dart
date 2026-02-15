@@ -7,7 +7,11 @@ import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 import 'package:ndk_flutter/ndk_flutter.dart';
 import 'package:ndk_rust_verifier/ndk_rust_verifier.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
 
+import '../app/routes/app_routes.dart';
+import '../controllers/auth_controller.dart';
 import '../services/nostr_mail_service.dart';
 import '../services/storage_service.dart';
 import '../services/theme_service.dart';
@@ -26,6 +30,7 @@ class SettingsController extends GetxController {
   static const _backgroundImageKey = 'background_image';
   static const themeModeKey = 'theme_mode';
   static const skipEventVerificationKey = 'skip_event_verification';
+  static const backgroundsDirName = 'backgrounds';
   static const _defaultSignature =
       '--\nSent with Nmail\nhttps://github.com/nogringo/nostr-mail-client';
 
@@ -222,5 +227,50 @@ class SettingsController extends GetxController {
     } else {
       _themeService.clear();
     }
+  }
+
+  Future<void> resetApplication() async {
+    // Clear all settings from database
+    await _storageService.clearAll();
+
+    // Clear NDK cache
+    await Get.find<Ndk>().config.cache.clearAll();
+
+    // Clear emails, labels, gift wraps
+    final nostrMailService = Get.find<NostrMailService>();
+    if (nostrMailService.isClientInitialized) {
+      await nostrMailService.client.clearAll();
+    }
+
+    // Delete background images folder (native only)
+    if (PlatformHelper.isNative) {
+      try {
+        final appDir = await getApplicationSupportDirectory();
+        final backgroundsDir = Directory(
+          p.join(appDir.path, backgroundsDirName),
+        );
+        if (await backgroundsDir.exists()) {
+          await backgroundsDir.delete(recursive: true);
+        }
+      } catch (_) {}
+    }
+
+    // Logout user
+    await Get.find<AuthController>().logout();
+
+    // Reset in-memory state
+    showRawEmail.value = false;
+    alwaysLoadImages.value = false;
+    skipEventVerification.value = false;
+    emailSignature.value = _defaultSignature;
+    backgroundImage.value = null;
+    themeMode.value = ThemeMode.system;
+    dynamicTheme.value = true;
+    lightColorScheme.value = null;
+    darkColorScheme.value = null;
+    _themeService.clear();
+
+    // Navigate to login
+    Get.offAllNamed(AppRoutes.login);
   }
 }

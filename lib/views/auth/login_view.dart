@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndk_flutter/ndk_flutter.dart';
 
+import '../../app/routes/app_routes.dart';
 import '../../controllers/auth_controller.dart';
 import '../../utils/responsive_helper.dart';
 
@@ -43,7 +44,7 @@ class LoginView extends GetView<AuthController> {
                     ndkFlutter: controller.ndkFlutter,
                     onLoggedIn: () {
                       controller.onLoggedIn();
-                      Get.offAllNamed('/inbox');
+                      Get.offAllNamed(AppRoutes.inbox);
                     },
                     enableNpubLogin: false,
                     enableNip05Login: false,

@@ -171,9 +171,9 @@ class _InitialScreen extends StatelessWidget {
       }
 
       if (authController.isLoggedIn.value) {
-        Future.microtask(() => Get.offAllNamed('/inbox'));
+        Future.microtask(() => Get.offAllNamed(AppRoutes.inbox));
       } else {
-        Future.microtask(() => Get.offAllNamed('/login'));
+        Future.microtask(() => Get.offAllNamed(AppRoutes.login));
       }
 
       return const Scaffold(body: Center(child: CircularProgressIndicator()));

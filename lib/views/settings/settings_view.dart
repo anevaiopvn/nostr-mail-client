@@ -12,6 +12,7 @@ import 'package:system_theme/system_theme.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+import '../../app/routes/app_routes.dart';
 import '../../controllers/auth_controller.dart';
 import '../../controllers/settings_controller.dart';
 import '../../utils/platform_helper.dart';
@@ -133,8 +134,17 @@ class SettingsView extends StatelessWidget {
                 ),
                 onTap: () {
                   Get.find<AuthController>().logout();
-                  Get.offAllNamed('/login');
+                  Get.offAllNamed(AppRoutes.login);
                 },
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete_forever, color: Colors.red),
+                title: const Text(
+                  'Reset application',
+                  style: TextStyle(color: Colors.red),
+                ),
+                subtitle: const Text('Delete all local data'),
+                onTap: () => _showResetConfirmationDialog(context),
               ),
               const SizedBox(height: 48),
             ],
@@ -154,6 +164,39 @@ class SettingsView extends StatelessWidget {
           fontWeight: FontWeight.w600,
           fontSize: 14,
         ),
+      ),
+    );
+  }
+
+  void _showResetConfirmationDialog(BuildContext context) {
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Reset application'),
+        content: const Text(
+          'This will delete all local data including settings, background images, and log you out.\n\nThis action cannot be undone.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () async {
+              Get.back();
+              Get.dialog(
+                const AlertDialog(
+                  content: Row(
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(width: 16),
+                      Text('Resetting...'),
+                    ],
+                  ),
+                ),
+                barrierDismissible: false,
+              );
+              await Get.find<SettingsController>().resetApplication();
+            },
+            child: const Text('Reset', style: TextStyle(color: Colors.red)),
+          ),
+        ],
       ),
     );
   }
@@ -623,7 +666,9 @@ class SettingsView extends StatelessWidget {
 
   Future<Directory> _getBackgroundDir() async {
     final appDir = await getApplicationSupportDirectory();
-    final dir = Directory(p.join(appDir.path, 'backgrounds'));
+    final dir = Directory(
+      p.join(appDir.path, SettingsController.backgroundsDirName),
+    );
     if (!await dir.exists()) {
       await dir.create(recursive: true);
     }
