@@ -85,10 +85,10 @@ packages:
     dependency: transitive
     description:
       name: characters
-      sha256: f71061c654a3380576a52b451dd5532377954cf9dbd272a78fc8479606670803
+      sha256: faf38497bda5ead2a8c7615f4f7939df04333478bf32e4173fcb06d428b5716b
       url: "https://pub.dev"
     source: hosted
-    version: "1.4.0"
+    version: "1.4.1"
   charcode:
     dependency: transitive
     description:
@@ -601,18 +601,18 @@ packages:
     dependency: transitive
     description:
       name: matcher
-      sha256: dc58c723c3c24bf8d3e2d3ad3f2f9d7bd9cf43ec6feaa64181775e60190153f2
+      sha256: "12956d0ad8390bbcc63ca2e1469c0619946ccb52809807067a7020d57e647aa6"
       url: "https://pub.dev"
     source: hosted
-    version: "0.12.17"
+    version: "0.12.18"
   material_color_utilities:
     dependency: transitive
     description:
       name: material_color_utilities
-      sha256: f7142bb1154231d7ea5f96bc7bde4bda2a0945d2806bb11670e30b850d56bdec
+      sha256: "9c337007e82b1889149c82ed242ed1cb24a66044e30979c44912381e9be4c48b"
       url: "https://pub.dev"
     source: hosted
-    version: "0.11.1"
+    version: "0.13.0"
   meta:
     dependency: transitive
     description:
@@ -633,10 +633,10 @@ packages:
     dependency: "direct main"
     description:
       name: ndk
-      sha256: "5fe22a383770efd4d8fede334e767a7eeea4ea30bcbc147ad714ff97699c91c8"
+      sha256: c366e3906d23633024ac842c37dcf510f150e128e0514d8f9e333ef3f7fe8764
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.1-dev.11"
+    version: "0.7.1-dev.12"
   ndk_amber:
     dependency: transitive
     description:
@@ -649,10 +649,10 @@ packages:
     dependency: "direct main"
     description:
       name: ndk_flutter
-      sha256: "73b05241934f8760621db39c35b2650d4ea45c7c0878f2b3c7b43e8e5ea456d6"
+      sha256: dae25558037f3870a3d89d5d06919c26e0a9bb715a5b7a8aa89e215f0c5aaea5
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.1"
+    version: "0.0.2-dev.4"
   ndk_rust_verifier:
     dependency: "direct main"
     description:
@@ -665,17 +665,17 @@ packages:
     dependency: transitive
     description:
       name: nip07_event_signer
-      sha256: "5c51d0f32bc83c21f6668d5c49a8af7661ea6411631313832a9c5b1f7b364e9b"
+      sha256: "156d7c283fe7bf3ac633a215a723e7aa9b3e173dd45434807b11e3b60a4b9859"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.5"
+    version: "1.0.6-dev.12"
   nostr_mail:
     dependency: "direct main"
     description:
       path: "../nostr-mail-dart"
       relative: true
     source: path
-    version: "1.4.2"
+    version: "1.4.3"
   objective_c:
     dependency: transitive
     description:
@@ -952,10 +952,10 @@ packages:
     dependency: "direct main"
     description:
       name: sembast_cache_manager
-      sha256: "2b4a2f48988e9ad943765ddf70033d691f8fe53067fc3f0427ca2c3abc9f1ade"
+      sha256: b280580f3328489cff97420d746d70ba29537e001582a7ff2cf95c687fe021a9
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.7-dev.11"
+    version: "1.0.7-dev.12"
   sembast_web:
     dependency: "direct main"
     description:
@@ -1037,10 +1037,10 @@ packages:
     dependency: transitive
     description:
       name: test_api
-      sha256: ab2726c1a94d3176a45960b6234466ec367179b87dd74f1611adb1f3b5fb9d55
+      sha256: "93167629bfc610f71560ab9312acdda4959de4df6fac7492c89ff0d3886f6636"
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.7"
+    version: "0.7.9"
   toastification:
     dependency: "direct main"
     description:
