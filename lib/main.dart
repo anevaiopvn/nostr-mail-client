@@ -7,7 +7,6 @@ import 'package:ndk/ndk.dart';
 import 'package:ndk_flutter/ndk_flutter.dart';
 import 'package:ndk_rust_verifier/ndk_rust_verifier.dart';
 import 'package:ndk_flutter/l10n/app_localizations.dart' as ndk_flutter;
-import 'package:sembast_cache_manager/sembast_cache_manager.dart';
 import 'package:system_theme/system_theme.dart';
 import 'package:toastification/toastification.dart';
 import 'package:window_manager/window_manager.dart';
@@ -17,6 +16,7 @@ import 'app/config/nostr_config.dart';
 import 'app/routes/app_routes.dart';
 import 'controllers/auth_controller.dart';
 import 'controllers/settings_controller.dart';
+import 'services/ndk_cache_service.dart';
 import 'services/storage_service.dart';
 import 'services/theme_service.dart';
 import 'utils/event_verifiers.dart';
@@ -47,7 +47,7 @@ void main() async {
   Get.put(storageService, permanent: true);
 
   // Initialize NDK with switchable verifier for hot-swap capability
-  final cacheManager = SembastCacheManager(storageService.db);
+  final cacheManager = await NdkCacheService.createCacheManager(storageService);
   final skipVerification =
       await storageService.getSetting<bool>(
         SettingsController.skipEventVerificationKey,

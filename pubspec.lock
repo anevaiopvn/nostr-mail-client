@@ -289,6 +289,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
+  flat_buffers:
+    dependency: transitive
+    description:
+      name: flat_buffers
+      sha256: "380bdcba5664a718bfd4ea20a45d39e13684f5318fcd8883066a55e21f37f4c3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "23.5.26"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -653,6 +661,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.2-dev.4"
+  ndk_objectbox:
+    dependency: "direct main"
+    description:
+      name: ndk_objectbox
+      sha256: "2bfe79e8aaa10f1f51c556c147c9976a3366aae2c610c172fe924cae27dd7005"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.8-dev.12"
   ndk_rust_verifier:
     dependency: "direct main"
     description:
@@ -676,6 +692,22 @@ packages:
       relative: true
     source: path
     version: "1.4.3"
+  objectbox:
+    dependency: transitive
+    description:
+      name: objectbox
+      sha256: "2897412ebc1ea9786be3cfc309e29fbc87dc8eac6b77a5a25b65ed25c92057e0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.4"
+  objectbox_flutter_libs:
+    dependency: transitive
+    description:
+      name: objectbox_flutter_libs
+      sha256: "2595fb53aa54227a5ea8b2eb3bc66bedcc316959efdf995df9921641a2c7d0b2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.4"
   objective_c:
     dependency: transitive
     description:

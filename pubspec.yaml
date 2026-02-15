@@ -33,6 +33,7 @@ dependencies:
   window_manager: ^0.5.1
   file_picker: ^10.3.10
   ndk_flutter: ^0.0.2-dev.4
+  ndk_objectbox: ^0.2.8-dev.12
 
 dev_dependencies:
   flutter_test:
