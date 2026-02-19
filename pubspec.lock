@@ -641,26 +641,26 @@ packages:
     dependency: "direct main"
     description:
       name: ndk
-      sha256: c366e3906d23633024ac842c37dcf510f150e128e0514d8f9e333ef3f7fe8764
+      sha256: "7a118aa8aac16ad1a8bcc8fd68314a2cbccd6b31cdab12b08499aa7f9d0833b7"
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.1-dev.12"
+    version: "0.7.1-dev.14"
   ndk_amber:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       name: ndk_amber
-      sha256: "9789a67d5b839c459b027ac7636a4021e126199c7d3b3361863ddba7ed55fe2e"
+      sha256: c8a2741b2d87811ad670764071954829bff019e0e73c3bb4eb4cbb520cf40f2b
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.0"
+    version: "0.4.0-dev.15"
   ndk_flutter:
     dependency: "direct main"
     description:
       name: ndk_flutter
-      sha256: dae25558037f3870a3d89d5d06919c26e0a9bb715a5b7a8aa89e215f0c5aaea5
+      sha256: "64fde6317984207da9db20fc1b1bd1b03086c5b7554ca2300760e35b159f8e70"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.2-dev.4"
+    version: "0.0.2-dev.8"
   ndk_objectbox:
     dependency: "direct main"
     description:
@@ -681,17 +681,17 @@ packages:
     dependency: transitive
     description:
       name: nip07_event_signer
-      sha256: "156d7c283fe7bf3ac633a215a723e7aa9b3e173dd45434807b11e3b60a4b9859"
+      sha256: e49d1750617909f0349de9d5125203f398f2c6ecdb9eda8dba4bc52630b39664
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.6-dev.12"
+    version: "1.0.6-dev.15"
   nostr_mail:
     dependency: "direct main"
     description:
       path: "../nostr-mail-dart"
       relative: true
     source: path
-    version: "1.4.3"
+    version: "1.4.4"
   objectbox:
     dependency: transitive
     description:

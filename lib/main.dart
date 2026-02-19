@@ -146,11 +146,17 @@ class MainApp extends StatelessWidget {
                         ],
                       ),
                     ),
+                    NPendingRequests(ndkFlutter: Get.find()),
                   ],
                 ),
               );
             }
-            return child!;
+            return Stack(
+              children: [
+                child!,
+                NPendingRequests(ndkFlutter: Get.find()),
+              ],
+            );
           },
         ),
       );
