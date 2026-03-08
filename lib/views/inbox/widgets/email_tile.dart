@@ -109,11 +109,47 @@ class _EmailTileState extends State<EmailTile> {
   @override
   Widget build(BuildContext context) {
     final isWide = ResponsiveHelper.isDesktop(context);
+    final isInTrash =
+        Get.find<InboxController>().currentFolder.value == MailFolder.trash;
+    final colorScheme = Theme.of(context).colorScheme;
 
-    if (isWide) {
-      return _buildCompactTile(context);
-    }
-    return _buildDefaultTile(context);
+    return Column(
+      children: [
+        Dismissible(
+          key: ValueKey(widget.email.id),
+          direction: isInTrash
+              ? DismissDirection.endToStart
+              : DismissDirection.horizontal,
+          background: Container(
+            color: Colors.green,
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.only(left: 16),
+            child: const Icon(Icons.archive, color: Colors.white),
+          ),
+          secondaryBackground: Container(
+            color: Colors.red,
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: 16),
+            child: const Icon(Icons.delete, color: Colors.white),
+          ),
+          onDismissed: (direction) {
+            if (direction == DismissDirection.startToEnd) {
+              widget.onDelete?.call();
+            } else if (direction == DismissDirection.endToStart) {
+              widget.onDelete?.call();
+            }
+          },
+          child: GestureDetector(
+            onSecondaryTapUp: (details) =>
+                _showContextMenu(context, details.globalPosition),
+            child: isWide
+                ? _buildCompactTile(context, colorScheme)
+                : _buildDefaultTile(context),
+          ),
+        ),
+        const Divider(height: 1),
+      ],
+    );
   }
 
   void _showContextMenu(BuildContext context, Offset position) {
@@ -201,139 +237,118 @@ class _EmailTileState extends State<EmailTile> {
     );
   }
 
-  Widget _buildCompactTile(BuildContext context) {
+  Widget _buildCompactTile(BuildContext context, ColorScheme colorScheme) {
     final subject = widget.email.subject.isEmpty
         ? '(No subject)'
         : widget.email.subject;
-    final colorScheme = Theme.of(context).colorScheme;
 
-    return Column(
-      children: [
-        GestureDetector(
-          onSecondaryTapUp: (details) =>
-              _showContextMenu(context, details.globalPosition),
-          child: InkWell(
-            onTap: widget.onTap,
-            child: Container(
-              color: widget.isSelected
-                  ? colorScheme.primaryContainer.withValues(alpha: 0.3)
-                  : null,
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+    return InkWell(
+      onTap: widget.onTap,
+      child: Container(
+        color: widget.isSelected
+            ? colorScheme.primaryContainer.withValues(alpha: 0.3)
+            : null,
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 40,
+              child: Checkbox(
+                value: widget.isSelected,
+                onChanged: widget.onToggleSelect != null
+                    ? (_) => widget.onToggleSelect!()
+                    : null,
+              ),
+            ),
+            SizedBox(
+              width: 160,
               child: Row(
                 children: [
-                  SizedBox(
-                    width: 40,
-                    child: Checkbox(
-                      value: widget.isSelected,
-                      onChanged: widget.onToggleSelect != null
-                          ? (_) => widget.onToggleSelect!()
-                          : null,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 160,
-                    child: Row(
-                      children: [
-                        _buildAvatar(context, compact: true),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            _displayName,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
+                  _buildAvatar(context, compact: true),
+                  const SizedBox(width: 12),
                   Expanded(
-                    child: Row(
-                      children: [
-                        Flexible(
-                          flex: 2,
-                          child: Text(
-                            subject,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text('—', style: TextStyle(color: Colors.grey[400])),
-                        const SizedBox(width: 8),
-                        Flexible(
-                          flex: 3,
-                          child: Text(
-                            widget.email.body,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: Colors.grey[500]),
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      _displayName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontWeight: FontWeight.w500),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Text(
-                    _formatDate(widget.email.date),
-                    style: TextStyle(color: Colors.grey[500], fontSize: 12),
                   ),
                 ],
               ),
             ),
-          ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Row(
+                children: [
+                  Flexible(
+                    flex: 2,
+                    child: Text(
+                      subject,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text('—', style: TextStyle(color: Colors.grey[400])),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    flex: 3,
+                    child: Text(
+                      widget.email.body,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: Colors.grey[500]),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 16),
+            Text(
+              _formatDate(widget.email.date),
+              style: TextStyle(color: Colors.grey[500], fontSize: 12),
+            ),
+          ],
         ),
-        const Divider(height: 1),
-      ],
+      ),
     );
   }
 
   Widget _buildDefaultTile(BuildContext context) {
-    return Column(
-      children: [
-        GestureDetector(
-          onSecondaryTapUp: (details) =>
-              _showContextMenu(context, details.globalPosition),
-          child: ListTile(
-            onTap: widget.onTap,
-            leading: _buildAvatar(context),
-            title: Text(
-              widget.email.subject.isEmpty
-                  ? '(No subject)'
-                  : widget.email.subject,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _displayName,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  widget.email.body,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.grey[500], fontSize: 13),
-                ),
-              ],
-            ),
-            trailing: Text(
-              _formatDate(widget.email.date),
-              style: TextStyle(color: Colors.grey[500], fontSize: 11),
-            ),
-            isThreeLine: true,
+    return ListTile(
+      onTap: widget.onTap,
+      leading: _buildAvatar(context),
+      title: Text(
+        widget.email.subject.isEmpty ? '(No subject)' : widget.email.subject,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            _displayName,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: Colors.grey[600], fontSize: 12),
           ),
-        ),
-        const Divider(height: 1),
-      ],
+          const SizedBox(height: 2),
+          Text(
+            widget.email.body,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: Colors.grey[500], fontSize: 13),
+          ),
+        ],
+      ),
+      trailing: Text(
+        _formatDate(widget.email.date),
+        style: TextStyle(color: Colors.grey[500], fontSize: 11),
+      ),
+      isThreeLine: true,
     );
   }
 
