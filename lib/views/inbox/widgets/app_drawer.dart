@@ -95,7 +95,8 @@ class AppDrawer extends StatelessWidget {
       final selectedIndex = switch (controller.currentFolder.value) {
         MailFolder.inbox => 0,
         MailFolder.sent => 1,
-        MailFolder.trash => 2,
+        MailFolder.archive => 2,
+        MailFolder.trash => 3,
       };
 
       return NavigationDrawer(
@@ -104,6 +105,7 @@ class AppDrawer extends StatelessWidget {
           final folder = switch (index) {
             0 => MailFolder.inbox,
             1 => MailFolder.sent,
+            2 => MailFolder.archive,
             _ => MailFolder.trash,
           };
           controller.setFolder(folder);
@@ -226,6 +228,11 @@ class AppDrawer extends StatelessWidget {
             icon: Icon(Icons.send_outlined),
             selectedIcon: Icon(Icons.send),
             label: Text('Sent'),
+          ),
+          const NavigationDrawerDestination(
+            icon: Icon(Icons.archive_outlined),
+            selectedIcon: Icon(Icons.archive),
+            label: Text('Archive'),
           ),
           const NavigationDrawerDestination(
             icon: Icon(Icons.delete_outlined),

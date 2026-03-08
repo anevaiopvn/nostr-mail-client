@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:nostr_mail/nostr_mail.dart';
-import 'package:toastification/toastification.dart';
 
 import '../../app/routes/app_routes.dart';
 import '../../controllers/auth_controller.dart';
 import '../../controllers/inbox_controller.dart';
 import '../../utils/responsive_helper.dart';
-import '../../utils/toast_helper.dart';
 import '../shared/desktop_shell.dart';
 import 'widgets/app_drawer.dart';
 import 'widgets/email_tile.dart';
@@ -150,6 +148,7 @@ class InboxView extends GetView<InboxController> {
               MailFolder.inbox => 'Inbox',
               MailFolder.sent => 'Sent',
               MailFolder.trash => 'Trash',
+              MailFolder.archive => 'Archive',
             };
             return Text(
               title,
@@ -216,6 +215,7 @@ class InboxView extends GetView<InboxController> {
           MailFolder.inbox => (Icons.inbox, 'No emails yet'),
           MailFolder.sent => (Icons.send, 'No sent emails'),
           MailFolder.trash => (Icons.delete_outline, 'Trash is empty'),
+          MailFolder.archive => (Icons.archive_outlined, 'Archive is empty'),
         };
         return Center(
           child: Column(
@@ -239,24 +239,28 @@ class InboxView extends GetView<InboxController> {
 
       return RefreshIndicator(
         onRefresh: controller.sync,
-        child: ListView.builder(
-          itemCount: controller.emails.length,
-          itemBuilder: (context, index) {
-            final email = controller.emails[index];
-            return Obx(
-              () => EmailTile(
-                key: ValueKey('${email.id}_${controller.currentFolder.value}'),
-                email: email,
-                onTap: () => Get.toNamed(AppRoutes.email, arguments: email.id),
-                isSelected: controller.isSelected(email.id),
-                onToggleSelect: () => controller.toggleSelection(email.id),
-                onReply: () => _replyTo(email),
-                onForward: () => _forward(email),
-                onDelete: () => _deleteEmail(context, email),
-                onRestore: () => _restoreEmail(context, email),
-              ),
-            );
-          },
+        child: GetBuilder<InboxController>(
+          builder: (controller) => ListView.builder(
+            itemCount: controller.emails.length,
+            itemBuilder: (context, index) {
+              final email = controller.emails[index];
+              return Obx(
+                () => EmailTile(
+                  key: ValueKey(email.id),
+                  email: email,
+                  onTap: () =>
+                      Get.toNamed(AppRoutes.email, arguments: email.id),
+                  isSelected: controller.isSelected(email.id),
+                  onToggleSelect: () => controller.toggleSelection(email.id),
+                  onReply: () => _replyTo(email),
+                  onForward: () => _forward(email),
+                  onDelete: () => _deleteEmail(context, email),
+                  onArchive: () => _archiveEmail(context, email),
+                  onRestore: () => _restoreEmail(context, email),
+                ),
+              );
+            },
+          ),
         ),
       );
     });
@@ -292,6 +296,7 @@ class InboxView extends GetView<InboxController> {
             MailFolder.inbox => 'Inbox',
             MailFolder.sent => 'Sent',
             MailFolder.trash => 'Trash',
+            MailFolder.archive => 'Archive',
           };
           return Text(title);
         }),
@@ -369,13 +374,6 @@ class InboxView extends GetView<InboxController> {
                       final npub = Get.find<AuthController>().npub;
                       if (npub != null) {
                         Clipboard.setData(ClipboardData(text: npub));
-                        toastification.show(
-                          context: context,
-                          type: ToastificationType.success,
-                          title: const Text('npub copied'),
-                          autoCloseDuration: const Duration(seconds: 2),
-                          alignment: Alignment.bottomRight,
-                        );
                       }
                     },
                     child: const Text('Copy npub'),
@@ -437,8 +435,15 @@ class InboxView extends GetView<InboxController> {
     controller.deleteEmail(email.id);
   }
 
+  void _archiveEmail(BuildContext context, Email email) {
+    controller.moveToArchive(email.id);
+  }
+
   void _restoreEmail(BuildContext context, Email email) {
-    controller.restoreFromTrash(email.id);
-    ToastHelper.success(context, 'Email restored');
+    if (controller.currentFolder.value == MailFolder.archive) {
+      controller.restoreFromArchive(email.id);
+    } else {
+      controller.restoreFromTrash(email.id);
+    }
   }
 }

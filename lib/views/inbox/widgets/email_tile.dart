@@ -16,6 +16,7 @@ class EmailTile extends StatefulWidget {
   final VoidCallback? onReply;
   final VoidCallback? onForward;
   final VoidCallback? onDelete;
+  final VoidCallback? onArchive;
   final VoidCallback? onRestore;
 
   const EmailTile({
@@ -27,6 +28,7 @@ class EmailTile extends StatefulWidget {
     this.onReply,
     this.onForward,
     this.onDelete,
+    this.onArchive,
     this.onRestore,
   });
 
@@ -109,8 +111,9 @@ class _EmailTileState extends State<EmailTile> {
   @override
   Widget build(BuildContext context) {
     final isWide = ResponsiveHelper.isDesktop(context);
-    final isInTrash =
-        Get.find<InboxController>().currentFolder.value == MailFolder.trash;
+    final currentFolder = Get.find<InboxController>().currentFolder.value;
+    final isInTrash = currentFolder == MailFolder.trash;
+    final isInArchive = currentFolder == MailFolder.archive;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Column(
@@ -121,10 +124,13 @@ class _EmailTileState extends State<EmailTile> {
               ? DismissDirection.endToStart
               : DismissDirection.horizontal,
           background: Container(
-            color: Colors.green,
+            color: isInArchive ? Colors.blue : Colors.green,
             alignment: Alignment.centerLeft,
             padding: const EdgeInsets.only(left: 16),
-            child: const Icon(Icons.archive, color: Colors.white),
+            child: Icon(
+              isInArchive ? Icons.inbox : Icons.archive,
+              color: Colors.white,
+            ),
           ),
           secondaryBackground: Container(
             color: Colors.red,
@@ -134,8 +140,14 @@ class _EmailTileState extends State<EmailTile> {
           ),
           onDismissed: (direction) {
             if (direction == DismissDirection.startToEnd) {
-              widget.onDelete?.call();
+              // Swipe right - archive (or restore from archive)
+              if (isInArchive) {
+                widget.onRestore?.call();
+              } else {
+                widget.onArchive?.call();
+              }
             } else if (direction == DismissDirection.endToStart) {
+              // Swipe left - delete
               widget.onDelete?.call();
             }
           },

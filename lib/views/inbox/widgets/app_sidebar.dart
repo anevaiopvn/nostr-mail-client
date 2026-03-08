@@ -46,6 +46,15 @@ class AppSidebar extends StatelessWidget {
           ),
           Obx(
             () => _NavItem(
+              icon: Icons.archive_outlined,
+              selectedIcon: Icons.archive,
+              label: 'Archive',
+              selected: controller.currentFolder.value == MailFolder.archive,
+              onTap: () => controller.setFolder(MailFolder.archive),
+            ),
+          ),
+          Obx(
+            () => _NavItem(
               icon: Icons.delete_outlined,
               selectedIcon: Icons.delete,
               label: 'Trash',

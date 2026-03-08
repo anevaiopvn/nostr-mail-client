@@ -5,7 +5,7 @@ import 'package:nostr_mail/nostr_mail.dart';
 
 import '../services/nostr_mail_service.dart';
 
-enum MailFolder { inbox, sent, trash }
+enum MailFolder { inbox, sent, trash, archive }
 
 class InboxController extends GetxController {
   final _nostrMailService = Get.find<NostrMailService>();
@@ -74,6 +74,7 @@ class InboxController extends GetxController {
       MailFolder.inbox => await client.getInboxEmails(),
       MailFolder.sent => await client.getSentEmails(),
       MailFolder.trash => await client.getTrashedEmails(),
+      MailFolder.archive => await client.getArchivedEmails(),
     };
     emails.assignAll(loaded);
   }
@@ -137,6 +138,16 @@ class InboxController extends GetxController {
       // Move to trash
       await _nostrMailService.client.moveToTrash(id);
     }
+    await _loadEmails();
+  }
+
+  Future<void> moveToArchive(String id) async {
+    await _nostrMailService.client.moveToArchive(id);
+    await _loadEmails();
+  }
+
+  Future<void> restoreFromArchive(String id) async {
+    await _nostrMailService.client.restoreFromArchive(id);
     await _loadEmails();
   }
 }
