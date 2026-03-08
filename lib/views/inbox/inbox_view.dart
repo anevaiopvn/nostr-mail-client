@@ -435,9 +435,6 @@ class InboxView extends GetView<InboxController> {
 
   void _deleteEmail(BuildContext context, Email email) {
     controller.deleteEmail(email.id);
-    if (controller.currentFolder.value != MailFolder.trash) {
-      ToastHelper.success(context, 'Email moved to trash');
-    }
   }
 
   void _restoreEmail(BuildContext context, Email email) {

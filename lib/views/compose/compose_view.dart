@@ -257,9 +257,6 @@ class _ComposeViewState extends State<ComposeView> {
     );
 
     if (success) {
-      if (mounted) {
-        ToastHelper.success(context, 'Email sent');
-      }
       Get.back();
     } else {
       if (mounted) {
