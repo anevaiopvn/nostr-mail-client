@@ -153,7 +153,8 @@ class _EmailTileState extends State<EmailTile> {
           },
           child: GestureDetector(
             onSecondaryTapUp: (details) =>
-                _showContextMenu(context, details.globalPosition),
+                _showContextMenu(context, position: details.globalPosition),
+            onLongPress: () => _showContextMenu(context),
             child: isWide
                 ? _buildCompactTile(context, colorScheme)
                 : _buildDefaultTile(context),
@@ -164,89 +165,153 @@ class _EmailTileState extends State<EmailTile> {
     );
   }
 
-  void _showContextMenu(BuildContext context, Offset position) {
+  void _showContextMenu(BuildContext context, {Offset? position}) {
     final isInTrash =
         Get.find<InboxController>().currentFolder.value == MailFolder.trash;
     final colorScheme = Theme.of(context).colorScheme;
 
-    final menuChildren = <Widget>[
-      if (!isInTrash) ...[
-        MenuItemButton(
-          leadingIcon: const Icon(Icons.reply),
-          onPressed: () {
-            Navigator.of(context).pop();
-            widget.onReply?.call();
-          },
-          child: const Text('Reply'),
-        ),
-        MenuItemButton(
-          leadingIcon: const Icon(Icons.forward),
-          onPressed: () {
-            Navigator.of(context).pop();
-            widget.onForward?.call();
-          },
-          child: const Text('Forward'),
-        ),
-        const Divider(height: 1),
-        MenuItemButton(
-          leadingIcon: const Icon(Icons.delete_outline),
-          onPressed: () {
-            Navigator.of(context).pop();
-            widget.onDelete?.call();
-          },
-          child: const Text('Move to trash'),
-        ),
-      ] else ...[
-        MenuItemButton(
-          leadingIcon: const Icon(Icons.restore_from_trash),
-          onPressed: () {
-            Navigator.of(context).pop();
-            widget.onRestore?.call();
-          },
-          child: const Text('Restore'),
-        ),
-        MenuItemButton(
-          leadingIcon: Icon(Icons.delete_forever, color: colorScheme.error),
-          onPressed: () {
-            Navigator.of(context).pop();
-            widget.onDelete?.call();
-          },
-          child: Text(
-            'Delete permanently',
-            style: TextStyle(color: colorScheme.error),
+    // Right-click (desktop) → popup menu at cursor position
+    // Long-press (mobile) → bottom sheet
+    if (position != null) {
+      // Desktop: popup menu
+      final menuChildren = <Widget>[
+        if (!isInTrash) ...[
+          MenuItemButton(
+            leadingIcon: const Icon(Icons.reply),
+            onPressed: () {
+              Navigator.of(context).pop();
+              widget.onReply?.call();
+            },
+            child: const Text('Reply'),
           ),
-        ),
-      ],
-    ];
-
-    showDialog(
-      context: context,
-      barrierColor: Colors.transparent,
-      builder: (context) => Stack(
-        children: [
-          Positioned.fill(
-            child: GestureDetector(onTap: () => Navigator.of(context).pop()),
+          MenuItemButton(
+            leadingIcon: const Icon(Icons.forward),
+            onPressed: () {
+              Navigator.of(context).pop();
+              widget.onForward?.call();
+            },
+            child: const Text('Forward'),
           ),
-          Positioned(
-            left: position.dx,
-            top: position.dy,
-            child: Material(
-              elevation: 8,
-              borderRadius: BorderRadius.circular(12),
-              clipBehavior: Clip.antiAlias,
-              surfaceTintColor: colorScheme.surfaceTint,
-              child: IntrinsicWidth(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.min,
-                  children: menuChildren,
-                ),
-              ),
+          const Divider(height: 1),
+          MenuItemButton(
+            leadingIcon: const Icon(Icons.delete_outline),
+            onPressed: () {
+              Navigator.of(context).pop();
+              widget.onDelete?.call();
+            },
+            child: const Text('Move to trash'),
+          ),
+        ] else ...[
+          MenuItemButton(
+            leadingIcon: const Icon(Icons.restore_from_trash),
+            onPressed: () {
+              Navigator.of(context).pop();
+              widget.onRestore?.call();
+            },
+            child: const Text('Restore'),
+          ),
+          MenuItemButton(
+            leadingIcon: Icon(Icons.delete_forever, color: colorScheme.error),
+            onPressed: () {
+              Navigator.of(context).pop();
+              widget.onDelete?.call();
+            },
+            child: Text(
+              'Delete permanently',
+              style: TextStyle(color: colorScheme.error),
             ),
           ),
         ],
-      ),
-    );
+      ];
+
+      showDialog(
+        context: context,
+        barrierColor: Colors.transparent,
+        builder: (context) => Stack(
+          children: [
+            Positioned.fill(
+              child: GestureDetector(onTap: () => Navigator.of(context).pop()),
+            ),
+            Positioned(
+              left: position.dx,
+              top: position.dy,
+              child: Material(
+                elevation: 8,
+                borderRadius: BorderRadius.circular(12),
+                clipBehavior: Clip.antiAlias,
+                surfaceTintColor: colorScheme.surfaceTint,
+                child: IntrinsicWidth(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: menuChildren,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      // Mobile: bottom sheet
+      showModalBottomSheet(
+        context: context,
+        showDragHandle: true,
+        builder: (context) => SafeArea(
+          child: Wrap(
+            children: [
+              if (!isInTrash) ...[
+                ListTile(
+                  leading: const Icon(Icons.reply),
+                  title: const Text('Reply'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    widget.onReply?.call();
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.forward),
+                  title: const Text('Forward'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    widget.onForward?.call();
+                  },
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.delete_outline),
+                  title: const Text('Move to trash'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    widget.onDelete?.call();
+                  },
+                ),
+              ] else ...[
+                ListTile(
+                  leading: const Icon(Icons.restore_from_trash),
+                  title: const Text('Restore'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    widget.onRestore?.call();
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.delete_forever, color: colorScheme.error),
+                  title: Text(
+                    'Delete permanently',
+                    style: TextStyle(color: colorScheme.error),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    widget.onDelete?.call();
+                  },
+                ),
+              ],
+            ],
+          ),
+        ),
+      );
+    }
   }
 
   Widget _buildCompactTile(BuildContext context, ColorScheme colorScheme) {
