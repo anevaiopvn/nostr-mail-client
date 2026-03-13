@@ -102,17 +102,23 @@ jobs:
       - name: Build Linux packages
         run: fastforge package --platform linux --targets deb,appimage
 
+      - name: Rename Linux packages
+        run: |
+          VERSION=${{ steps.get_version.outputs.version }}
+          mv dist/**/*.deb dist/nmail-${VERSION}-linux.deb
+          mv dist/**/*.AppImage dist/nmail-${VERSION}-linux.AppImage
+
       - name: Upload .deb artifact
         uses: actions/upload-artifact@v7
         with:
           name: nmail-deb
-          path: dist/**/*.deb
+          path: dist/*.deb
 
       - name: Upload AppImage artifact
         uses: actions/upload-artifact@v7
         with:
           name: nmail-appimage
-          path: dist/**/*.AppImage
+          path: dist/*.AppImage
 
   create-release:
     runs-on: ubuntu-latest
