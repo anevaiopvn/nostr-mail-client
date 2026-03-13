@@ -18,11 +18,6 @@ import '../../controllers/settings_controller.dart';
 import '../../utils/platform_helper.dart';
 import '../../utils/responsive_helper.dart';
 import '../../utils/toast_helper.dart';
-import 'widgets/blossom_servers_section.dart';
-import 'widgets/dm_relays_section.dart';
-import 'widgets/nip65_relays_section.dart';
-import 'widgets/relay_connectivity_section.dart';
-import 'widgets/sync_status_section.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
@@ -73,14 +68,6 @@ class SettingsView extends StatelessWidget {
                   onChanged: settingsController.setAlwaysLoadImages,
                 ),
               ),
-              Obx(
-                () => SwitchListTile(
-                  title: const Text('Skip event verification'),
-                  subtitle: const Text('Disable Nostr signature verification'),
-                  value: settingsController.skipEventVerification.value,
-                  onChanged: settingsController.setSkipEventVerification,
-                ),
-              ),
               const SizedBox(height: 24),
               _buildSectionHeader(context, 'Compose'),
               Obx(() {
@@ -97,15 +84,13 @@ class SettingsView extends StatelessWidget {
               }),
               const SizedBox(height: 24),
               _buildSectionHeader(context, 'Synchronization'),
-              const Nip65RelaysSection(),
-              const SizedBox(height: 16),
-              const DmRelaysSection(),
-              const SizedBox(height: 16),
-              const BlossomServersSection(),
-              const SizedBox(height: 16),
-              const RelayConnectivitySection(),
-              const SizedBox(height: 8),
-              const SyncStatusSection(),
+              ListTile(
+                leading: const Icon(Icons.cloud_outlined),
+                title: const Text('Hosting'),
+                subtitle: const Text('Relays, blossom servers, connectivity'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => Get.toNamed(AppRoutes.nostrTechnicalSettings),
+              ),
               const SizedBox(height: 24),
               _buildSectionHeader(context, 'Account'),
               Builder(
@@ -115,12 +100,14 @@ class SettingsView extends StatelessWidget {
                   if (nsec == null) return const SizedBox.shrink();
                   return ListTile(
                     leading: const Icon(Icons.key),
-                    title: const Text('Copy my private key (nsec)'),
-                    subtitle: const Text('Keep this key safe'),
+                    title: const Text('Copy sync code'),
+                    subtitle: const Text(
+                      'Use this code to sync your account on other devices',
+                    ),
                     onTap: () async {
                       await Clipboard.setData(ClipboardData(text: nsec));
-                      if (context.mounted) {
-                        ToastHelper.success(context, 'Private key copied');
+                      if (!PlatformHelper.isAndroid && context.mounted) {
+                        ToastHelper.success(context, 'Sync code copied');
                       }
                     },
                   );

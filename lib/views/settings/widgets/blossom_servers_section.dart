@@ -196,10 +196,11 @@ class _BlossomServersSectionState extends State<BlossomServersSection> {
         ListTile(
           dense: true,
           title: Text(
-            'Blossom Servers',
+            'File Hosting',
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 12,
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
             ),
           ),
           trailing: IconButton(
@@ -210,7 +211,7 @@ class _BlossomServersSectionState extends State<BlossomServersSection> {
         ),
         if (_servers == null || _servers!.isEmpty)
           const ListTile(
-            leading: Icon(Icons.cloud_off_outlined, size: 20),
+            leading: Icon(Icons.cloud_off_outlined),
             title: Text('No Blossom servers configured'),
             subtitle: Text('Tap + to add a server'),
           )
@@ -220,7 +221,6 @@ class _BlossomServersSectionState extends State<BlossomServersSection> {
             return ListTile(
               leading: Icon(
                 Icons.cloud_outlined,
-                size: 20,
                 color: isMarked ? Theme.of(context).disabledColor : null,
               ),
               title: Text(

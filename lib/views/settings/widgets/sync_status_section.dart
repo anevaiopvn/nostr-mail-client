@@ -75,21 +75,22 @@ class _SyncStatusSectionState extends State<SyncStatusSection> {
           title: Text(
             'Sync Status',
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 12,
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
             ),
           ),
         ),
         if (_syncStatus == null || _syncStatus!.isEmpty)
           const ListTile(
-            leading: Icon(Icons.sync_disabled, size: 20),
+            leading: Icon(Icons.sync_disabled),
             title: Text('No sync data available'),
             subtitle: Text('Sync your emails to see relay status'),
           )
         else
           ..._syncStatus!.map(
             (status) => ListTile(
-              leading: const Icon(Icons.cloud_outlined, size: 20),
+              leading: const Icon(Icons.cloud_outlined),
               title: Text(
                 formatRelayUrl(status.relayUrl),
                 style: const TextStyle(fontSize: 14),

@@ -243,10 +243,11 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
         ListTile(
           dense: true,
           title: Text(
-            'NIP-65 Relays',
+            'Inbox Outbox Relays',
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 12,
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
             ),
           ),
           trailing: IconButton(
@@ -257,8 +258,8 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
         ),
         if (_relays == null || _relays!.isEmpty)
           const ListTile(
-            leading: Icon(Icons.warning_outlined, size: 20),
-            title: Text('No NIP-65 relays configured'),
+            leading: Icon(Icons.warning_rounded),
+            title: Text('No Inbox/Outbox relays configured'),
             subtitle: Text('Tap + to add a relay'),
           )
         else
@@ -269,7 +270,6 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
             return ListTile(
               leading: Icon(
                 Icons.dns_outlined,
-                size: 20,
                 color: isMarked ? Theme.of(context).disabledColor : null,
               ),
               title: Text(

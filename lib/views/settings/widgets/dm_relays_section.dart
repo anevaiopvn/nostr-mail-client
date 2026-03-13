@@ -192,8 +192,9 @@ class _DmRelaysSectionState extends State<DmRelaysSection> {
           title: Text(
             'DM Relays',
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 12,
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
             ),
           ),
           trailing: IconButton(
@@ -204,7 +205,7 @@ class _DmRelaysSectionState extends State<DmRelaysSection> {
         ),
         if (_dmRelays == null || _dmRelays!.isEmpty)
           const ListTile(
-            leading: Icon(Icons.warning_outlined, size: 20),
+            leading: Icon(Icons.warning_rounded),
             title: Text('No DM relays configured'),
             subtitle: Text('Tap + to add a relay'),
           )
@@ -214,7 +215,6 @@ class _DmRelaysSectionState extends State<DmRelaysSection> {
             return ListTile(
               leading: Icon(
                 Icons.dns_outlined,
-                size: 20,
                 color: isMarked ? Theme.of(context).disabledColor : null,
               ),
               title: Text(

@@ -8,6 +8,7 @@ import '../../views/compose/compose_view.dart';
 import '../../views/email/email_view.dart';
 import '../../views/inbox/inbox_view.dart';
 import '../../views/profile/profile_view.dart';
+import '../../views/settings/hosting_settings_view.dart';
 import '../../views/settings/settings_view.dart';
 
 class AppRoutes {
@@ -17,6 +18,7 @@ class AppRoutes {
   static const compose = '/compose';
   static const profile = '/profile';
   static const settings = '/settings';
+  static const nostrTechnicalSettings = '/nostr-technical-settings';
 
   static final routes = [
     GetPage(
@@ -43,5 +45,9 @@ class AppRoutes {
     ),
     GetPage(name: profile, page: () => const ProfileView()),
     GetPage(name: settings, page: () => const SettingsView()),
+    GetPage(
+      name: nostrTechnicalSettings,
+      page: () => const HostingSettingsView(),
+    ),
   ];
 }

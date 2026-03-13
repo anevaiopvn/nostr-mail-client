@@ -10,4 +10,9 @@ abstract class PlatformHelper {
 
   /// Returns true for desktop and mobile (not web)
   static bool get isNative => !kIsWeb;
+
+  static bool get isAndroid {
+    if (kIsWeb) return false;
+    return defaultTargetPlatform == TargetPlatform.android;
+  }
 }

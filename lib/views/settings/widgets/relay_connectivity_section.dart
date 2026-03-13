@@ -50,61 +50,77 @@ class _RelayConnectivitySectionState extends State<RelayConnectivitySection> {
     final connected = _connectedCount;
     final total = _connectivityMap.length;
 
-    return ExpansionTile(
-      onExpansionChanged: (expanded) => setState(() => _isExpanded = expanded),
-      leading: Icon(
-        connected > 0 ? Icons.wifi : Icons.wifi_off,
-        color: colorScheme.onSurfaceVariant,
-        size: 20,
-      ),
-      title: Text(
-        'Relay Connectivity',
-        style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: colorScheme.primaryContainer,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              '$connected / $total',
-              style: TextStyle(
-                color: colorScheme.onPrimaryContainer,
-                fontWeight: FontWeight.w600,
-                fontSize: 12,
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Text(
+            'Realtime Connection',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
             ),
           ),
-          const SizedBox(width: 8),
-          AnimatedRotation(
-            turns: _isExpanded ? 0.5 : 0,
-            duration: const Duration(milliseconds: 200),
-            child: const Icon(Icons.expand_more, size: 20),
-          ),
-        ],
-      ),
-      children: _connectivityMap.entries.map((entry) {
-        final url = entry.key;
-        final connectivity = entry.value;
-        final isConnected = connectivity.isConnected;
-
-        return ListTile(
-          dense: true,
+        ),
+        ExpansionTile(
+          onExpansionChanged: (expanded) =>
+              setState(() => _isExpanded = expanded),
           leading: Icon(
-            isConnected ? Icons.power : Icons.power_off,
-            color: isConnected ? colorScheme.primary : colorScheme.outline,
-            size: 16,
+            connected > 0 ? Icons.wifi_rounded : Icons.wifi_off_rounded,
+            color: colorScheme.onSurfaceVariant,
           ),
           title: Text(
-            formatRelayUrl(url),
-            style: const TextStyle(fontSize: 13),
+            'Relay Connectivity',
+            style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
           ),
-        );
-      }).toList(),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '$connected / $total',
+                  style: TextStyle(
+                    color: colorScheme.onPrimaryContainer,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              AnimatedRotation(
+                turns: _isExpanded ? 0.5 : 0,
+                duration: const Duration(milliseconds: 200),
+                child: const Icon(Icons.expand_more),
+              ),
+            ],
+          ),
+          children: _connectivityMap.entries.map((entry) {
+            final url = entry.key;
+            final connectivity = entry.value;
+            final isConnected = connectivity.isConnected;
+
+            return ListTile(
+              dense: true,
+              leading: Icon(
+                isConnected ? Icons.power : Icons.power_off,
+                color: isConnected ? colorScheme.primary : colorScheme.outline,
+                size: 16,
+              ),
+              title: Text(
+                formatRelayUrl(url),
+                style: const TextStyle(fontSize: 13),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 }
