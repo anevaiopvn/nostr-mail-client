@@ -691,7 +691,7 @@ packages:
       path: "../nostr-mail-dart"
       relative: true
     source: path
-    version: "1.4.5"
+    version: "1.5.0"
   objectbox:
     dependency: transitive
     description:

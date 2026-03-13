@@ -413,7 +413,19 @@ class InboxView extends GetView<InboxController> {
         backgroundColor: colorScheme.primary,
         child: Icon(Icons.edit, color: colorScheme.onPrimary),
       ),
-      body: _buildEmailList(context),
+      body: Column(
+        children: [
+          SizedBox(
+            height: 4,
+            child: Obx(
+              () => controller.isSyncing.value
+                  ? const LinearProgressIndicator()
+                  : const SizedBox.shrink(),
+            ),
+          ),
+          Expanded(child: _buildEmailList(context)),
+        ],
+      ),
     );
   }
 
