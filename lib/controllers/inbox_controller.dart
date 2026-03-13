@@ -1,19 +1,22 @@
 import 'dart:async';
 
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:nostr_mail/nostr_mail.dart';
 
+import '../app/config/app_config.dart';
 import '../services/nostr_mail_service.dart';
 
 enum MailFolder { inbox, sent, trash, archive }
 
-class InboxController extends GetxController {
+class InboxController extends GetxController with WidgetsBindingObserver {
   final _nostrMailService = Get.find<NostrMailService>();
 
   final RxList<Email> emails = <Email>[].obs;
   final isSyncing = false.obs;
   final currentFolder = MailFolder.inbox.obs;
   final selectedIds = <String>{}.obs;
+  final Rx<DateTime?> _backgroundTime = Rx<DateTime?>(null);
 
   StreamSubscription? _watchSubscription;
 
@@ -55,6 +58,7 @@ class InboxController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    WidgetsBinding.instance.addObserver(this);
     if (_nostrMailService.isClientInitialized) {
       _loadEmails();
       _startWatching();
@@ -64,8 +68,36 @@ class InboxController extends GetxController {
 
   @override
   void onClose() {
+    WidgetsBinding.instance.removeObserver(this);
     _watchSubscription?.cancel();
     super.onClose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.paused:
+        // App went to background, record the time
+        _backgroundTime.value = DateTime.now();
+        break;
+      case AppLifecycleState.resumed:
+        // App came back from background, sync if needed
+        _syncIfNecessary();
+        break;
+      default:
+        break;
+    }
+  }
+
+  /// Sync only if app was in background for more than debounce duration
+  void _syncIfNecessary() {
+    final backgroundTime = _backgroundTime.value;
+    if (backgroundTime == null) return;
+
+    final now = DateTime.now();
+    if (now.difference(backgroundTime) >= AppConfig.syncDebounceDuration) {
+      sync();
+    }
   }
 
   Future<void> _loadEmails() async {
