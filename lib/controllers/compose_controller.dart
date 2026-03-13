@@ -82,10 +82,12 @@ class ComposeController extends GetxController {
   }
 
   Future<Recipient> _resolveRecipient(String input) async {
-    // Check if npub
+    // Check if npub (with or without @domain)
     if (input.startsWith('npub1')) {
       try {
-        final pubkey = Nip19.decode(input);
+        // Extract bech32 part (before @ if present)
+        final bech32Part = input.split('@').first;
+        final pubkey = Nip19.decode(bech32Part);
         final metadata = await _fetchMetadata(pubkey);
         return Recipient(
           input: input,
