@@ -13,7 +13,7 @@ class RecipientAutocomplete extends StatefulWidget {
   final String hintText;
   final Set<String> excludeIds;
   final void Function(Contact contact) onContactSelected;
-  final void Function(String input) onManualInput;
+  final Future<bool> Function(String input) onManualInput;
   final void Function(String value) onSubmitted;
 
   const RecipientAutocomplete({
@@ -80,17 +80,73 @@ class _RecipientAutocompleteState extends State<RecipientAutocomplete> {
   }
 
   void _onTextChanged() {
-    final text = widget.textController.text;
+    final text = widget.textController.text.trim();
+
+    // Auto-detect complete bech32 formats (npub, nprofile, naddr)
+    if (text.startsWith('npub1') ||
+        text.startsWith('nprofile1') ||
+        text.startsWith('naddr1')) {
+      String? prefix;
+      if (text.startsWith('npub1')) {
+        prefix = 'npub1';
+      } else if (text.startsWith('nprofile1')) {
+        prefix = 'nprofile1';
+      } else if (text.startsWith('naddr1')) {
+        prefix = 'naddr1';
+      }
+
+      if (prefix != null) {
+        final bech32Part = text.split('@').first;
+        // npub1 = 5 chars + 58 chars = 63 total
+        // nprofile1 = 9 chars + ~50-60 chars
+        // naddr1 = 6 chars + variable
+        final minLength = prefix == 'npub1'
+            ? 63
+            : prefix == 'nprofile1'
+            ? 59
+            : 56;
+        if (bech32Part.length >= minLength) {
+          // Valid bech32 format, add recipient
+          widget.onManualInput(text).then((added) {
+            if (added) {
+              widget.textController.clear();
+              _hideOverlay();
+              setState(() {
+                _suggestions = [];
+              });
+            }
+          });
+          return;
+        }
+      }
+    }
+
+    // Auto-detect hex pubkey (64 hex characters)
+    if (RegExp(r'^[0-9a-fA-F]{64}$').hasMatch(text)) {
+      widget.onManualInput(text).then((added) {
+        if (added) {
+          widget.textController.clear();
+          _hideOverlay();
+          setState(() {
+            _suggestions = [];
+          });
+        }
+      });
+      return;
+    }
 
     // Check for space or comma to add recipient
     if (text.endsWith(' ') || text.endsWith(',')) {
       final input = text.substring(0, text.length - 1).trim();
       if (input.isNotEmpty) {
-        widget.onManualInput(input);
-        widget.textController.clear();
-        _hideOverlay();
-        setState(() {
-          _suggestions = [];
+        widget.onManualInput(input).then((added) {
+          if (added) {
+            widget.textController.clear();
+            _hideOverlay();
+            setState(() {
+              _suggestions = [];
+            });
+          }
         });
         return;
       }
@@ -231,18 +287,23 @@ class _RecipientAutocompleteState extends State<RecipientAutocomplete> {
             ),
             style: const TextStyle(fontSize: 16),
             keyboardType: TextInputType.emailAddress,
-            onSubmitted: (value) {
+            onSubmitted: (value) async {
               if (_highlightedIndex >= 0 &&
                   _highlightedIndex < _suggestions.length &&
                   _overlayEntry != null) {
                 _selectContact(_suggestions[_highlightedIndex]);
               } else {
-                widget.onSubmitted(value);
-                widget.textController.clear();
-                _hideOverlay();
-                setState(() {
-                  _suggestions = [];
-                });
+                // Try to add recipient
+                final added = await widget.onManualInput(value);
+                // Only clear if recipient was added (i.e., input was valid)
+                if (added) {
+                  widget.textController.clear();
+                  _hideOverlay();
+                  setState(() {
+                    _suggestions = [];
+                  });
+                }
+                // If input is still there, it was invalid, keep it visible
               }
             },
           ),

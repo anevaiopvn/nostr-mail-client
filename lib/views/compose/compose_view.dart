@@ -125,11 +125,11 @@ class _ComposeViewState extends State<ComposeView> {
     super.dispose();
   }
 
-  void _handleToSubmit(String value) {
+  Future<void> _handleToSubmit(String value) async {
     final input = value.trim();
     if (input.isNotEmpty) {
-      controller.addRecipient(input);
-      toController.clear();
+      final added = await controller.addRecipient(input);
+      if (added) toController.clear();
     }
   }
 
@@ -189,8 +189,8 @@ class _ComposeViewState extends State<ComposeView> {
                         onContactSelected: (contact) {
                           controller.addRecipientFromContact(contact);
                         },
-                        onManualInput: (input) {
-                          controller.addRecipient(input);
+                        onManualInput: (input) async {
+                          return await controller.addRecipient(input);
                         },
                         onSubmitted: _handleToSubmit,
                       ),

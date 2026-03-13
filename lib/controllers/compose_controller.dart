@@ -30,22 +30,27 @@ class ComposeController extends GetxController {
     _contactsService.loadContacts();
   }
 
-  Future<void> addRecipient(String input) async {
+  Future<bool> addRecipient(String input) async {
     final trimmed = input.trim();
-    if (trimmed.isEmpty) return;
+    if (trimmed.isEmpty) return false;
 
-    // Check if already added
-    if (recipients.any((r) => r.input == trimmed)) return;
+    // Check if already added (by input)
+    if (recipients.any((r) => r.input == trimmed)) return false;
 
-    // Add with loading state
-    final index = recipients.length;
-    recipients.add(
-      Recipient(input: trimmed, type: RecipientType.legacy, isLoading: true),
-    );
-
-    // Resolve recipient
+    // Resolve recipient first to get pubkey
     final resolved = await _resolveRecipient(trimmed);
-    recipients[index] = resolved;
+
+    // Check if invalid format
+    if (resolved == null) return false;
+
+    // Check if already added (by pubkey for nostr recipients)
+    if (resolved.type == RecipientType.nostr && resolved.pubkey != null) {
+      if (recipients.any((r) => r.pubkey == resolved.pubkey)) return false;
+    }
+
+    // Add recipient
+    recipients.add(resolved);
+    return true;
   }
 
   void removeRecipient(int index) {
@@ -81,13 +86,22 @@ class ComposeController extends GetxController {
     return ids;
   }
 
-  Future<Recipient> _resolveRecipient(String input) async {
-    // Check if npub (with or without @domain)
-    if (input.startsWith('npub1')) {
-      try {
-        // Extract bech32 part (before @ if present)
-        final bech32Part = input.split('@').first;
-        final pubkey = Nip19.decode(bech32Part);
+  Future<Recipient?> _resolveRecipient(String input) async {
+    try {
+      String? pubkey;
+
+      // Extract bech32 part (before @ if present) and decode
+      final bech32Part = input.split('@').first;
+
+      if (input.startsWith('npub1')) {
+        pubkey = Nip19.decode(bech32Part);
+      } else if (input.startsWith('nprofile1')) {
+        pubkey = Nip19.decodeNprofile(bech32Part).pubkey;
+      } else if (input.startsWith('naddr1')) {
+        pubkey = Nip19.decodeNaddr(bech32Part).pubkey;
+      }
+
+      if (pubkey != null) {
         final metadata = await _fetchMetadata(pubkey);
         return Recipient(
           input: input,
@@ -96,25 +110,25 @@ class ComposeController extends GetxController {
           picture: metadata?.picture,
           type: RecipientType.nostr,
         );
-      } catch (_) {
-        return Recipient(input: input, type: RecipientType.legacy);
       }
-    }
+    } catch (_) {}
 
     // Check if hex pubkey
     if (RegExp(r'^[0-9a-fA-F]{64}$').hasMatch(input)) {
-      final pubkey = input.toLowerCase();
-      final metadata = await _fetchMetadata(pubkey);
-      return Recipient(
-        input: input,
-        pubkey: pubkey,
-        displayName: metadata?.name,
-        picture: metadata?.picture,
-        type: RecipientType.nostr,
-      );
+      try {
+        final pubkey = input.toLowerCase();
+        final metadata = await _fetchMetadata(pubkey);
+        return Recipient(
+          input: input,
+          pubkey: pubkey,
+          displayName: metadata?.name,
+          picture: metadata?.picture,
+          type: RecipientType.nostr,
+        );
+      } catch (_) {}
     }
 
-    // Check if email format - try NIP-05
+    // Check if NIP-05
     if (input.contains('@')) {
       try {
         final pubkey = await _resolveNip05(input);
@@ -131,8 +145,13 @@ class ComposeController extends GetxController {
       } catch (_) {}
     }
 
-    // Fallback to legacy email
-    return Recipient(input: input, type: RecipientType.legacy);
+    // Validate legacy email format
+    if (GetUtils.isEmail(input)) {
+      return Recipient(input: input, type: RecipientType.legacy);
+    }
+
+    // Invalid format
+    return null;
   }
 
   Future<String?> _resolveNip05(String identifier) async {
