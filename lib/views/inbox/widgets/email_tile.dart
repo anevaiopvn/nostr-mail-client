@@ -210,7 +210,7 @@ class _EmailTileState extends State<EmailTile> {
                 Navigator.of(context).pop();
                 widget.onRestore?.call();
               },
-              child: const Text('Move to inbox'),
+              child: const Text('Unarchive'),
             ),
           MenuItemButton(
             leadingIcon: const Icon(Icons.delete_outline),
@@ -309,7 +309,7 @@ class _EmailTileState extends State<EmailTile> {
                 else
                   ListTile(
                     leading: const Icon(Icons.unarchive),
-                    title: const Text('Move to inbox'),
+                    title: const Text('Unarchive'),
                     onTap: () {
                       Navigator.pop(context);
                       widget.onRestore?.call();
