@@ -6,7 +6,7 @@ maintainer:
 priority: optional
 section: mail
 installed_size: 35000
-icon: icons/original_transparent_3x.png
+icon: linux/icon.png
 keywords:
   - nostr
   - email
