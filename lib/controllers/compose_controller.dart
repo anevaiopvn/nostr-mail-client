@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:enough_mail/enough_mail.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -205,9 +206,23 @@ class ComposeController extends GetxController {
       // Get plain text from document
       final plainText = document.toPlainText();
 
+      // Format From header with display name if available
+      String? formattedFrom;
+      if (from != null && selectedFrom.value != null) {
+        final displayName = selectedFrom.value!.displayName;
+        if (displayName != null && displayName.isNotEmpty) {
+          final mailAddress = MailAddress(displayName, from);
+          formattedFrom = mailAddress.encode();
+        } else {
+          formattedFrom = from;
+        }
+      } else {
+        formattedFrom = from;
+      }
+
       for (final recipient in recipients) {
         await _nostrMailService.client.send(
-          from: from,
+          from: formattedFrom,
           to: recipient.pubkey ?? recipient.input,
           subject: subject,
           body: plainText,
