@@ -176,7 +176,7 @@ class _EmailTileState extends State<EmailTile> {
     if (position != null) {
       // Desktop: popup menu
       final menuChildren = <Widget>[
-        if (!isInTrash && !isInArchive) ...[
+        if (!isInTrash) ...[
           MenuItemButton(
             leadingIcon: const Icon(Icons.reply),
             onPressed: () {
@@ -194,14 +194,24 @@ class _EmailTileState extends State<EmailTile> {
             child: const Text('Forward'),
           ),
           const Divider(height: 1),
-          MenuItemButton(
-            leadingIcon: const Icon(Icons.archive),
-            onPressed: () {
-              Navigator.of(context).pop();
-              widget.onArchive?.call();
-            },
-            child: const Text('Archive'),
-          ),
+          if (!isInArchive)
+            MenuItemButton(
+              leadingIcon: const Icon(Icons.archive),
+              onPressed: () {
+                Navigator.of(context).pop();
+                widget.onArchive?.call();
+              },
+              child: const Text('Archive'),
+            )
+          else
+            MenuItemButton(
+              leadingIcon: const Icon(Icons.unarchive),
+              onPressed: () {
+                Navigator.of(context).pop();
+                widget.onRestore?.call();
+              },
+              child: const Text('Move to inbox'),
+            ),
           MenuItemButton(
             leadingIcon: const Icon(Icons.delete_outline),
             onPressed: () {
@@ -209,43 +219,6 @@ class _EmailTileState extends State<EmailTile> {
               widget.onDelete?.call();
             },
             child: const Text('Move to trash'),
-          ),
-        ] else if (isInArchive) ...[
-          MenuItemButton(
-            leadingIcon: const Icon(Icons.reply),
-            onPressed: () {
-              Navigator.of(context).pop();
-              widget.onReply?.call();
-            },
-            child: const Text('Reply'),
-          ),
-          MenuItemButton(
-            leadingIcon: const Icon(Icons.forward),
-            onPressed: () {
-              Navigator.of(context).pop();
-              widget.onForward?.call();
-            },
-            child: const Text('Forward'),
-          ),
-          const Divider(height: 1),
-          MenuItemButton(
-            leadingIcon: const Icon(Icons.unarchive),
-            onPressed: () {
-              Navigator.of(context).pop();
-              widget.onRestore?.call();
-            },
-            child: const Text('Move to inbox'),
-          ),
-          MenuItemButton(
-            leadingIcon: Icon(Icons.delete_outline, color: colorScheme.error),
-            onPressed: () {
-              Navigator.of(context).pop();
-              widget.onDelete?.call();
-            },
-            child: Text(
-              'Move to trash',
-              style: TextStyle(color: colorScheme.error),
-            ),
           ),
         ] else ...[
           MenuItemButton(
@@ -306,7 +279,7 @@ class _EmailTileState extends State<EmailTile> {
         builder: (context) => SafeArea(
           child: Wrap(
             children: [
-              if (!isInTrash && !isInArchive) ...[
+              if (!isInTrash) ...[
                 ListTile(
                   leading: const Icon(Icons.reply),
                   title: const Text('Reply'),
@@ -324,54 +297,27 @@ class _EmailTileState extends State<EmailTile> {
                   },
                 ),
                 const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(Icons.archive),
-                  title: const Text('Archive'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    widget.onArchive?.call();
-                  },
-                ),
+                if (!isInArchive)
+                  ListTile(
+                    leading: const Icon(Icons.archive),
+                    title: const Text('Archive'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      widget.onArchive?.call();
+                    },
+                  )
+                else
+                  ListTile(
+                    leading: const Icon(Icons.unarchive),
+                    title: const Text('Move to inbox'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      widget.onRestore?.call();
+                    },
+                  ),
                 ListTile(
                   leading: const Icon(Icons.delete_outline),
                   title: const Text('Move to trash'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    widget.onDelete?.call();
-                  },
-                ),
-              ] else if (isInArchive) ...[
-                ListTile(
-                  leading: const Icon(Icons.reply),
-                  title: const Text('Reply'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    widget.onReply?.call();
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.forward),
-                  title: const Text('Forward'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    widget.onForward?.call();
-                  },
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(Icons.unarchive),
-                  title: const Text('Move to inbox'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    widget.onRestore?.call();
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.delete_outline, color: colorScheme.error),
-                  title: Text(
-                    'Move to trash',
-                    style: TextStyle(color: colorScheme.error),
-                  ),
                   onTap: () {
                     Navigator.pop(context);
                     widget.onDelete?.call();
