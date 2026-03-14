@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ndk/ndk.dart';
 import 'package:ndk_flutter/ndk_flutter.dart';
 
 import '../../app/routes/app_routes.dart';
@@ -48,6 +49,26 @@ class LoginView extends GetView<AuthController> {
                     },
                     enableNpubLogin: false,
                     enableNip05Login: false,
+                    nostrConnect: NostrConnect(
+                      relays: [
+                        "wss://relay.camelus.app",
+                        "wss://nostr-01.yakihonne.com",
+                      ],
+                      perms: [
+                        "get_public_key",
+                        "nip44_encrypt",
+                        "nip44_decrypt",
+                        "sign_event:5",
+                        "sign_event:13",
+                        "sign_event:1059",
+                        "sign_event:1301",
+                        "sign_event:1985",
+                      ],
+                      appName: "Nmail",
+                      appUrl: "https://nogringo.github.io/nostr-mail-client",
+                      appImageUrl:
+                          "https://raw.githubusercontent.com/nogringo/nostr-mail-client/refs/heads/main/icons/web/icon-512-maskable.png",
+                    ),
                   ),
                 ],
               ),
