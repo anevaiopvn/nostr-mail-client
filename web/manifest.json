@@ -1,6 +1,6 @@
 {
-    "name": "Nostr mail",
-    "short_name": "Nostr mail",
+    "name": "Nmail",
+    "short_name": "Nmail",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
