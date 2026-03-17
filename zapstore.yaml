@@ -1,0 +1,20 @@
+repository: https://github.com/nogringo/nostr-mail-client
+summary: "Take back your inbox. Private, decentralized mail that you truly own."
+description: |
+  Today, your email address belongs to a big company. They can scan your data, show you ads, or even close your account. This app changes that. It gives you a personal mailbox that belongs only to you, on a network that no one can shut down or control.
+
+  It looks and feels like the email you already know, but with a major difference: you are the only one with the key to your messages.
+
+  Key Benefits:
+  * Total Ownership: You own your identity and your data. No central authority can take your "address" away.
+  * Complete Privacy: Every message is automatically locked so that only you and the recipient can read it.
+  * Talk to Anyone: Send secure messages to other users on the new network, or reach out to traditional email addresses.
+  * Ad-Free Experience: No trackers, no data harvesting, and no unwanted ads in your inbox.
+tags:
+    - nostr
+    - mail
+    - email
+license: MIT
+website: https://nogringo.github.io/nostr-mail-client/
+metadata_sources:
+    - github
