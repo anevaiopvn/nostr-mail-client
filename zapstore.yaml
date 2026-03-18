@@ -16,6 +16,6 @@ tags:
     - email
 license: MIT
 website: https://nogringo.github.io/nostr-mail-client/
-icon: ./web/icons/icon-512-maskable.png
+icon: https://raw.githubusercontent.com/nogringo/nostr-mail-client/refs/heads/main/icons/android/play_store_512.png
 metadata_sources:
     - github
