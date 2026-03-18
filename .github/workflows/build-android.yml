@@ -1,8 +1,6 @@
 name: Build Android
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -24,17 +22,28 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Prepare Signing
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/russel.p12
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+          echo "storeFile=russel.p12" >> android/key.properties
+
       - name: Build Android APK
         run: flutter build apk --release
 
       - name: Build Android App Bundle
         run: flutter build appbundle --release
 
+      - name: Rename APK
+        run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/nostr-mail-signed.apk
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v7
         with:
           name: nmail-android-apk
-          path: build/app/outputs/flutter-apk/*.apk
+          path: build/app/outputs/flutter-apk/nostr-mail-signed.apk
 
       - name: Upload App Bundle artifact
         uses: actions/upload-artifact@v7

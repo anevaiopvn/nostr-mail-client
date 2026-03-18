@@ -34,6 +34,14 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Prepare Signing
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/russel.p12
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+          echo "storeFile=russel.p12" >> android/key.properties
+
       - name: Get version from pubspec.yaml
         id: get_version
         run: |

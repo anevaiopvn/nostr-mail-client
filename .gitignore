@@ -46,5 +46,11 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Certificates and signing keys
+*.p12
+*.jks
+*.keystore
+android/key.properties
+
 # Local dependency overrides
 pubspec_overrides.yaml
