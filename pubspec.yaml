@@ -1,7 +1,7 @@
 name: nostr_mail_client
 description: "Everyone has an email address but nobody own it. Nostr solve this."
 publish_to: 'none'
-version: 0.6.1+2
+version: 0.6.2+3
 
 environment:
   sdk: ^3.10.8
