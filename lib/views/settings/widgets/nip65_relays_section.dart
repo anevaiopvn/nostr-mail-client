@@ -74,13 +74,13 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
                 onChanged: (value) {
                   setDialogState(() {
                     errorText = null;
-                    final normalized = _normalizeRelayUrl(value.trim());
+                    final normalized = normalizeRelayUrl(value.trim());
                     preview = (normalized != value.trim()) ? normalized : null;
                   });
                 },
                 onSubmitted: (value) {
-                  final url = _normalizeRelayUrl(value.trim());
-                  if (!_isValidRelayUrl(url)) {
+                  final url = normalizeRelayUrl(value.trim());
+                  if (!isValidRelayUrl(url)) {
                     setDialogState(() => errorText = 'Invalid relay URL');
                     return;
                   }
@@ -136,8 +136,8 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
             ),
             TextButton(
               onPressed: () {
-                final url = _normalizeRelayUrl(controller.text.trim());
-                if (!_isValidRelayUrl(url)) {
+                final url = normalizeRelayUrl(controller.text.trim());
+                if (!isValidRelayUrl(url)) {
                   setDialogState(() => errorText = 'Invalid relay URL');
                   return;
                 }
@@ -155,23 +155,6 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
         !_relays!.containsKey(result.key)) {
       setState(() => _relays![result.key] = result.value);
     }
-  }
-
-  String _normalizeRelayUrl(String url) {
-    if (url.isEmpty) return url;
-    if (!url.startsWith('wss://') && !url.startsWith('ws://')) {
-      return 'wss://$url';
-    }
-    return url;
-  }
-
-  bool _isValidRelayUrl(String url) {
-    if (url.isEmpty || url.contains(' ')) return false;
-    if (!url.startsWith('wss://') && !url.startsWith('ws://')) {
-      return false;
-    }
-    final uri = Uri.tryParse(url);
-    return uri != null && uri.host.isNotEmpty;
   }
 
   void _toggleRelayDeletion(String relayUrl) {

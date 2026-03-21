@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../services/nostr_mail_service.dart';
+import '../../../utils/blossom_utils.dart';
 
 class BlossomServersSection extends StatefulWidget {
   const BlossomServersSection({super.key});
@@ -70,13 +71,13 @@ class _BlossomServersSectionState extends State<BlossomServersSection> {
                 onChanged: (value) {
                   setDialogState(() {
                     errorText = null;
-                    final normalized = _normalizeServerUrl(value.trim());
+                    final normalized = normalizeBlossomUrl(value.trim());
                     preview = (normalized != value.trim()) ? normalized : null;
                   });
                 },
                 onSubmitted: (value) {
-                  final url = _normalizeServerUrl(value.trim());
-                  if (!_isValidServerUrl(url)) {
+                  final url = normalizeBlossomUrl(value.trim());
+                  if (!isValidBlossomUrl(url)) {
                     setDialogState(() => errorText = 'Invalid server URL');
                     return;
                   }
@@ -103,8 +104,8 @@ class _BlossomServersSectionState extends State<BlossomServersSection> {
             ),
             TextButton(
               onPressed: () {
-                final url = _normalizeServerUrl(controller.text.trim());
-                if (!_isValidServerUrl(url)) {
+                final url = normalizeBlossomUrl(controller.text.trim());
+                if (!isValidBlossomUrl(url)) {
                   setDialogState(() => errorText = 'Invalid server URL');
                   return;
                 }
@@ -120,30 +121,6 @@ class _BlossomServersSectionState extends State<BlossomServersSection> {
     if (result != null && _servers != null && !_servers!.contains(result)) {
       setState(() => _servers!.add(result));
     }
-  }
-
-  String _normalizeServerUrl(String url) {
-    if (url.isEmpty) return url;
-    if (!url.startsWith('https://') && !url.startsWith('http://')) {
-      return 'https://$url';
-    }
-    return url;
-  }
-
-  bool _isValidServerUrl(String url) {
-    if (url.isEmpty || url.contains(' ')) return false;
-    if (!url.startsWith('https://') && !url.startsWith('http://')) {
-      return false;
-    }
-    final uri = Uri.tryParse(url);
-    return uri != null && uri.host.isNotEmpty;
-  }
-
-  String _formatServerUrl(String url) {
-    return url
-        .replaceFirst('https://', '')
-        .replaceFirst('http://', '')
-        .replaceFirst(RegExp(r'/$'), '');
   }
 
   void _toggleServerDeletion(String serverUrl) {
@@ -224,7 +201,7 @@ class _BlossomServersSectionState extends State<BlossomServersSection> {
                 color: isMarked ? Theme.of(context).disabledColor : null,
               ),
               title: Text(
-                _formatServerUrl(server),
+                formatBlossomUrl(server),
                 style: TextStyle(
                   fontSize: 14,
                   decoration: isMarked ? TextDecoration.lineThrough : null,
