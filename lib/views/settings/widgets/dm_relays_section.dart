@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 
 import '../../../services/nostr_mail_service.dart';
 import '../../../utils/relay_utils.dart';
+import '../../../app/config/nostr_config.dart';
+import 'recommendation_chips.dart';
 
 class DmRelaysSection extends StatefulWidget {
   const DmRelaysSection({super.key});
@@ -185,6 +187,12 @@ class _DmRelaysSectionState extends State<DmRelaysSection> {
             onPressed: _addRelay,
             tooltip: 'Add relay',
           ),
+        ),
+        RecommendationChips(
+          recommendations: NostrConfig.recommendedDmRelays,
+          isAlreadyAdded: (r) => _dmRelays != null && _dmRelays!.contains(r),
+          onAdd: (relay) => setState(() => _dmRelays!.add(relay)),
+          formatLabel: formatRelayUrl,
         ),
         if (_dmRelays == null || _dmRelays!.isEmpty)
           const ListTile(

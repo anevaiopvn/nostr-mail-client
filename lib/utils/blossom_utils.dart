@@ -10,7 +10,9 @@ String formatBlossomUrl(String url) {
 String normalizeBlossomUrl(String url) {
   if (url.isEmpty) return url;
   if (url.startsWith('https://') || url.startsWith('http://')) return url;
-  if (url.contains('://')) return url; // Already has some protocol, don't prepend https://
+  if (url.contains('://')) {
+    return url; // Already has some protocol, don't prepend https://
+  }
   return 'https://$url';
 }
 

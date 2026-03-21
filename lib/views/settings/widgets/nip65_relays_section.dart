@@ -4,6 +4,8 @@ import 'package:ndk/domain_layer/entities/read_write_marker.dart';
 
 import '../../../services/nostr_mail_service.dart';
 import '../../../utils/relay_utils.dart';
+import '../../../app/config/nostr_config.dart';
+import 'recommendation_chips.dart';
 
 class Nip65RelaysSection extends StatefulWidget {
   const Nip65RelaysSection({super.key});
@@ -238,6 +240,13 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
             onPressed: _addRelay,
             tooltip: 'Add relay',
           ),
+        ),
+        RecommendationChips(
+          recommendations: NostrConfig.recommendedInboxOutboxRelays,
+          isAlreadyAdded: (r) => _relays != null && _relays!.containsKey(r),
+          onAdd: (relay) =>
+              setState(() => _relays![relay] = ReadWriteMarker.readWrite),
+          formatLabel: formatRelayUrl,
         ),
         if (_relays == null || _relays!.isEmpty)
           const ListTile(

@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 
 import '../../../services/nostr_mail_service.dart';
 import '../../../utils/blossom_utils.dart';
+import '../../../app/config/nostr_config.dart';
+import 'recommendation_chips.dart';
 
 class BlossomServersSection extends StatefulWidget {
   const BlossomServersSection({super.key});
@@ -185,6 +187,12 @@ class _BlossomServersSectionState extends State<BlossomServersSection> {
             onPressed: _addServer,
             tooltip: 'Add server',
           ),
+        ),
+        RecommendationChips(
+          recommendations: NostrConfig.recommendedBlossomServers,
+          isAlreadyAdded: (r) => _servers != null && _servers!.contains(r),
+          onAdd: (server) => setState(() => _servers!.add(server)),
+          formatLabel: formatBlossomUrl,
         ),
         if (_servers == null || _servers!.isEmpty)
           const ListTile(

@@ -23,7 +23,10 @@ void main() {
       });
 
       test('should not prepend wss:// if wss:// is already present', () {
-        expect(normalizeRelayUrl('wss://relay.damus.io'), 'wss://relay.damus.io');
+        expect(
+          normalizeRelayUrl('wss://relay.damus.io'),
+          'wss://relay.damus.io',
+        );
       });
 
       test('should not prepend wss:// if ws:// is already present', () {
@@ -36,7 +39,10 @@ void main() {
       });
 
       test('should not change malformed double protocol urls', () {
-        expect(normalizeRelayUrl('ws://ws://example.com'), 'ws://ws://example.com');
+        expect(
+          normalizeRelayUrl('ws://ws://example.com'),
+          'ws://ws://example.com',
+        );
       });
 
       test('should return empty string for empty input', () {
@@ -76,7 +82,7 @@ void main() {
       test('should return false for urls with spaces', () {
         expect(isValidRelayUrl('wss://relay. damus.io'), isFalse);
       });
-      
+
       test('should return false for invalid uri formats', () {
         expect(isValidRelayUrl('wss://'), isFalse);
       });

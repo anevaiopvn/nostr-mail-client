@@ -5,7 +5,10 @@ void main() {
   group('Blossom Utils', () {
     group('formatBlossomUrl', () {
       test('should remove https:// prefix', () {
-        expect(formatBlossomUrl('https://blossom.example.com'), 'blossom.example.com');
+        expect(
+          formatBlossomUrl('https://blossom.example.com'),
+          'blossom.example.com',
+        );
       });
 
       test('should remove http:// prefix', () {
@@ -13,21 +16,33 @@ void main() {
       });
 
       test('should remove trailing slash', () {
-        expect(formatBlossomUrl('https://blossom.example.com/'), 'blossom.example.com');
+        expect(
+          formatBlossomUrl('https://blossom.example.com/'),
+          'blossom.example.com',
+        );
       });
     });
 
     group('normalizeBlossomUrl', () {
       test('should prepend https:// if no protocol is present', () {
-        expect(normalizeBlossomUrl('blossom.example.com'), 'https://blossom.example.com');
+        expect(
+          normalizeBlossomUrl('blossom.example.com'),
+          'https://blossom.example.com',
+        );
       });
 
       test('should not prepend https:// if https:// is already present', () {
-        expect(normalizeBlossomUrl('https://blossom.example.com'), 'https://blossom.example.com');
+        expect(
+          normalizeBlossomUrl('https://blossom.example.com'),
+          'https://blossom.example.com',
+        );
       });
 
       test('should not prepend https:// if http:// is already present', () {
-        expect(normalizeBlossomUrl('http://localhost:8080'), 'http://localhost:8080');
+        expect(
+          normalizeBlossomUrl('http://localhost:8080'),
+          'http://localhost:8080',
+        );
       });
 
       test('should not prepend https:// if another protocol is present', () {
@@ -59,7 +74,7 @@ void main() {
       test('should return false for empty strings', () {
         expect(isValidBlossomUrl(''), isFalse);
       });
-      
+
       test('should return false for hosts without dots (except localhost)', () {
         expect(isValidBlossomUrl('https://myserver'), isFalse);
         expect(isValidBlossomUrl('https://localhost'), isTrue);
