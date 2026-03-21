@@ -1,93 +1,36 @@
 # Nostr Mail Client
 
-A Flutter email client for the Nostr protocol. Send and receive encrypted emails via NIP-59 gift-wrapped messages.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/version-0.6.3+4-blue.svg)](pubspec.yaml)
+
+**Take back your inbox. Private, decentralized mail that you truly own.**
+
+Today, your email address belongs to a big company. They can scan your data, show you ads, or even close your account. This app changes that. It gives you a personal mailbox that belongs only to you, on a network that no one can shut down or control.
+
+It looks and feels like the email you already know, but with a major difference: you are the only one with the key to your messages.
+
+## Key Benefits
+
+*   **Total Ownership:** You own your identity and your data. No central authority can take your "address" away.
+*   **Complete Privacy:** Every message is automatically locked so that only you and the recipient can read it.
+*   **Talk to Anyone:** Send secure messages to other users on the new network, or reach out to traditional email addresses.
+*   **Ad-Free Experience:** No trackers, no data harvesting, and no unwanted ads in your inbox.
 
 ## Features
 
-- Login with Nostr private key (nsec/hex)
-- Encrypted inbox with real-time sync
-- Compose and send emails to:
-  - Nostr pubkeys (npub/hex)
-  - NIP-05 identifiers (user@domain)
-  - Legacy email addresses (via bridge)
-- Local storage with Sembast database
-- Cross-platform: Android, iOS, Web, macOS, Windows, Linux
-
-## Screenshots
-
-*Coming soon*
+- **Nostr Integration:** Uses the [Nostr protocol](https://github.com/nostr-protocol/nips) for decentralized identities and communications.
+- **Cross-Platform:** Built with Flutter, supporting Android, Linux and Web.
+- **Offline Support:** Local caching for a responsive experience.
 
 ## Getting Started
 
-### Prerequisites
+### Try it now
 
-- Flutter SDK ^3.10.4
-- [nostr-mail-dart](https://github.com/nogringo/nostr-mail-dart) package
+*   **Web App:** [https://nogringo.github.io/nostr-mail-client](https://nogringo.github.io/nostr-mail-client)
+*   **Android (ZapStore):** [ZapStore.dev](https://zapstore.dev/apps/app.nostrmail.client)
+*   **Latest Releases:** [Download for Android & Desktop](https://github.com/nogringo/nostr-mail-client/releases/latest)
 
-### Installation
+## Contributing
 
-```bash
-# Clone the repository
-git clone https://github.com/nogringo/nostr-mail-client.git
-cd nostr-mail-client
+Contributions are welcome! Please feel free to submit a Pull Request or open an issue for any bugs or feature requests.
 
-# Get dependencies
-flutter pub get
-
-# Run the app
-flutter run
-```
-
-### Build for Web
-
-```bash
-flutter build web --release --base-href "/nostr-mail-client/"
-```
-
-The build output will be in `build/web/`.
-
-## Project Structure
-
-```
-lib/
-├── main.dart
-├── app/
-│   ├── bindings/          # GetX dependency injection
-│   └── routes/            # App navigation routes
-├── controllers/
-│   ├── auth_controller.dart
-│   ├── inbox_controller.dart
-│   └── compose_controller.dart
-├── models/
-│   └── recipient.dart
-├── services/
-│   ├── nostr_mail_service.dart
-│   └── storage_service.dart
-├── utils/
-│   └── toast_helper.dart
-└── views/
-    ├── auth/              # Login screen
-    ├── inbox/             # Email list
-    ├── email/             # Email detail
-    └── compose/           # New email
-```
-
-## Dependencies
-
-| Package | Description |
-|---------|-------------|
-| `nostr_mail` | Nostr email client library |
-| `ndk` | Nostr Development Kit |
-| `get` | State management & routing |
-| `flutter_secure_storage` | Secure key storage |
-| `sembast` | Local NoSQL database |
-| `toastification` | Toast notifications |
-
-## Configuration
-
-The app uses the `nostr_mail` package which connects to Nostr relays. Default relays are configured in the package.
-
-## Related Projects
-
-- [nostr-mail-dart](https://github.com/nogringo/nostr-mail-dart) - Dart/Flutter library
-- [nostr-mail-bridge](https://github.com/nogringo/nostr-mail-bridge) - Email bridge server
