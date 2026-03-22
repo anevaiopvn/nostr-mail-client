@@ -13,12 +13,39 @@ class InboxController extends GetxController with WidgetsBindingObserver {
   final _nostrMailService = Get.find<NostrMailService>();
 
   final RxList<Email> emails = <Email>[].obs;
+  final searchQuery = ''.obs;
+  final isSearchMode = false.obs;
   final isSyncing = false.obs;
   final currentFolder = MailFolder.inbox.obs;
   final selectedIds = <String>{}.obs;
   final Rx<DateTime?> _backgroundTime = Rx<DateTime?>(null);
 
   StreamSubscription? _watchSubscription;
+
+  bool get isSearching => searchQuery.value.isNotEmpty;
+
+  void setSearchQuery(String query) {
+    if (searchQuery.value == query) return;
+
+    searchQuery.value = query;
+    _loadEmails();
+  }
+
+  void enterSearchMode() {
+    isSearchMode.value = true;
+  }
+
+  void exitSearchMode() {
+    isSearchMode.value = false;
+    clearSearch();
+  }
+
+  void clearSearch() {
+    if (searchQuery.value.isEmpty) return;
+
+    searchQuery.value = '';
+    _loadEmails();
+  }
 
   bool get hasSelection => selectedIds.isNotEmpty;
   bool get allSelected =>
@@ -102,6 +129,13 @@ class InboxController extends GetxController with WidgetsBindingObserver {
 
   Future<void> _loadEmails() async {
     final client = _nostrMailService.client;
+
+    if (isSearching) {
+      final loaded = await client.search(searchQuery.value);
+      emails.assignAll(loaded);
+      return;
+    }
+
     final loaded = switch (currentFolder.value) {
       MailFolder.inbox => await client.getInboxEmails(),
       MailFolder.sent => await client.getSentEmails(),
@@ -115,6 +149,8 @@ class InboxController extends GetxController with WidgetsBindingObserver {
     if (currentFolder.value != folder) {
       currentFolder.value = folder;
       selectedIds.clear();
+      isSearchMode.value = false;
+      searchQuery.value = ''; // Clear search when switching folders
       _loadEmails();
     }
   }

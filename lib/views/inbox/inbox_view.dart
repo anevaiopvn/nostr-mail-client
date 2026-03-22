@@ -10,6 +10,7 @@ import '../../utils/responsive_helper.dart';
 import '../shared/desktop_shell.dart';
 import 'widgets/app_drawer.dart';
 import 'widgets/email_tile.dart';
+import 'widgets/search_field.dart';
 
 class InboxView extends GetView<InboxController> {
   const InboxView({super.key});
@@ -144,6 +145,12 @@ class InboxView extends GetView<InboxController> {
                 ],
               );
             }
+
+            if (controller.isSearchMode.value) {
+              // No leading icon for search mode anymore, it's on the right
+              return const SizedBox.shrink();
+            }
+
             final title = switch (controller.currentFolder.value) {
               MailFolder.inbox => 'Inbox',
               MailFolder.sent => 'Sent',
@@ -155,7 +162,20 @@ class InboxView extends GetView<InboxController> {
               style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
             );
           }),
-          const Spacer(),
+          Obx(() {
+            if (controller.isSearchMode.value) {
+              return Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 600),
+                    child: SearchField(),
+                  ),
+                ),
+              );
+            }
+            return const Spacer();
+          }),
           Obx(() {
             if (controller.hasSelection) {
               return Row(
@@ -185,20 +205,24 @@ class InboxView extends GetView<InboxController> {
             return Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Obx(
-                  () => IconButton(
-                    icon: controller.isSyncing.value
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Icon(Icons.sync),
-                    tooltip: 'Sync',
-                    onPressed: controller.isSyncing.value
-                        ? null
-                        : controller.sync,
+                if (!controller.isSearchMode.value)
+                  IconButton(
+                    icon: const Icon(Icons.search),
+                    tooltip: 'Search',
+                    onPressed: controller.enterSearchMode,
                   ),
+                IconButton(
+                  icon: controller.isSyncing.value
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.sync),
+                  tooltip: 'Sync',
+                  onPressed: controller.isSyncing.value
+                      ? null
+                      : controller.sync,
                 ),
               ],
             );
@@ -285,127 +309,156 @@ class InboxView extends GetView<InboxController> {
 
     // Mobile: Traditional scaffold with AppBar and drawer
     return Scaffold(
-      appBar: AppBar(
-        scrolledUnderElevation: 0,
-        backgroundColor: colorScheme.surface,
-        title: Obx(() {
-          if (controller.hasSelection) {
-            return Text('${controller.selectedIds.length} selected');
-          }
-          final title = switch (controller.currentFolder.value) {
-            MailFolder.inbox => 'Inbox',
-            MailFolder.sent => 'Sent',
-            MailFolder.trash => 'Trash',
-            MailFolder.archive => 'Archive',
-          };
-          return Text(title);
-        }),
-        leading: Obx(
-          () => controller.hasSelection
-              ? IconButton(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: Obx(() {
+          final isSearching =
+              controller.isSearchMode.value && !controller.hasSelection;
+          return AppBar(
+            scrolledUnderElevation: 0,
+            backgroundColor: colorScheme.surface,
+            automaticallyImplyLeading: false,
+            titleSpacing: isSearching ? 16 : null,
+            title: Builder(
+              builder: (context) {
+                if (controller.hasSelection) {
+                  return Text('${controller.selectedIds.length} selected');
+                }
+                if (controller.isSearchMode.value) {
+                  return SearchField();
+                }
+                final title = switch (controller.currentFolder.value) {
+                  MailFolder.inbox => 'Inbox',
+                  MailFolder.sent => 'Sent',
+                  MailFolder.trash => 'Trash',
+                  MailFolder.archive => 'Archive',
+                };
+                return Text(title);
+              },
+            ),
+            leading: () {
+              if (isSearching) {
+                return null;
+              }
+              if (controller.hasSelection) {
+                return IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: controller.clearSelection,
-                )
-              : Builder(
-                  builder: (context) => IconButton(
-                    icon: const Icon(Icons.menu),
-                    onPressed: () => Scaffold.of(context).openDrawer(),
-                  ),
+                );
+              }
+              return Builder(
+                builder: (context) => IconButton(
+                  icon: const Icon(Icons.menu),
+                  onPressed: () => Scaffold.of(context).openDrawer(),
                 ),
-        ),
-        actions: [
-          Obx(() {
-            if (controller.hasSelection) {
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: Icon(
-                      controller.allSelected
-                          ? Icons.deselect
-                          : Icons.select_all,
-                    ),
-                    tooltip: controller.allSelected
-                        ? 'Deselect all'
-                        : 'Select all',
-                    onPressed: controller.allSelected
-                        ? controller.clearSelection
-                        : controller.selectAll,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.delete_outline),
-                    tooltip: 'Delete',
-                    onPressed: controller.deleteSelected,
-                  ),
-                ],
               );
-            }
-            return const SizedBox.shrink();
-          }),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            tooltip: 'Settings',
-            onPressed: () => Get.toNamed(AppRoutes.settings),
-          ),
-          const SizedBox(width: 8),
-          Builder(
-            builder: (context) => Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: MenuAnchor(
-                alignmentOffset: const Offset(-200, 8),
-                style: MenuStyle(
-                  shape: WidgetStatePropertyAll(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+            }(),
+            actions: [
+              if (controller.isSearchMode.value)
+                const SizedBox.shrink()
+              else if (controller.hasSelection)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        controller.allSelected
+                            ? Icons.deselect
+                            : Icons.select_all,
+                      ),
+                      tooltip: controller.allSelected
+                          ? 'Deselect all'
+                          : 'Select all',
+                      onPressed: controller.allSelected
+                          ? controller.clearSelection
+                          : controller.selectAll,
                     ),
-                  ),
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline),
+                      tooltip: 'Delete',
+                      onPressed: controller.deleteSelected,
+                    ),
+                  ],
+                )
+              else
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.search),
+                      onPressed: () => controller.enterSearchMode(),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.settings),
+                      tooltip: 'Settings',
+                      onPressed: () => Get.toNamed(AppRoutes.settings),
+                    ),
+                    const SizedBox(width: 8),
+                    Builder(
+                      builder: (context) => Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: MenuAnchor(
+                          alignmentOffset: const Offset(-200, 8),
+                          style: MenuStyle(
+                            shape: WidgetStatePropertyAll(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                          ),
+                          menuChildren: [
+                            Obx(() => _buildAccountHeader(context)),
+                            const Divider(height: 1),
+                            MenuItemButton(
+                              leadingIcon: const Icon(Icons.person_outline),
+                              onPressed: () => Get.toNamed(AppRoutes.profile),
+                              child: const Text('Profile'),
+                            ),
+                            MenuItemButton(
+                              leadingIcon: const Icon(Icons.copy),
+                              onPressed: () {
+                                final npub = Get.find<AuthController>().npub;
+                                if (npub != null) {
+                                  Clipboard.setData(ClipboardData(text: npub));
+                                }
+                              },
+                              child: const Text('Copy npub'),
+                            ),
+                            MenuItemButton(
+                              leadingIcon: const Icon(
+                                Icons.logout,
+                                color: Colors.red,
+                              ),
+                              onPressed: () {
+                                Get.find<AuthController>().logout();
+                                Get.offAllNamed(AppRoutes.login);
+                              },
+                              child: const Text(
+                                'Logout',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ],
+                          builder: (context, menuController, child) {
+                            return GestureDetector(
+                              onTap: () {
+                                if (menuController.isOpen) {
+                                  menuController.close();
+                                } else {
+                                  menuController.open();
+                                }
+                              },
+                              child: Obx(() => _buildAvatar(context)),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                menuChildren: [
-                  Obx(() => _buildAccountHeader(context)),
-                  const Divider(height: 1),
-                  MenuItemButton(
-                    leadingIcon: const Icon(Icons.person_outline),
-                    onPressed: () => Get.toNamed(AppRoutes.profile),
-                    child: const Text('Profile'),
-                  ),
-                  MenuItemButton(
-                    leadingIcon: const Icon(Icons.copy),
-                    onPressed: () {
-                      final npub = Get.find<AuthController>().npub;
-                      if (npub != null) {
-                        Clipboard.setData(ClipboardData(text: npub));
-                      }
-                    },
-                    child: const Text('Copy npub'),
-                  ),
-                  MenuItemButton(
-                    leadingIcon: const Icon(Icons.logout, color: Colors.red),
-                    onPressed: () {
-                      Get.find<AuthController>().logout();
-                      Get.offAllNamed(AppRoutes.login);
-                    },
-                    child: const Text(
-                      'Logout',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ),
-                ],
-                builder: (context, menuController, child) {
-                  return GestureDetector(
-                    onTap: () {
-                      if (menuController.isOpen) {
-                        menuController.close();
-                      } else {
-                        menuController.open();
-                      }
-                    },
-                    child: Obx(() => _buildAvatar(context)),
-                  );
-                },
-              ),
-            ),
-          ),
-        ],
+            ],
+          );
+        }),
       ),
       drawer: const AppDrawer(),
       floatingActionButton: FloatingActionButton(

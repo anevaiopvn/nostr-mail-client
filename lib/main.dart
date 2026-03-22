@@ -29,9 +29,7 @@ void main() async {
   // Initialize window manager for desktop
   if (PlatformHelper.isDesktop) {
     await windowManager.ensureInitialized();
-    const windowOptions = WindowOptions(
-      titleBarStyle: TitleBarStyle.hidden,
-    );
+    const windowOptions = WindowOptions(titleBarStyle: TitleBarStyle.hidden);
     await windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.show();
       await windowManager.focus();
