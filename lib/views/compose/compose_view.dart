@@ -8,7 +8,9 @@ import '../../controllers/compose_controller.dart';
 import '../../controllers/settings_controller.dart';
 import '../../models/from_option.dart';
 import '../../services/nostr_mail_service.dart';
+import '../../utils/responsive_helper.dart';
 import '../../utils/toast_helper.dart';
+import '../shared/desktop_shell.dart';
 import 'widgets/from_selector_sheet.dart';
 import 'widgets/recipient_autocomplete.dart';
 import 'widgets/recipient_chip.dart';
@@ -135,7 +137,9 @@ class _ComposeViewState extends State<ComposeView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final isWide = ResponsiveHelper.isNotMobile(context);
+
+    Widget content = Scaffold(
       appBar: AppBar(
         title: const Text('Compose'),
         actions: [
@@ -235,6 +239,11 @@ class _ComposeViewState extends State<ComposeView> {
         ),
       ),
     );
+
+    if (isWide) {
+      return DesktopShell(body: content);
+    }
+    return content;
   }
 
   Future<void> _send() async {

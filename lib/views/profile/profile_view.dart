@@ -5,6 +5,7 @@ import 'package:ndk/ndk.dart';
 import '../../controllers/auth_controller.dart';
 import '../../utils/responsive_helper.dart';
 import '../../utils/toast_helper.dart';
+import '../shared/desktop_shell.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -102,7 +103,9 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final isWide = ResponsiveHelper.isNotMobile(context);
+
+    Widget content = Scaffold(
       appBar: AppBar(
         title: const Text('Edit Profile'),
         actions: [
@@ -166,6 +169,11 @@ class _ProfileViewState extends State<ProfileView> {
               ),
             ),
     );
+
+    if (isWide) {
+      return DesktopShell(body: content);
+    }
+    return content;
   }
 
   Widget _buildAvatarPreview(BuildContext context) {

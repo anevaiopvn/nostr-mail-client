@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../utils/responsive_helper.dart';
+import '../shared/desktop_shell.dart';
 import 'widgets/blossom_servers_section.dart';
 import 'widgets/dm_relays_section.dart';
 import 'widgets/nip65_relays_section.dart';
@@ -12,7 +13,9 @@ class HostingSettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final isWide = ResponsiveHelper.isNotMobile(context);
+
+    Widget content = Scaffold(
       appBar: AppBar(title: const Text('Hosting')),
       body: SingleChildScrollView(
         child: ResponsiveCenter(
@@ -38,5 +41,10 @@ class HostingSettingsView extends StatelessWidget {
         ),
       ),
     );
+
+    if (isWide) {
+      return DesktopShell(body: content);
+    }
+    return content;
   }
 }

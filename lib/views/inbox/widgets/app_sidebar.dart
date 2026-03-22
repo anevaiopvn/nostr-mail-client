@@ -9,7 +9,9 @@ class AppSidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<InboxController>();
+    final controller = Get.isRegistered<InboxController>()
+        ? Get.find<InboxController>()
+        : Get.put(InboxController());
 
     return Material(
       color: Colors.transparent,

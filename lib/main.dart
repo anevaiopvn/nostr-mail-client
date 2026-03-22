@@ -121,6 +121,9 @@ class MainApp extends StatelessWidget {
           supportedLocales: const [Locale('en')],
           initialBinding: InitialBinding(),
           getPages: AppRoutes.routes,
+          defaultTransition: GetPlatform.isMobile
+              ? null
+              : Transition.noTransition,
           home: const _InitialScreen(),
           builder: (context, child) {
             if (PlatformHelper.isDesktop) {

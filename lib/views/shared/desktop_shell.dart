@@ -13,13 +13,8 @@ import 'left_rail.dart';
 
 class DesktopShell extends StatelessWidget {
   final Widget body;
-  final Widget? floatingActionButton;
 
-  const DesktopShell({
-    super.key,
-    required this.body,
-    this.floatingActionButton,
-  });
+  const DesktopShell({super.key, required this.body});
 
   Widget _buildBackground(BuildContext context) {
     return Obx(() {
@@ -145,7 +140,6 @@ class DesktopShell extends StatelessWidget {
     // Mobile layout with drawer
     return Scaffold(
       drawer: const AppDrawer(),
-      floatingActionButton: floatingActionButton,
       body: Stack(
         fit: StackFit.expand,
         children: [_buildBackground(context), body],

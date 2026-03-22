@@ -18,6 +18,7 @@ import '../../controllers/settings_controller.dart';
 import '../../utils/platform_helper.dart';
 import '../../utils/responsive_helper.dart';
 import '../../utils/toast_helper.dart';
+import '../shared/desktop_shell.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
@@ -25,8 +26,9 @@ class SettingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settingsController = Get.find<SettingsController>();
+    final isWide = ResponsiveHelper.isNotMobile(context);
 
-    return Scaffold(
+    Widget content = Scaffold(
       appBar: AppBar(title: const Text('Settings')),
       body: SingleChildScrollView(
         child: ResponsiveCenter(
@@ -139,6 +141,11 @@ class SettingsView extends StatelessWidget {
         ),
       ),
     );
+
+    if (isWide) {
+      return DesktopShell(body: content);
+    }
+    return content;
   }
 
   Widget _buildSectionHeader(BuildContext context, String title) {

@@ -13,6 +13,7 @@ import '../../services/nostr_mail_service.dart';
 import '../../utils/nostr_utils.dart';
 import '../../utils/responsive_helper.dart';
 import '../../utils/toast_helper.dart';
+import '../shared/desktop_shell.dart';
 
 class EmailView extends StatefulWidget {
   const EmailView({super.key});
@@ -193,21 +194,25 @@ class _EmailViewState extends State<EmailView> {
 
   @override
   Widget build(BuildContext context) {
+    final isWide = ResponsiveHelper.isNotMobile(context);
+
     if (isLoading) {
-      return Scaffold(
+      Widget content = Scaffold(
         appBar: AppBar(),
         body: const Center(child: CircularProgressIndicator()),
       );
+      return isWide ? DesktopShell(body: content) : content;
     }
 
     if (email == null) {
-      return Scaffold(
+      Widget content = Scaffold(
         appBar: AppBar(),
         body: const Center(child: Text('Email not found')),
       );
+      return isWide ? DesktopShell(body: content) : content;
     }
 
-    return Scaffold(
+    Widget content = Scaffold(
       appBar: AppBar(
         title: Text(
           email!.subject.isEmpty ? '(No subject)' : email!.subject,
@@ -294,6 +299,11 @@ class _EmailViewState extends State<EmailView> {
         ),
       ),
     );
+
+    if (isWide) {
+      return DesktopShell(body: content);
+    }
+    return content;
   }
 
   String get _senderDisplayName {
