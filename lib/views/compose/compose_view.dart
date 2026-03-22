@@ -142,6 +142,7 @@ class _ComposeViewState extends State<ComposeView> {
     Widget content = Scaffold(
       appBar: AppBar(
         title: const Text('Compose'),
+        actionsPadding: const EdgeInsets.only(right: 8),
         actions: [
           Obx(
             () => controller.isSending.value

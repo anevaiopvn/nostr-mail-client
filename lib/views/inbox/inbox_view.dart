@@ -114,7 +114,7 @@ class InboxView extends GetView<InboxController> {
 
     return Container(
       height: 56,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.only(left: 16, right: 8),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         border: Border(
@@ -165,12 +165,9 @@ class InboxView extends GetView<InboxController> {
           Obx(() {
             if (controller.isSearchMode.value) {
               return Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 600),
-                    child: SearchField(),
-                  ),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 600),
+                  child: SearchField(),
                 ),
               );
             }
@@ -318,7 +315,7 @@ class InboxView extends GetView<InboxController> {
             scrolledUnderElevation: 0,
             backgroundColor: colorScheme.surface,
             automaticallyImplyLeading: false,
-            titleSpacing: isSearching ? 16 : null,
+            titleSpacing: isSearching ? 8 : null,
             title: Builder(
               builder: (context) {
                 if (controller.hasSelection) {
@@ -353,6 +350,7 @@ class InboxView extends GetView<InboxController> {
                 ),
               );
             }(),
+            actionsPadding: const EdgeInsets.only(right: 8),
             actions: [
               if (controller.isSearchMode.value)
                 const SizedBox.shrink()
@@ -395,63 +393,60 @@ class InboxView extends GetView<InboxController> {
                     ),
                     const SizedBox(width: 8),
                     Builder(
-                      builder: (context) => Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: MenuAnchor(
-                          alignmentOffset: const Offset(-200, 8),
-                          style: MenuStyle(
-                            shape: WidgetStatePropertyAll(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
+                      builder: (context) => MenuAnchor(
+                        alignmentOffset: const Offset(-200, 8),
+                        style: MenuStyle(
+                          shape: WidgetStatePropertyAll(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
                             ),
                           ),
-                          menuChildren: [
-                            Obx(() => _buildAccountHeader(context)),
-                            const Divider(height: 1),
-                            MenuItemButton(
-                              leadingIcon: const Icon(Icons.person_outline),
-                              onPressed: () => Get.toNamed(AppRoutes.profile),
-                              child: const Text('Profile'),
-                            ),
-                            MenuItemButton(
-                              leadingIcon: const Icon(Icons.copy),
-                              onPressed: () {
-                                final npub = Get.find<AuthController>().npub;
-                                if (npub != null) {
-                                  Clipboard.setData(ClipboardData(text: npub));
-                                }
-                              },
-                              child: const Text('Copy npub'),
-                            ),
-                            MenuItemButton(
-                              leadingIcon: const Icon(
-                                Icons.logout,
-                                color: Colors.red,
-                              ),
-                              onPressed: () {
-                                Get.find<AuthController>().logout();
-                                Get.offAllNamed(AppRoutes.login);
-                              },
-                              child: const Text(
-                                'Logout',
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            ),
-                          ],
-                          builder: (context, menuController, child) {
-                            return GestureDetector(
-                              onTap: () {
-                                if (menuController.isOpen) {
-                                  menuController.close();
-                                } else {
-                                  menuController.open();
-                                }
-                              },
-                              child: Obx(() => _buildAvatar(context)),
-                            );
-                          },
                         ),
+                        menuChildren: [
+                          Obx(() => _buildAccountHeader(context)),
+                          const Divider(height: 1),
+                          MenuItemButton(
+                            leadingIcon: const Icon(Icons.person_outline),
+                            onPressed: () => Get.toNamed(AppRoutes.profile),
+                            child: const Text('Profile'),
+                          ),
+                          MenuItemButton(
+                            leadingIcon: const Icon(Icons.copy),
+                            onPressed: () {
+                              final npub = Get.find<AuthController>().npub;
+                              if (npub != null) {
+                                Clipboard.setData(ClipboardData(text: npub));
+                              }
+                            },
+                            child: const Text('Copy npub'),
+                          ),
+                          MenuItemButton(
+                            leadingIcon: const Icon(
+                              Icons.logout,
+                              color: Colors.red,
+                            ),
+                            onPressed: () {
+                              Get.find<AuthController>().logout();
+                              Get.offAllNamed(AppRoutes.login);
+                            },
+                            child: const Text(
+                              'Logout',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ],
+                        builder: (context, menuController, child) {
+                          return GestureDetector(
+                            onTap: () {
+                              if (menuController.isOpen) {
+                                menuController.close();
+                              } else {
+                                menuController.open();
+                              }
+                            },
+                            child: Obx(() => _buildAvatar(context)),
+                          );
+                        },
                       ),
                     ),
                   ],
