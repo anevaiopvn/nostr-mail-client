@@ -7,6 +7,7 @@ import 'package:ndk/ndk.dart';
 import 'package:ndk_flutter/ndk_flutter.dart';
 import 'package:ndk_rust_verifier/ndk_rust_verifier.dart';
 import 'package:ndk_flutter/l10n/app_localizations.dart' as ndk_flutter;
+import 'package:nostr_mail_client/utils/responsive_helper.dart';
 import 'package:system_theme/system_theme.dart';
 import 'package:toastification/toastification.dart';
 import 'package:window_manager/window_manager.dart';
@@ -29,7 +30,6 @@ void main() async {
   if (PlatformHelper.isDesktop) {
     await windowManager.ensureInitialized();
     const windowOptions = WindowOptions(
-      minimumSize: Size(600, 300),
       titleBarStyle: TitleBarStyle.hidden,
     );
     await windowManager.waitUntilReadyToShow(windowOptions, () async {
@@ -128,29 +128,37 @@ class MainApp extends StatelessWidget {
           builder: (context, child) {
             if (PlatformHelper.isDesktop) {
               return DragToResizeArea(
-                child: Stack(
-                  children: [
-                    child!,
-                    Positioned(
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      height: 32,
-                      child: Row(
-                        children: [
-                          Expanded(child: DragToMoveArea(child: Container())),
-                          SizedBox(
-                            width: 154,
-                            child: WindowCaption(
-                              brightness: Theme.of(context).brightness,
-                              backgroundColor: Colors.transparent,
-                            ),
-                          ),
-                        ],
+                child: ColoredBox(
+                  color: Theme.of(context).colorScheme.surface,
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: ResponsiveHelper.isMobile(context) ? 32 : 0,
+                        ),
+                        child: child!,
                       ),
-                    ),
-                    NPendingRequests(ndkFlutter: Get.find()),
-                  ],
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: 32,
+                        child: Row(
+                          children: [
+                            Expanded(child: DragToMoveArea(child: Container())),
+                            SizedBox(
+                              width: 154,
+                              child: WindowCaption(
+                                brightness: Theme.of(context).brightness,
+                                backgroundColor: Colors.transparent,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      NPendingRequests(ndkFlutter: Get.find()),
+                    ],
+                  ),
                 ),
               );
             }
