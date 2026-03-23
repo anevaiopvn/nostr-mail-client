@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 
-import '../../controllers/auth_controller.dart';
 import '../../controllers/compose_controller.dart';
 import '../../controllers/inbox_controller.dart';
 import '../../views/auth/login_view.dart';
@@ -11,6 +10,8 @@ import '../../views/onboarding/onboarding_view.dart';
 import '../../views/profile/profile_view.dart';
 import '../../views/settings/hosting_settings_view.dart';
 import '../../views/settings/settings_view.dart';
+import 'middlewares/auth_middleware.dart';
+import 'middlewares/guest_middleware.dart';
 import 'middlewares/onboarding_middleware.dart';
 
 class AppRoutes {
@@ -29,10 +30,7 @@ class AppRoutes {
     GetPage(
       name: login,
       page: () => const LoginView(),
-      binding: BindingsBuilder(() {
-        Get.lazyPut(() => AuthController());
-      }),
-      middlewares: [OnboardingMiddleware()],
+      middlewares: [OnboardingMiddleware(), GuestMiddleware()],
     ),
     GetPage(
       name: inbox,
@@ -40,12 +38,12 @@ class AppRoutes {
       binding: BindingsBuilder(() {
         Get.lazyPut(() => InboxController());
       }),
-      middlewares: [OnboardingMiddleware()],
+      middlewares: [OnboardingMiddleware(), AuthMiddleware()],
     ),
     GetPage(
       name: email,
       page: () => const EmailView(),
-      middlewares: [OnboardingMiddleware()],
+      middlewares: [OnboardingMiddleware(), AuthMiddleware()],
     ),
     GetPage(
       name: compose,
@@ -53,23 +51,23 @@ class AppRoutes {
       binding: BindingsBuilder(() {
         Get.lazyPut(() => ComposeController());
       }),
-      middlewares: [OnboardingMiddleware()],
+      middlewares: [OnboardingMiddleware(), AuthMiddleware()],
     ),
     GetPage(
       name: profile,
       page: () => const ProfileView(),
-      middlewares: [OnboardingMiddleware()],
+      middlewares: [OnboardingMiddleware(), AuthMiddleware()],
     ),
     GetPage(
       name: settings,
       page: () => const SettingsView(),
-      middlewares: [OnboardingMiddleware()],
+      middlewares: [OnboardingMiddleware(), AuthMiddleware()],
     ),
     GetPage(name: onboarding, page: () => const OnboardingView()),
     GetPage(
       name: nostrTechnicalSettings,
       page: () => const HostingSettingsView(),
-      middlewares: [OnboardingMiddleware()],
+      middlewares: [OnboardingMiddleware(), AuthMiddleware()],
     ),
   ];
 }

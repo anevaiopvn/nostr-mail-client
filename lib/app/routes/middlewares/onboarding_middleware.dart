@@ -6,6 +6,9 @@ import '../app_routes.dart';
 
 class OnboardingMiddleware extends GetMiddleware {
   @override
+  int? get priority => 1;
+
+  @override
   RouteSettings? redirect(String? route) {
     // If user is already on onboarding, don't redirect
     if (route == AppRoutes.onboarding) return null;

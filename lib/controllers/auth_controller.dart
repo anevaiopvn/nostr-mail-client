@@ -14,13 +14,7 @@ class AuthController extends GetxController {
   Ndk get ndk => Get.find();
   NdkFlutter get ndkFlutter => Get.find();
 
-  @override
-  void onInit() {
-    super.onInit();
-    _checkAuth();
-  }
-
-  Future<void> _checkAuth() async {
+  Future<AuthController> init() async {
     isLoading.value = true;
     try {
       await ndkFlutter.restoreAccountsState();
@@ -28,12 +22,23 @@ class AuthController extends GetxController {
       if (ndk.accounts.getPublicKey() != null) {
         _nostrMailService.initClient();
         isLoggedIn.value = true;
+        // Non-blocking metadata load
         loadUserMetadata();
       }
-    } catch (e) {
-      // Si erreur, on reste sur la page de login
+    } catch (_) {
+      // Keep isLoggedIn as false
     } finally {
       isLoading.value = false;
+    }
+    return this;
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    // In case it wasn't called in main (testing/standalone)
+    if (!isLoggedIn.value && ndk.accounts.getPublicKey() == null) {
+      init();
     }
   }
 
