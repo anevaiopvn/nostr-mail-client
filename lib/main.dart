@@ -18,6 +18,7 @@ import 'app/routes/app_routes.dart';
 import 'controllers/auth_controller.dart';
 import 'controllers/settings_controller.dart';
 import 'services/ndk_cache_service.dart';
+import 'services/nostr_mail_service.dart';
 import 'services/storage_service.dart';
 import 'services/theme_service.dart';
 import 'utils/event_verifiers.dart';
@@ -67,6 +68,12 @@ void main() async {
   Get.put(ndk, permanent: true);
   final ndkFlutter = NdkFlutter(ndk: ndk);
   Get.put(ndkFlutter, permanent: true);
+
+  // Initialize Services and Controllers early for Middlewares
+  Get.put(NostrMailService(), permanent: true);
+  final authController = AuthController();
+  await authController.init();
+  Get.put(authController, permanent: true);
 
   // Initialize theme service
   await Get.putAsync(() => ThemeService().init(), permanent: true);
@@ -122,7 +129,7 @@ class MainApp extends StatelessWidget {
           defaultTransition: GetPlatform.isMobile
               ? null
               : Transition.noTransition,
-          home: const _InitialScreen(),
+          initialRoute: AppRoutes.inbox,
           builder: (context, child) {
             if (PlatformHelper.isDesktop) {
               return DragToResizeArea(
@@ -169,29 +176,6 @@ class MainApp extends StatelessWidget {
           },
         ),
       );
-    });
-  }
-}
-
-class _InitialScreen extends StatelessWidget {
-  const _InitialScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    return Obx(() {
-      final authController = Get.find<AuthController>();
-
-      if (authController.isLoading.value) {
-        return const Scaffold(body: Center(child: CircularProgressIndicator()));
-      }
-
-      if (authController.isLoggedIn.value) {
-        Future.microtask(() => Get.offAllNamed(AppRoutes.inbox));
-      } else {
-        Future.microtask(() => Get.offAllNamed(AppRoutes.login));
-      }
-
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     });
   }
 }
