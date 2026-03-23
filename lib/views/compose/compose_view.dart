@@ -131,7 +131,13 @@ class _ComposeViewState extends State<ComposeView> {
     final input = value.trim();
     if (input.isNotEmpty) {
       final added = await controller.addRecipient(input);
-      if (added) toController.clear();
+      if (added) {
+        toController.clear();
+      } else {
+        if (mounted) {
+          ToastHelper.error(context, 'Invalid recipient format');
+        }
+      }
     }
   }
 
@@ -248,6 +254,14 @@ class _ComposeViewState extends State<ComposeView> {
   }
 
   Future<void> _send() async {
+    // Try to add current input as recipient if not empty
+    if (toController.text.trim().isNotEmpty) {
+      await _handleToSubmit(toController.text);
+      if (!mounted) return;
+      // If still not empty, it was invalid and toast was already shown
+      if (toController.text.trim().isNotEmpty) return;
+    }
+
     if (controller.recipients.isEmpty) {
       ToastHelper.error(context, 'Add at least one recipient');
       return;
@@ -266,12 +280,12 @@ class _ComposeViewState extends State<ComposeView> {
       document: quillController.document,
     );
 
+    if (!mounted) return;
+
     if (success) {
       Get.back();
     } else {
-      if (mounted) {
-        ToastHelper.error(context, 'Failed to send email');
-      }
+      ToastHelper.error(context, 'Failed to send email');
     }
   }
 

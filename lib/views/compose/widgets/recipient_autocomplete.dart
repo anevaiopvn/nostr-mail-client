@@ -80,23 +80,24 @@ class _RecipientAutocompleteState extends State<RecipientAutocomplete> {
   }
 
   void _onTextChanged() {
-    final text = widget.textController.text.trim();
+    final text = widget.textController.text;
+    final trimmedText = text.trim();
 
     // Auto-detect complete bech32 formats (npub, nprofile, naddr)
-    if (text.startsWith('npub1') ||
-        text.startsWith('nprofile1') ||
-        text.startsWith('naddr1')) {
+    if (trimmedText.startsWith('npub1') ||
+        trimmedText.startsWith('nprofile1') ||
+        trimmedText.startsWith('naddr1')) {
       String? prefix;
-      if (text.startsWith('npub1')) {
+      if (trimmedText.startsWith('npub1')) {
         prefix = 'npub1';
-      } else if (text.startsWith('nprofile1')) {
+      } else if (trimmedText.startsWith('nprofile1')) {
         prefix = 'nprofile1';
-      } else if (text.startsWith('naddr1')) {
+      } else if (trimmedText.startsWith('naddr1')) {
         prefix = 'naddr1';
       }
 
       if (prefix != null) {
-        final bech32Part = text.split('@').first;
+        final bech32Part = trimmedText.split('@').first;
         // npub1 = 5 chars + 58 chars = 63 total
         // nprofile1 = 9 chars + ~50-60 chars
         // naddr1 = 6 chars + variable
@@ -107,7 +108,7 @@ class _RecipientAutocompleteState extends State<RecipientAutocomplete> {
             : 56;
         if (bech32Part.length >= minLength) {
           // Valid bech32 format, add recipient
-          widget.onManualInput(text).then((added) {
+          widget.onManualInput(trimmedText).then((added) {
             if (added) {
               widget.textController.clear();
               _hideOverlay();
@@ -122,8 +123,8 @@ class _RecipientAutocompleteState extends State<RecipientAutocomplete> {
     }
 
     // Auto-detect hex pubkey (64 hex characters)
-    if (RegExp(r'^[0-9a-fA-F]{64}$').hasMatch(text)) {
-      widget.onManualInput(text).then((added) {
+    if (RegExp(r'^[0-9a-fA-F]{64}$').hasMatch(trimmedText)) {
+      widget.onManualInput(trimmedText).then((added) {
         if (added) {
           widget.textController.clear();
           _hideOverlay();
@@ -155,7 +156,7 @@ class _RecipientAutocompleteState extends State<RecipientAutocomplete> {
     // Debounce search
     _debounceTimer?.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 300), () {
-      _search(text.trim());
+      _search(trimmedText);
     });
   }
 
