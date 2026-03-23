@@ -12,6 +12,8 @@ import '../../views/settings/hosting_settings_view.dart';
 import '../../views/settings/settings_view.dart';
 
 class AppRoutes {
+  // TODO: Implement nested routes with go_router for better desktop/web navigation.
+  // This will allow DesktopShell to remain fixed while only its content (body) changes.
   static const login = '/login';
   static const inbox = '/inbox';
   static const email = '/email';

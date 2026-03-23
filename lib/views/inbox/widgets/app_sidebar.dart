@@ -34,7 +34,11 @@ class AppSidebar extends StatelessWidget {
               selectedIcon: Icons.inbox,
               label: 'Inbox',
               selected: controller.currentFolder.value == MailFolder.inbox,
-              onTap: () => controller.setFolder(MailFolder.inbox),
+              onTap: () {
+                controller.setFolder(MailFolder.inbox);
+                if (Get.currentRoute == AppRoutes.inbox) return;
+                Get.until((route) => route.settings.name == AppRoutes.inbox);
+              },
             ),
           ),
           Obx(
@@ -43,7 +47,11 @@ class AppSidebar extends StatelessWidget {
               selectedIcon: Icons.send,
               label: 'Sent',
               selected: controller.currentFolder.value == MailFolder.sent,
-              onTap: () => controller.setFolder(MailFolder.sent),
+              onTap: () {
+                controller.setFolder(MailFolder.sent);
+                if (Get.currentRoute == AppRoutes.inbox) return;
+                Get.until((route) => route.settings.name == AppRoutes.inbox);
+              },
             ),
           ),
           Obx(
@@ -52,7 +60,11 @@ class AppSidebar extends StatelessWidget {
               selectedIcon: Icons.archive,
               label: 'Archive',
               selected: controller.currentFolder.value == MailFolder.archive,
-              onTap: () => controller.setFolder(MailFolder.archive),
+              onTap: () {
+                controller.setFolder(MailFolder.archive);
+                if (Get.currentRoute == AppRoutes.inbox) return;
+                Get.until((route) => route.settings.name == AppRoutes.inbox);
+              },
             ),
           ),
           Obx(
@@ -61,7 +73,11 @@ class AppSidebar extends StatelessWidget {
               selectedIcon: Icons.delete,
               label: 'Trash',
               selected: controller.currentFolder.value == MailFolder.trash,
-              onTap: () => controller.setFolder(MailFolder.trash),
+              onTap: () {
+                controller.setFolder(MailFolder.trash);
+                if (Get.currentRoute == AppRoutes.inbox) return;
+                Get.until((route) => route.settings.name == AppRoutes.inbox);
+              },
             ),
           ),
         ],
