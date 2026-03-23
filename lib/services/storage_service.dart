@@ -8,6 +8,9 @@ import 'storage_service_io.dart'
 
 class StorageService extends GetxService {
   late final Database db;
+  bool _hasSeenOnboarding = false;
+
+  bool get hasSeenOnboarding => _hasSeenOnboarding;
 
   static final _settingsStore = StoreRef<String, dynamic>('settings');
 
@@ -17,12 +20,19 @@ class StorageService extends GetxService {
     } else {
       db = await io.openDatabaseIo();
     }
+
+    // Initialize cache
+    _hasSeenOnboarding = await getSetting<bool>('has_seen_onboarding') ?? false;
+
     return this;
   }
 
   // Settings methods
   Future<void> saveSetting(String key, dynamic value) async {
     await _settingsStore.record(key).put(db, value);
+    if (key == 'has_seen_onboarding' && value is bool) {
+      _hasSeenOnboarding = value;
+    }
   }
 
   Future<T?> getSetting<T>(String key) async {

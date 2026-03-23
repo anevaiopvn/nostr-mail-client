@@ -122,6 +122,7 @@ class MainApp extends StatelessWidget {
           defaultTransition: GetPlatform.isMobile
               ? null
               : Transition.noTransition,
+          initialRoute: AppRoutes.inbox,
           home: const _InitialScreen(),
           builder: (context, child) {
             if (PlatformHelper.isDesktop) {
