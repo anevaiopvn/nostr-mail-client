@@ -108,6 +108,7 @@ class _ProfileViewState extends State<ProfileView> {
     Widget content = Scaffold(
       appBar: AppBar(
         title: const Text('Edit Profile'),
+        actionsPadding: const EdgeInsets.only(right: 8),
         actions: [
           if (!_isLoading)
             TextButton(
