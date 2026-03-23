@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 
@@ -40,21 +39,10 @@ class OnboardingView extends StatelessWidget {
           body:
               "Discover a decentralized email experience that puts you in control. A new way to communicate, centered around you.",
           image: Center(
-            child: Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: colorScheme.primary,
-                shape: BoxShape.circle,
-              ),
-              padding: const EdgeInsets.all(20),
-              child: SvgPicture.asset(
-                'icons/original_transparent_2x.svg',
-                colorFilter: ColorFilter.mode(
-                  colorScheme.surface,
-                  BlendMode.srcIn,
-                ),
-              ),
+            child: Image.asset(
+              'icons/original_transparent_3x.png',
+              width: 100,
+              height: 100,
             ),
           ),
           decoration: _getPageDecoration(context),
