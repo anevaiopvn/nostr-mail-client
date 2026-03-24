@@ -123,6 +123,11 @@ class AuthController extends GetxController {
 
     Get.offAllNamed(AppRoutes.inbox);
 
+    // Clear registration state
+    username.value = '';
+    usernameController.clear();
+    isRegistering.value = false;
+
     isLoading.value = false;
   }
 
@@ -131,8 +136,16 @@ class AuthController extends GetxController {
     try {
       await _nostrMailService.logout();
       await ndkFlutter.saveAccountsState();
+      
+      // Reset all auth state
       isLoggedIn.value = false;
       userMetadata.value = null;
+      isRegistering.value = false;
+      username.value = '';
+      usernameController.clear();
+      showMoreOptions.value = false;
+
+      Get.offAllNamed(AppRoutes.login);
     } finally {
       isLoading.value = false;
     }
