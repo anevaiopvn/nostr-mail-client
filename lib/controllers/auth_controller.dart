@@ -9,6 +9,7 @@ class AuthController extends GetxController {
 
   final isLoading = false.obs;
   final isLoggedIn = false.obs;
+  final showMoreOptions = false.obs;
   final Rxn<Metadata> userMetadata = Rxn<Metadata>();
 
   Ndk get ndk => Get.find();
