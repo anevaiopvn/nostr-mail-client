@@ -1,8 +1,14 @@
 import 'package:get/get.dart';
+import 'package:ndk/entities.dart';
 import 'package:ndk/ndk.dart';
+import 'package:ndk/shared/nips/nip01/bip340.dart';
 import 'package:ndk_flutter/ndk_flutter.dart';
 
+import '../app/config/nostr_config.dart';
+import '../app/routes/app_routes.dart';
 import '../services/nostr_mail_service.dart';
+import '../utils/toast_helper.dart';
+import 'package:flutter/material.dart';
 
 class AuthController extends GetxController {
   final _nostrMailService = Get.find<NostrMailService>();
@@ -10,6 +16,9 @@ class AuthController extends GetxController {
   final isLoading = false.obs;
   final isLoggedIn = false.obs;
   final showMoreOptions = false.obs;
+  final isRegistering = false.obs;
+  final username = ''.obs;
+  final usernameController = TextEditingController();
   final Rxn<Metadata> userMetadata = Rxn<Metadata>();
 
   Ndk get ndk => Get.find();
@@ -37,10 +46,20 @@ class AuthController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    // Sync controller with observable
+    usernameController.addListener(() {
+      username.value = usernameController.text;
+    });
     // In case it wasn't called in main (testing/standalone)
     if (!isLoggedIn.value && ndk.accounts.getPublicKey() == null) {
       init();
     }
+  }
+
+  @override
+  void onClose() {
+    usernameController.dispose();
+    super.onClose();
   }
 
   Future<void> loadUserMetadata() async {
@@ -57,6 +76,54 @@ class AuthController extends GetxController {
     _nostrMailService.initClient();
     isLoggedIn.value = true;
     loadUserMetadata();
+  }
+
+  Future<void> register() async {
+    final isEmpty = username.value.trim().isEmpty;
+    final context = Get.context;
+
+    if (isEmpty && context != null) {
+      ToastHelper.error(context, 'Please enter a username');
+      return;
+    }
+
+    if (isEmpty) return;
+
+    isLoading.value = true;
+
+    final keyPair = Bip340.generatePrivateKey();
+    ndk.accounts.loginPrivateKey(
+      privkey: keyPair.privateKey!,
+      pubkey: keyPair.publicKey,
+    );
+
+    final rawName = username.value.trim();
+    final formattedName = rawName.toLowerCase().replaceAll(' ', '');
+
+    final metadata = Metadata(
+      pubKey: keyPair.publicKey,
+      name: formattedName,
+      displayName: rawName,
+    );
+
+    await ndk.config.cache.saveMetadata(metadata);
+
+    final relays = {
+      for (var r in NostrConfig.recommendedInboxOutboxRelays)
+        r: ReadWriteMarker.readWrite,
+    };
+
+    ndk.metadata.broadcastMetadata(metadata);
+    _nostrMailService.saveNip65Relays(relays);
+    _nostrMailService.saveDmRelays(NostrConfig.recommendedDmRelays);
+    _nostrMailService.saveBlossomServers(NostrConfig.recommendedBlossomServers);
+    ndkFlutter.saveAccountsState();
+
+    onLoggedIn();
+
+    Get.offAllNamed(AppRoutes.inbox);
+
+    isLoading.value = false;
   }
 
   Future<void> logout() async {

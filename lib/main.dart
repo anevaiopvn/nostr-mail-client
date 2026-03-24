@@ -112,8 +112,20 @@ class MainApp extends StatelessWidget {
       return ToastificationWrapper(
         child: GetMaterialApp(
           title: 'Nmail',
-          theme: ThemeData.from(colorScheme: lightScheme),
-          darkTheme: ThemeData.from(colorScheme: darkScheme),
+          theme: ThemeData.from(colorScheme: lightScheme).copyWith(
+            inputDecorationTheme: InputDecorationTheme(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+          darkTheme: ThemeData.from(colorScheme: darkScheme).copyWith(
+            inputDecorationTheme: InputDecorationTheme(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
           themeMode: initialThemeMode,
           locale: const Locale('en'),
           localizationsDelegates: [
