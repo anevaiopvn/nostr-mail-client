@@ -136,7 +136,7 @@ class AuthController extends GetxController {
     try {
       await _nostrMailService.logout();
       await ndkFlutter.saveAccountsState();
-      
+
       // Reset all auth state
       isLoggedIn.value = false;
       userMetadata.value = null;

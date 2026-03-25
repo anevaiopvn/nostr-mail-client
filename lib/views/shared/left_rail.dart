@@ -46,7 +46,6 @@ class LeftRail extends StatelessWidget {
           // Settings
           IconButton(
             icon: const Icon(Icons.settings),
-            tooltip: 'Settings',
             onPressed: () => Get.toNamed(AppRoutes.settings),
           ),
           // Account menu

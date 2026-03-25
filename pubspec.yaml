@@ -13,26 +13,25 @@ dependencies:
     sdk: flutter
   flutter_secure_storage: ^10.0.0
   get: ^4.7.3
-  ndk: ^0.7.2-dev.0
+  ndk: ^0.7.2-dev.2
   path_provider: ^2.1.5
   sembast: ^3.8.6
   toastification: ^3.0.3
   nostr_mail: ^1.8.0
-  ndk_rust_verifier: ^0.5.0
-  sembast_cache_manager: ^1.0.8-dev.0
+  sembast_cache_manager: ^1.0.8-dev.2
   http: ^1.6.0
   intl: ^0.20.2
-  sembast_web: ^2.4.4
+  sembast_web: ^2.4.4+1
   path: ^1.9.1
   url_launcher: ^6.3.2
   flutter_widget_from_html_core: ^0.17.0
   flutter_quill: ^11.5.0
   vsc_quill_delta_to_html: ^1.0.5
   system_theme: ^3.2.0
-  flutter_svg: ^2.2.3
+  flutter_svg: ^2.2.4
   window_manager: ^0.5.1
   file_picker: ^10.3.10
-  ndk_flutter: ^0.0.2
+  ndk_flutter: ^0.0.2-dev.16
   ndk_objectbox: ^0.2.8
   enough_mail: ^2.1.7
   introduction_screen: ^4.0.0

@@ -5,7 +5,6 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 import 'package:ndk_flutter/ndk_flutter.dart';
-import 'package:ndk_rust_verifier/ndk_rust_verifier.dart';
 import 'package:ndk_flutter/l10n/app_localizations.dart' as ndk_flutter;
 import 'package:nostr_mail_client/utils/responsive_helper.dart';
 import 'package:system_theme/system_theme.dart';

@@ -13,15 +13,21 @@ class RegistrationForm extends GetView<AuthController> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const Text(
-            'Choose your username',
+            'What should others see?',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 16),
           TextField(
             controller: controller.usernameController,
             enabled: !controller.isLoading.value,
+            textCapitalization: TextCapitalization.words,
+            onSubmitted: (value) {
+              if (value.trim().isEmpty) return;
+              if (controller.isLoading.value) return;
+              controller.register();
+            },
             decoration: const InputDecoration(
-              labelText: 'Username',
+              labelText: 'Display Name',
               hintText: 'e.g. Alice',
               prefixIcon: Icon(Icons.alternate_email),
             ),

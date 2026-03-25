@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 
@@ -7,6 +8,8 @@ import '../../utils/responsive_helper.dart';
 import '../../utils/toast_helper.dart';
 import '../shared/desktop_shell.dart';
 
+// TODO: Refactor this to a GetView<ProfileController> and use a dedicated controller
+// instead of StatefulWidget to maintain architectural consistency with GetX.
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
 
@@ -16,9 +19,11 @@ class ProfileView extends StatefulWidget {
 
 class _ProfileViewState extends State<ProfileView> {
   final _nameController = TextEditingController();
+  final _displayNameController = TextEditingController();
   final _pictureController = TextEditingController();
   final _aboutController = TextEditingController();
 
+  Metadata? _currentMetadata;
   bool _isLoading = true;
   bool _isSaving = false;
 
@@ -31,6 +36,7 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   void dispose() {
     _nameController.dispose();
+    _displayNameController.dispose();
     _pictureController.dispose();
     _aboutController.dispose();
     super.dispose();
@@ -49,7 +55,9 @@ class _ProfileViewState extends State<ProfileView> {
 
       if (mounted) {
         setState(() {
+          _currentMetadata = metadata;
           _nameController.text = metadata?.name ?? '';
+          _displayNameController.text = metadata?.displayName ?? '';
           _pictureController.text = metadata?.picture ?? '';
           _aboutController.text = metadata?.about ?? '';
           _isLoading = false;
@@ -63,33 +71,47 @@ class _ProfileViewState extends State<ProfileView> {
   }
 
   Future<void> _saveProfile() async {
+    final pubkey = Get.find<AuthController>().publicKey;
+    if (pubkey == null) return;
+
     setState(() => _isSaving = true);
 
     try {
       final ndk = Get.find<Ndk>();
 
-      final metadata = Metadata(
-        pubKey: Get.find<AuthController>().publicKey!,
-        name: _nameController.text.trim().isEmpty
-            ? null
-            : _nameController.text.trim(),
-        picture: _pictureController.text.trim().isEmpty
-            ? null
-            : _pictureController.text.trim(),
-        about: _aboutController.text.trim().isEmpty
-            ? null
-            : _aboutController.text.trim(),
+      // Start from current object to preserve fields like banner, nip05, website, etc.
+      final metadata = _currentMetadata ?? Metadata(pubKey: pubkey);
+
+      // Update fields using setters
+      metadata.name = _nameController.text.trim().isEmpty
+          ? null
+          : _nameController.text.trim().toLowerCase().replaceAll(' ', '');
+      metadata.displayName = _displayNameController.text.trim().isEmpty
+          ? null
+          : _displayNameController.text.trim();
+      metadata.picture = _pictureController.text.trim().isEmpty
+          ? null
+          : _pictureController.text.trim();
+      metadata.about = _aboutController.text.trim().isEmpty
+          ? null
+          : _aboutController.text.trim();
+
+      metadata.updatedAt = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+      await ndk.config.cache.saveMetadata(metadata);
+
+      final event = metadata.toEvent();
+      final signedEvent = await ndk.accounts.getLoggedAccount()!.signer.sign(
+        event,
       );
 
-      await ndk.metadata.broadcastMetadata(metadata);
+      final broadcast = ndk.broadcast.broadcast(nostrEvent: signedEvent);
+      await broadcast.broadcastDoneFuture;
 
       // Refresh metadata in AuthController
       Get.find<AuthController>().userMetadata.value = metadata;
 
-      if (mounted) {
-        ToastHelper.success(context, 'Profile updated');
-        Get.back();
-      }
+      if (mounted) Get.back();
     } catch (e) {
       if (mounted) {
         ToastHelper.error(context, 'Failed to update profile');
@@ -135,13 +157,28 @@ class _ProfileViewState extends State<ProfileView> {
                     Center(child: _buildAvatarPreview(context)),
                     const SizedBox(height: 24),
                     TextField(
-                      controller: _nameController,
+                      controller: _displayNameController,
                       decoration: const InputDecoration(
-                        labelText: 'Name',
-                        hintText: 'Your display name',
-                        border: OutlineInputBorder(),
+                        labelText: 'Display Name',
+                        hintText: 'Your full name or alias',
                       ),
                       textCapitalization: TextCapitalization.words,
+                      onChanged: (_) => setState(() {}),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Username',
+                        hintText: 'handle',
+                        prefixText: '@',
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'[a-z0-9_.-]'),
+                        ),
+                      ],
+                      textCapitalization: TextCapitalization.none,
                     ),
                     const SizedBox(height: 16),
                     TextField(
@@ -149,7 +186,6 @@ class _ProfileViewState extends State<ProfileView> {
                       decoration: const InputDecoration(
                         labelText: 'Picture URL',
                         hintText: 'https://example.com/avatar.png',
-                        border: OutlineInputBorder(),
                       ),
                       keyboardType: TextInputType.url,
                       onChanged: (_) => setState(() {}),
@@ -160,7 +196,6 @@ class _ProfileViewState extends State<ProfileView> {
                       decoration: const InputDecoration(
                         labelText: 'About',
                         hintText: 'A short bio about yourself',
-                        border: OutlineInputBorder(),
                       ),
                       maxLines: 3,
                       textCapitalization: TextCapitalization.sentences,
@@ -179,6 +214,7 @@ class _ProfileViewState extends State<ProfileView> {
 
   Widget _buildAvatarPreview(BuildContext context) {
     final pictureUrl = _pictureController.text.trim();
+    final displayName = _displayNameController.text.trim();
     final name = _nameController.text.trim();
     final pubkey = Get.find<AuthController>().publicKey;
     final colorScheme = Theme.of(context).colorScheme;
@@ -192,11 +228,14 @@ class _ProfileViewState extends State<ProfileView> {
       );
     }
 
-    final initial = name.isNotEmpty
-        ? name[0].toUpperCase()
-        : pubkey != null && pubkey.isNotEmpty
-        ? pubkey.substring(0, 2).toUpperCase()
-        : '?';
+    String initial = '?';
+    if (displayName.isNotEmpty) {
+      initial = displayName[0].toUpperCase();
+    } else if (name.isNotEmpty) {
+      initial = name[0].toUpperCase();
+    } else if (pubkey != null && pubkey.isNotEmpty) {
+      initial = pubkey.substring(0, 2).toUpperCase();
+    }
 
     return CircleAvatar(
       radius: 50,

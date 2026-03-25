@@ -388,7 +388,6 @@ class InboxView extends GetView<InboxController> {
                     ),
                     IconButton(
                       icon: const Icon(Icons.settings),
-                      tooltip: 'Settings',
                       onPressed: () => Get.toNamed(AppRoutes.settings),
                     ),
                     const SizedBox(width: 8),
