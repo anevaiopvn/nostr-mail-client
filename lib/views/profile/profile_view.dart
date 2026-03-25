@@ -27,6 +27,16 @@ class _ProfileViewState extends State<ProfileView> {
   bool _isLoading = true;
   bool _isSaving = false;
 
+  bool get _hasChanges {
+    final metadata = _currentMetadata;
+    if (metadata == null) return true;
+
+    return _nameController.text.trim() != (metadata.name ?? '') ||
+        _displayNameController.text.trim() != (metadata.displayName ?? '') ||
+        _pictureController.text.trim() != (metadata.picture ?? '') ||
+        _aboutController.text.trim() != (metadata.about ?? '');
+  }
+
   @override
   void initState() {
     super.initState();
@@ -133,8 +143,8 @@ class _ProfileViewState extends State<ProfileView> {
         actionsPadding: const EdgeInsets.only(right: 8),
         actions: [
           if (!_isLoading)
-            TextButton(
-              onPressed: _isSaving ? null : _saveProfile,
+            FilledButton(
+              onPressed: (_isSaving || !_hasChanges) ? null : _saveProfile,
               child: _isSaving
                   ? const SizedBox(
                       width: 20,
@@ -179,6 +189,7 @@ class _ProfileViewState extends State<ProfileView> {
                         ),
                       ],
                       textCapitalization: TextCapitalization.none,
+                      onChanged: (_) => setState(() {}),
                     ),
                     const SizedBox(height: 16),
                     TextField(
@@ -199,6 +210,7 @@ class _ProfileViewState extends State<ProfileView> {
                       ),
                       maxLines: 3,
                       textCapitalization: TextCapitalization.sentences,
+                      onChanged: (_) => setState(() {}),
                     ),
                   ],
                 ),
