@@ -24,7 +24,9 @@ class InboxView extends GetView<InboxController> {
         ? '${npub.substring(0, 10)}...${npub.substring(npub.length - 6)}'
         : npub;
 
-    final displayName = metadata?.name?.isNotEmpty == true
+    final displayName = metadata?.displayName?.isNotEmpty == true
+        ? metadata!.displayName!
+        : metadata?.name?.isNotEmpty == true
         ? metadata!.name!
         : shortNpub;
 
