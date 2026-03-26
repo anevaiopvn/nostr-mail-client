@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 
 import '../../controllers/compose_controller.dart';
 import '../../controllers/inbox_controller.dart';
+import '../../controllers/profile_controller.dart';
 import '../../views/auth/login_view.dart';
 import '../../views/compose/compose_view.dart';
 import '../../views/email/email_view.dart';
@@ -56,6 +57,9 @@ class AppRoutes {
     GetPage(
       name: profile,
       page: () => const ProfileView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => ProfileController());
+      }),
       middlewares: [OnboardingMiddleware(), AuthMiddleware()],
     ),
     GetPage(

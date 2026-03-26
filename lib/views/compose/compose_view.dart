@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:ndk/ndk.dart';
 import 'package:nostr_mail/nostr_mail.dart';
 
+import '../../controllers/auth_controller.dart';
 import '../../controllers/compose_controller.dart';
 import '../../controllers/settings_controller.dart';
 import '../../models/from_option.dart';
 import '../../services/nostr_mail_service.dart';
 import '../../utils/responsive_helper.dart';
 import '../../utils/toast_helper.dart';
+import '../../widgets/email_avatar.dart';
+import '../../widgets/nostr_avatar.dart';
 import '../shared/desktop_shell.dart';
 import 'widgets/from_selector_sheet.dart';
 import 'widgets/recipient_autocomplete.dart';
@@ -416,31 +420,24 @@ class _ComposeViewState extends State<ComposeView> {
   }
 
   Widget _buildFromAvatar(BuildContext context, FromOption option) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final authController = Get.find<AuthController>();
+    final pubkey = authController.publicKey;
 
-    if (option.picture != null && option.picture!.isNotEmpty) {
-      return CircleAvatar(
+    // Use current user's pubkey for all addresses that are the user's aliases
+    final isUserAddress = option.source != FromSource.history;
+
+    if (isUserAddress && pubkey != null) {
+      return NostrAvatar(
+        pubkey: pubkey,
+        metadata: Metadata(
+          pubKey: pubkey,
+          picture: option.picture,
+          displayName: option.displayName,
+        ),
         radius: 14,
-        backgroundImage: NetworkImage(option.picture!),
-        backgroundColor: colorScheme.primaryContainer,
       );
     }
 
-    final initial = option.displayName?.isNotEmpty == true
-        ? option.displayName![0].toUpperCase()
-        : 'N';
-
-    return CircleAvatar(
-      radius: 14,
-      backgroundColor: colorScheme.primaryContainer,
-      child: Text(
-        initial,
-        style: TextStyle(
-          color: colorScheme.primary,
-          fontWeight: FontWeight.bold,
-          fontSize: 10,
-        ),
-      ),
-    );
+    return EmailAvatar(email: option.address, radius: 14);
   }
 }

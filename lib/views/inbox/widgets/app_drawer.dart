@@ -6,6 +6,7 @@ import 'package:toastification/toastification.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../controllers/auth_controller.dart';
 import '../../../controllers/inbox_controller.dart';
+import '../../../widgets/nostr_avatar.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -29,50 +30,12 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Color _avatarColor(BuildContext context) {
-    final pubkey = Get.find<AuthController>().publicKey;
-    if (pubkey == null || pubkey.isEmpty) {
-      return Theme.of(context).colorScheme.primary;
-    }
-    final hash = pubkey.hashCode;
-    return Color.fromARGB(
-      255,
-      (hash & 0xFF0000) >> 16,
-      (hash & 0x00FF00) >> 8,
-      hash & 0x0000FF,
-    ).withValues(alpha: 1);
-  }
-
   Widget _buildAvatar(BuildContext context) {
     final authController = Get.find<AuthController>();
-    final metadata = authController.userMetadata.value;
-    final pubkey = authController.publicKey;
-
-    if (metadata?.picture != null && metadata!.picture!.isNotEmpty) {
-      return CircleAvatar(
-        radius: 28,
-        backgroundImage: NetworkImage(metadata.picture!),
-        backgroundColor: _avatarColor(context),
-      );
-    }
-
-    final initial = metadata?.name?.isNotEmpty == true
-        ? metadata!.name![0].toUpperCase()
-        : pubkey != null && pubkey.isNotEmpty
-        ? pubkey.substring(0, 2).toUpperCase()
-        : '?';
-
-    return CircleAvatar(
+    return NostrAvatar(
+      pubkey: authController.publicKey ?? '',
+      metadata: authController.userMetadata.value,
       radius: 28,
-      backgroundColor: _avatarColor(context),
-      child: Text(
-        initial,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onPrimary,
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-        ),
-      ),
     );
   }
 

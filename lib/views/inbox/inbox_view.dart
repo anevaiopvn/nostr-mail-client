@@ -7,6 +7,7 @@ import '../../app/routes/app_routes.dart';
 import '../../controllers/auth_controller.dart';
 import '../../controllers/inbox_controller.dart';
 import '../../utils/responsive_helper.dart';
+import '../../widgets/nostr_avatar.dart';
 import '../shared/desktop_shell.dart';
 import 'widgets/app_drawer.dart';
 import 'widgets/email_tile.dart';
@@ -14,54 +15,6 @@ import 'widgets/search_field.dart';
 
 class InboxView extends GetView<InboxController> {
   const InboxView({super.key});
-
-  Color _avatarColor(BuildContext context) {
-    final pubkey = Get.find<AuthController>().publicKey;
-    if (pubkey == null || pubkey.isEmpty) {
-      return Theme.of(context).colorScheme.primary;
-    }
-    final hash = pubkey.hashCode;
-    return Color.fromARGB(
-      255,
-      (hash & 0xFF0000) >> 16,
-      (hash & 0x00FF00) >> 8,
-      hash & 0x0000FF,
-    ).withValues(alpha: 1);
-  }
-
-  Widget _buildAvatar(BuildContext context) {
-    final authController = Get.find<AuthController>();
-    final metadata = authController.userMetadata.value;
-    final pubkey = authController.publicKey;
-    final colorScheme = Theme.of(context).colorScheme;
-
-    if (metadata?.picture != null && metadata!.picture!.isNotEmpty) {
-      return CircleAvatar(
-        radius: 18,
-        backgroundImage: NetworkImage(metadata.picture!),
-        backgroundColor: _avatarColor(context),
-      );
-    }
-
-    final initial = metadata?.name?.isNotEmpty == true
-        ? metadata!.name![0].toUpperCase()
-        : pubkey != null && pubkey.isNotEmpty
-        ? pubkey.substring(0, 2).toUpperCase()
-        : '?';
-
-    return CircleAvatar(
-      radius: 18,
-      backgroundColor: _avatarColor(context),
-      child: Text(
-        initial,
-        style: TextStyle(
-          color: colorScheme.onPrimary,
-          fontWeight: FontWeight.bold,
-          fontSize: 12,
-        ),
-      ),
-    );
-  }
 
   Widget _buildAccountHeader(BuildContext context) {
     final authController = Get.find<AuthController>();
@@ -71,7 +24,9 @@ class InboxView extends GetView<InboxController> {
         ? '${npub.substring(0, 10)}...${npub.substring(npub.length - 6)}'
         : npub;
 
-    final displayName = metadata?.name?.isNotEmpty == true
+    final displayName = metadata?.displayName?.isNotEmpty == true
+        ? metadata!.displayName!
+        : metadata?.name?.isNotEmpty == true
         ? metadata!.name!
         : shortNpub;
 
@@ -80,7 +35,11 @@ class InboxView extends GetView<InboxController> {
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
-          _buildAvatar(context),
+          NostrAvatar(
+            pubkey: authController.publicKey ?? '',
+            metadata: metadata,
+            radius: 18,
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -388,17 +347,23 @@ class InboxView extends GetView<InboxController> {
                     ),
                     IconButton(
                       icon: const Icon(Icons.settings),
-                      tooltip: 'Settings',
                       onPressed: () => Get.toNamed(AppRoutes.settings),
                     ),
                     const SizedBox(width: 8),
                     Builder(
                       builder: (context) => MenuAnchor(
-                        alignmentOffset: const Offset(-200, 8),
+                        // TODO: Refactor account popup into a reusable widget to avoid duplication with left_rail.dart
+                        alignmentOffset: const Offset(-204, 8),
                         style: MenuStyle(
                           shape: WidgetStatePropertyAll(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
+                              side: BorderSide(
+                                width: 2,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.outlineVariant,
+                              ),
                             ),
                           ),
                         ),
@@ -444,7 +409,14 @@ class InboxView extends GetView<InboxController> {
                                 menuController.open();
                               }
                             },
-                            child: Obx(() => _buildAvatar(context)),
+                            child: Obx(() {
+                              final authController = Get.find<AuthController>();
+                              return NostrAvatar(
+                                pubkey: authController.publicKey ?? '',
+                                metadata: authController.userMetadata.value,
+                                radius: 18,
+                              );
+                            }),
                           );
                         },
                       ),

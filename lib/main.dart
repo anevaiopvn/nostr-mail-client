@@ -5,7 +5,6 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 import 'package:ndk_flutter/ndk_flutter.dart';
-import 'package:ndk_rust_verifier/ndk_rust_verifier.dart';
 import 'package:ndk_flutter/l10n/app_localizations.dart' as ndk_flutter;
 import 'package:nostr_mail_client/utils/responsive_helper.dart';
 import 'package:system_theme/system_theme.dart';
@@ -112,8 +111,21 @@ class MainApp extends StatelessWidget {
       return ToastificationWrapper(
         child: GetMaterialApp(
           title: 'Nmail',
-          theme: ThemeData.from(colorScheme: lightScheme),
-          darkTheme: ThemeData.from(colorScheme: darkScheme),
+          // TODO: Extract repetitive InputDecorationTheme to a shared variable
+          theme: ThemeData.from(colorScheme: lightScheme).copyWith(
+            inputDecorationTheme: InputDecorationTheme(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+          darkTheme: ThemeData.from(colorScheme: darkScheme).copyWith(
+            inputDecorationTheme: InputDecorationTheme(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
           themeMode: initialThemeMode,
           locale: const Locale('en'),
           localizationsDelegates: [

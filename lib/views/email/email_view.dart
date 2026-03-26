@@ -4,6 +4,7 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 import 'package:nostr_mail/nostr_mail.dart';
+import 'package:nostr_mail_client/widgets/email_avatar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../app/routes/app_routes.dart';
@@ -13,6 +14,7 @@ import '../../services/nostr_mail_service.dart';
 import '../../utils/nostr_utils.dart';
 import '../../utils/responsive_helper.dart';
 import '../../utils/toast_helper.dart';
+import '../../widgets/nostr_avatar.dart';
 import '../shared/desktop_shell.dart';
 
 class EmailView extends StatefulWidget {
@@ -425,56 +427,23 @@ class _EmailViewState extends State<EmailView> {
   }
 
   Widget _buildMainRecipientAvatar(ColorScheme colorScheme) {
-    if (_recipientMetadata?.picture != null &&
-        _recipientMetadata!.picture!.isNotEmpty) {
-      return CircleAvatar(
-        radius: 12,
-        backgroundImage: NetworkImage(_recipientMetadata!.picture!),
-        backgroundColor: colorScheme.primaryContainer,
-      );
+    final contactPubkey = _recipientContactPubkey;
+    if (contactPubkey == null) {
+      return EmailAvatar(email: email!.to, radius: 12);
     }
-    final initial = _recipientMetadata?.name?.isNotEmpty == true
-        ? _recipientMetadata!.name![0].toUpperCase()
-        : email!.to.isNotEmpty
-        ? email!.to[0].toUpperCase()
-        : '?';
-    return CircleAvatar(
+
+    return NostrAvatar(
+      pubkey: contactPubkey,
+      metadata: _recipientMetadata,
       radius: 12,
-      backgroundColor: colorScheme.primaryContainer,
-      child: Text(
-        initial,
-        style: TextStyle(
-          color: colorScheme.primary,
-          fontWeight: FontWeight.bold,
-          fontSize: 10,
-        ),
-      ),
     );
   }
 
   Widget _buildRecipientBridgeBadge(ColorScheme colorScheme) {
-    if (_recipientBridgeMetadata?.picture != null &&
-        _recipientBridgeMetadata!.picture!.isNotEmpty) {
-      return CircleAvatar(
-        radius: 7,
-        backgroundImage: NetworkImage(_recipientBridgeMetadata!.picture!),
-        backgroundColor: colorScheme.secondaryContainer,
-      );
-    }
-    // Fallback: show last character of npub
-    final npub = Nip19.encodePubKey(email!.recipientPubkey);
-    final lastChar = npub[npub.length - 1].toUpperCase();
-    return CircleAvatar(
+    return NostrAvatar(
+      pubkey: email!.recipientPubkey,
+      metadata: _recipientBridgeMetadata,
       radius: 7,
-      backgroundColor: colorScheme.secondaryContainer,
-      child: Text(
-        lastChar,
-        style: TextStyle(
-          color: colorScheme.onSecondaryContainer,
-          fontWeight: FontWeight.bold,
-          fontSize: 6,
-        ),
-      ),
     );
   }
 
@@ -507,56 +476,23 @@ class _EmailViewState extends State<EmailView> {
   }
 
   Widget _buildSenderBridgeBadge(ColorScheme colorScheme) {
-    if (_bridgeMetadata?.picture != null &&
-        _bridgeMetadata!.picture!.isNotEmpty) {
-      return CircleAvatar(
-        radius: 12,
-        backgroundImage: NetworkImage(_bridgeMetadata!.picture!),
-        backgroundColor: colorScheme.secondaryContainer,
-      );
-    }
-    // Fallback: show last character of npub
-    final npub = Nip19.encodePubKey(email!.senderPubkey);
-    final lastChar = npub[npub.length - 1].toUpperCase();
-    return CircleAvatar(
+    return NostrAvatar(
+      pubkey: email!.senderPubkey,
+      metadata: _bridgeMetadata,
       radius: 12,
-      backgroundColor: colorScheme.secondaryContainer,
-      child: Text(
-        lastChar,
-        style: TextStyle(
-          color: colorScheme.onSecondaryContainer,
-          fontWeight: FontWeight.bold,
-          fontSize: 10,
-        ),
-      ),
     );
   }
 
   Widget _buildMainSenderAvatar(ColorScheme colorScheme) {
-    if (_senderMetadata?.picture != null &&
-        _senderMetadata!.picture!.isNotEmpty) {
-      return CircleAvatar(
-        radius: 24,
-        backgroundImage: NetworkImage(_senderMetadata!.picture!),
-        backgroundColor: colorScheme.primaryContainer,
-      );
+    final contactPubkey = _senderContactPubkey;
+    if (contactPubkey == null) {
+      return EmailAvatar(email: email!.from, radius: 24);
     }
-    final initial = _senderMetadata?.name?.isNotEmpty == true
-        ? _senderMetadata!.name![0].toUpperCase()
-        : email!.from.isNotEmpty
-        ? email!.from[0].toUpperCase()
-        : '?';
-    return CircleAvatar(
+
+    return NostrAvatar(
+      pubkey: contactPubkey,
+      metadata: _senderMetadata,
       radius: 24,
-      backgroundColor: colorScheme.primaryContainer,
-      child: Text(
-        initial,
-        style: TextStyle(
-          color: colorScheme.primary,
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-        ),
-      ),
     );
   }
 

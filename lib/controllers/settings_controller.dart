@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 import 'package:ndk_flutter/ndk_flutter.dart';
-import 'package:ndk_rust_verifier/ndk_rust_verifier.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
