@@ -14,6 +14,7 @@ class ProfileController extends GetxController {
   final Rx<Metadata?> _currentMetadata = Rx<Metadata?>(null);
   final RxBool isLoading = true.obs;
   final RxBool isSaving = false.obs;
+  final RxBool showMoreOptions = false.obs;
 
   bool get hasChanges {
     final metadata = _currentMetadata.value;

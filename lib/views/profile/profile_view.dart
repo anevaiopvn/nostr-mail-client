@@ -79,16 +79,6 @@ class ProfileView extends GetView<ProfileController> {
                   ),
                   const SizedBox(height: 16),
                   TextField(
-                    controller: controller.pictureController,
-                    decoration: const InputDecoration(
-                      labelText: 'Picture URL',
-                      hintText: 'https://example.com/avatar.png',
-                    ),
-                    keyboardType: TextInputType.url,
-                    onChanged: (_) => controller.update(),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
                     controller: controller.aboutController,
                     decoration: const InputDecoration(
                       labelText: 'About',
@@ -97,6 +87,36 @@ class ProfileView extends GetView<ProfileController> {
                     maxLines: 3,
                     textCapitalization: TextCapitalization.sentences,
                     onChanged: (_) => controller.update(),
+                  ),
+                  const SizedBox(height: 16),
+                  Obx(
+                    () => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextButton.icon(
+                          onPressed: () => controller.showMoreOptions.toggle(),
+                          icon: AnimatedRotation(
+                            turns: controller.showMoreOptions.value ? 0.5 : 0,
+                            duration: const Duration(milliseconds: 200),
+                            child: const Icon(Icons.expand_more),
+                          ),
+                          label: const Text('Advanced'),
+                        ),
+                        if (controller.showMoreOptions.value)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16),
+                            child: TextField(
+                              controller: controller.pictureController,
+                              decoration: const InputDecoration(
+                                labelText: 'Picture URL',
+                                hintText: 'https://example.com/avatar.png',
+                              ),
+                              keyboardType: TextInputType.url,
+                              onChanged: (_) => controller.update(),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ],
               ),
