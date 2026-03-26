@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
@@ -14,6 +15,7 @@ class ProfileController extends GetxController {
   final Rx<Metadata?> _currentMetadata = Rx<Metadata?>(null);
   final RxBool isLoading = true.obs;
   final RxBool isSaving = false.obs;
+  final RxBool isUploadingPicture = false.obs;
   final RxBool showMoreOptions = false.obs;
 
   bool get hasChanges {
@@ -75,6 +77,49 @@ class ProfileController extends GetxController {
       ToastHelper.error(Get.context!, 'Failed to load profile data');
     } finally {
       isLoading.value = false;
+      update();
+    }
+  }
+
+  Future<void> pickAndUploadPicture(BuildContext context) async {
+    final result = await FilePicker.platform.pickFiles(
+      dialogTitle: 'Select profile picture',
+      type: FileType.image,
+      allowMultiple: false,
+      withData: true,
+    );
+
+    if (result == null || result.files.single.bytes == null) return;
+
+    final file = result.files.single;
+    isUploadingPicture.value = true;
+    update();
+
+    try {
+      final ndk = Get.find<Ndk>();
+      final uploadResults = await ndk.blossom.uploadBlob(
+        data: file.bytes!,
+        contentType: file.extension != null ? 'image/${file.extension}' : null,
+      );
+
+      final successResult = uploadResults.firstWhere(
+        (r) => r.success && r.descriptor != null,
+        orElse: () => uploadResults.first,
+      );
+
+      if (successResult.success && successResult.descriptor != null) {
+        pictureController.text = successResult.descriptor!.url;
+      } else {
+        if (context.mounted) {
+          ToastHelper.error(context, successResult.error ?? 'Upload failed');
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ToastHelper.error(context, 'An error occurred during upload');
+      }
+    } finally {
+      isUploadingPicture.value = false;
       update();
     }
   }
