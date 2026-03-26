@@ -97,6 +97,8 @@ class AuthController extends GetxController {
       pubkey: keyPair.publicKey,
     );
 
+    await ndkFlutter.saveAccountsState();
+
     final rawName = username.value.trim();
     final formattedName = rawName.toLowerCase().replaceAll(' ', '');
 
@@ -117,7 +119,6 @@ class AuthController extends GetxController {
     _nostrMailService.saveNip65Relays(relays);
     _nostrMailService.saveDmRelays(NostrConfig.recommendedDmRelays);
     _nostrMailService.saveBlossomServers(NostrConfig.recommendedBlossomServers);
-    ndkFlutter.saveAccountsState();
 
     onLoggedIn();
 

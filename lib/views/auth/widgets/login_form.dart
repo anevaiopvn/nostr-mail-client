@@ -23,8 +23,10 @@ class LoginForm extends GetView<AuthController> {
               Get.offAllNamed(AppRoutes.inbox);
             },
             nsecLabelText: "Sync code",
+            enableNip07Login: false,
             enablePubkeyLogin: false,
             enableBunkerLogin: false,
+            enableAmberLogin: false,
             enableAccountCreation: false,
           ),
           OutlinedButton.icon(

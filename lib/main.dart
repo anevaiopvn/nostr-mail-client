@@ -111,6 +111,7 @@ class MainApp extends StatelessWidget {
       return ToastificationWrapper(
         child: GetMaterialApp(
           title: 'Nmail',
+          // TODO: Extract repetitive InputDecorationTheme to a shared variable
           theme: ThemeData.from(colorScheme: lightScheme).copyWith(
             inputDecorationTheme: InputDecorationTheme(
               border: OutlineInputBorder(

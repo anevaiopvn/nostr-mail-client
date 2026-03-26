@@ -20,6 +20,8 @@ class NostrAvatar extends StatelessWidget {
       return Theme.of(context).colorScheme.primaryContainer;
     }
 
+    //!! WARNING: pubkey.hashCode can be negative, potentially creating invalid colors
+    // Consider using pubkey.hashCode.abs() or a proper hash function
     final hash = pubkey.hashCode;
     return Color.fromARGB(
       255,

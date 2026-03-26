@@ -97,6 +97,13 @@ class ProfileController extends GetxController {
         contentType: file.extension != null ? 'image/${file.extension}' : null,
       );
 
+      if (uploadResults.isEmpty) {
+        if (context.mounted) {
+          ToastHelper.error(context, 'No servers responded');
+        }
+        return;
+      }
+
       final successResult = uploadResults.firstWhere(
         (r) => r.success && r.descriptor != null,
         orElse: () => uploadResults.first,

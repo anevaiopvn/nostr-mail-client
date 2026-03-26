@@ -360,9 +360,9 @@ class InboxView extends GetView<InboxController> {
                               borderRadius: BorderRadius.circular(16),
                               side: BorderSide(
                                 width: 2,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .outlineVariant,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.outlineVariant,
                               ),
                             ),
                           ),
