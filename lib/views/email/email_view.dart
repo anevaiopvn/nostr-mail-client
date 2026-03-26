@@ -429,10 +429,7 @@ class _EmailViewState extends State<EmailView> {
   Widget _buildMainRecipientAvatar(ColorScheme colorScheme) {
     final contactPubkey = _recipientContactPubkey;
     if (contactPubkey == null) {
-      return EmailAvatar(
-        email: email!.to,
-        radius: 12,
-      );
+      return EmailAvatar(email: email!.to, radius: 12);
     }
 
     return NostrAvatar(
@@ -489,10 +486,7 @@ class _EmailViewState extends State<EmailView> {
   Widget _buildMainSenderAvatar(ColorScheme colorScheme) {
     final contactPubkey = _senderContactPubkey;
     if (contactPubkey == null) {
-      return EmailAvatar(
-        email: email!.from,
-        radius: 24,
-      );
+      return EmailAvatar(email: email!.from, radius: 24);
     }
 
     return NostrAvatar(

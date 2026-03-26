@@ -174,9 +174,6 @@ class _FromOptionTile extends StatelessWidget {
       );
     }
 
-    return EmailAvatar(
-      email: option.address,
-      radius: 20,
-    );
+    return EmailAvatar(email: option.address, radius: 20);
   }
 }

@@ -438,9 +438,6 @@ class _ComposeViewState extends State<ComposeView> {
       );
     }
 
-    return EmailAvatar(
-      email: option.address,
-      radius: 14,
-    );
+    return EmailAvatar(email: option.address, radius: 14);
   }
 }

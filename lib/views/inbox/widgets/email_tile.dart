@@ -509,10 +509,7 @@ class _EmailTileState extends State<EmailTile> {
   Widget _buildMainAvatar(ColorScheme colorScheme, {double radius = 20}) {
     final contactPubkey = _contactPubkey;
     if (contactPubkey == null) {
-      return EmailAvatar(
-        email: _displayAddress,
-        radius: radius,
-      );
+      return EmailAvatar(email: _displayAddress, radius: radius);
     }
 
     return NostrAvatar(

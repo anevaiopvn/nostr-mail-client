@@ -72,9 +72,7 @@ class ProfileView extends GetView<ProfileController> {
                       prefixText: '@',
                     ),
                     inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'[a-z0-9_.-]'),
-                      ),
+                      FilteringTextInputFormatter.allow(RegExp(r'[a-z0-9_.-]')),
                     ],
                     textCapitalization: TextCapitalization.none,
                     onChanged: (_) => controller.update(),
@@ -114,7 +112,10 @@ class ProfileView extends GetView<ProfileController> {
     return content;
   }
 
-  Widget _buildAvatarPreview(BuildContext context, ProfileController controller) {
+  Widget _buildAvatarPreview(
+    BuildContext context,
+    ProfileController controller,
+  ) {
     final pictureUrl = controller.pictureController.text.trim();
     final displayName = controller.displayNameController.text.trim();
     final name = controller.nameController.text.trim();

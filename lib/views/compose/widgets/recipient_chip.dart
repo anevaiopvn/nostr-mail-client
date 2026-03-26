@@ -61,10 +61,7 @@ class RecipientChip extends StatelessWidget {
   Widget _buildAvatar(BuildContext context) {
     final pubkey = recipient.pubkey;
     if (pubkey == null) {
-      return EmailAvatar(
-        email: recipient.input,
-        radius: 12,
-      );
+      return EmailAvatar(email: recipient.input, radius: 12);
     }
 
     return NostrAvatar(
