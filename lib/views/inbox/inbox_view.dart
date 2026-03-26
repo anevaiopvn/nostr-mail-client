@@ -352,11 +352,18 @@ class InboxView extends GetView<InboxController> {
                     const SizedBox(width: 8),
                     Builder(
                       builder: (context) => MenuAnchor(
-                        alignmentOffset: const Offset(-200, 8),
+                        // TODO: Refactor account popup into a reusable widget to avoid duplication with left_rail.dart
+                        alignmentOffset: const Offset(-204, 8),
                         style: MenuStyle(
                           shape: WidgetStatePropertyAll(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
+                              side: BorderSide(
+                                width: 2,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .outlineVariant,
+                              ),
                             ),
                           ),
                         ),

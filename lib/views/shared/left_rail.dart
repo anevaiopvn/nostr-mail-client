@@ -121,11 +121,16 @@ class _AccountMenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MenuAnchor(
-      alignmentOffset: const Offset(LayoutConstants.railWidth, 0),
+      // TODO: Refactor account popup into a reusable widget to avoid duplication with inbox_view.dart
+      alignmentOffset: const Offset(LayoutConstants.railWidth - 8, -44),
       style: MenuStyle(
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(LayoutConstants.borderRadius),
+            side: BorderSide(
+              width: 2,
+              color: Theme.of(context).colorScheme.outlineVariant,
+            ),
           ),
         ),
       ),
