@@ -44,15 +44,6 @@ class ProfileController extends GetxController {
     loadMetadata();
   }
 
-  @override
-  void onClose() {
-    nameController.dispose();
-    displayNameController.dispose();
-    pictureController.dispose();
-    aboutController.dispose();
-    super.onClose();
-  }
-
   Future<void> loadMetadata() async {
     final authController = Get.find<AuthController>();
     final pubkey = authController.publicKey;
@@ -74,10 +65,14 @@ class ProfileController extends GetxController {
         aboutController.text = metadata.about ?? '';
       }
     } catch (e) {
-      ToastHelper.error(Get.context!, 'Failed to load profile data');
+      if (!isClosed) {
+        ToastHelper.error(Get.context!, 'Failed to load profile data');
+      }
     } finally {
-      isLoading.value = false;
-      update();
+      if (!isClosed) {
+        isLoading.value = false;
+        update();
+      }
     }
   }
 
@@ -119,8 +114,10 @@ class ProfileController extends GetxController {
         ToastHelper.error(context, 'An error occurred during upload');
       }
     } finally {
-      isUploadingPicture.value = false;
-      update();
+      if (!isClosed) {
+        isUploadingPicture.value = false;
+        update();
+      }
     }
   }
 
@@ -169,10 +166,11 @@ class ProfileController extends GetxController {
 
       Get.back();
     } catch (e) {
-      ToastHelper.error(Get.context!, 'Failed to update profile');
-    } finally {
-      isSaving.value = false;
-      update();
+      if (!isClosed) {
+        isSaving.value = false;
+        update();
+        ToastHelper.error(Get.context!, 'Failed to update profile');
+      }
     }
   }
 }

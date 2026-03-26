@@ -12,11 +12,15 @@ import '../shared/desktop_shell.dart';
 class ProfileView extends GetView<ProfileController> {
   const ProfileView({super.key});
 
+  static final GlobalKey<ScaffoldState> _scaffoldKey =
+      GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     final isWide = ResponsiveHelper.isNotMobile(context);
 
     Widget content = Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: const Text('Edit Profile'),
         actionsPadding: const EdgeInsets.only(right: 8),
