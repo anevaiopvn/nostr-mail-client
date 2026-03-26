@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:ndk/ndk.dart';
 
 import '../../../models/contact.dart';
+import '../../../widgets/email_avatar.dart';
+import '../../../widgets/nostr_avatar.dart';
 
 class ContactSuggestionTile extends StatelessWidget {
   final Contact contact;
@@ -66,35 +69,22 @@ class ContactSuggestionTile extends StatelessWidget {
   }
 
   Widget _buildAvatar(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    if (contact.picture != null && contact.picture!.isNotEmpty) {
-      return CircleAvatar(
+    final pubkey = contact.pubkey;
+    if (pubkey == null) {
+      return EmailAvatar(
+        email: contact.legacyEmail ?? contact.label,
         radius: 18,
-        backgroundColor: colorScheme.primaryContainer,
-        backgroundImage: NetworkImage(contact.picture!),
       );
     }
 
-    final initial = contact.displayName?.isNotEmpty == true
-        ? contact.displayName![0].toUpperCase()
-        : contact.legacyEmail?.isNotEmpty == true
-        ? contact.legacyEmail![0].toUpperCase()
-        : contact.pubkey?.isNotEmpty == true
-        ? contact.pubkey![0].toUpperCase()
-        : '?';
-
-    return CircleAvatar(
-      radius: 18,
-      backgroundColor: colorScheme.primaryContainer,
-      child: Text(
-        initial,
-        style: TextStyle(
-          color: colorScheme.primary,
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
-        ),
+    return NostrAvatar(
+      pubkey: pubkey,
+      metadata: Metadata(
+        pubKey: pubkey,
+        picture: contact.picture,
+        displayName: contact.displayName,
       ),
+      radius: 18,
     );
   }
 

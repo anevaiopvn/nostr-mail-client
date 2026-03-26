@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:ndk/ndk.dart';
 
 import '../../../models/recipient.dart';
+import '../../../widgets/email_avatar.dart';
+import '../../../widgets/nostr_avatar.dart';
 
 class RecipientChip extends StatelessWidget {
   final Recipient recipient;
@@ -56,25 +59,22 @@ class RecipientChip extends StatelessWidget {
   }
 
   Widget _buildAvatar(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    if (recipient.picture != null && recipient.picture!.isNotEmpty) {
-      return CircleAvatar(
-        backgroundColor: colorScheme.primary,
+    final pubkey = recipient.pubkey;
+    if (pubkey == null) {
+      return EmailAvatar(
+        email: recipient.input,
         radius: 12,
-        backgroundImage: NetworkImage(recipient.picture!),
       );
     }
-    return CircleAvatar(
-      backgroundColor: colorScheme.primary,
-      radius: 12,
-      child: Text(
-        _getAvatarText(),
-        style: TextStyle(
-          color: colorScheme.onPrimary,
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-        ),
+
+    return NostrAvatar(
+      pubkey: pubkey,
+      metadata: Metadata(
+        pubKey: pubkey,
+        picture: recipient.picture,
+        displayName: recipient.displayName,
       ),
+      radius: 12,
     );
   }
 
@@ -90,15 +90,5 @@ class RecipientChip extends StatelessWidget {
       deleteIcon: Icon(Icons.close, size: 18, color: Colors.grey.shade500),
       onDeleted: onDelete,
     );
-  }
-
-  String _getAvatarText() {
-    if (recipient.displayName != null && recipient.displayName!.isNotEmpty) {
-      return recipient.displayName![0].toUpperCase();
-    }
-    if (recipient.pubkey != null && recipient.pubkey!.isNotEmpty) {
-      return recipient.pubkey![0].toUpperCase();
-    }
-    return '?';
   }
 }

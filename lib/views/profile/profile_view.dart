@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:ndk/ndk.dart';
 
 import '../../controllers/auth_controller.dart';
 import '../../controllers/profile_controller.dart';
 import '../../utils/responsive_helper.dart';
+import '../../widgets/nostr_avatar.dart';
 import '../shared/desktop_shell.dart';
 
 class ProfileView extends GetView<ProfileController> {
@@ -117,37 +119,18 @@ class ProfileView extends GetView<ProfileController> {
     final displayName = controller.displayNameController.text.trim();
     final name = controller.nameController.text.trim();
     final pubkey = Get.find<AuthController>().publicKey;
-    final colorScheme = Theme.of(context).colorScheme;
 
-    if (pictureUrl.isNotEmpty) {
-      return CircleAvatar(
-        radius: 50,
-        backgroundImage: NetworkImage(pictureUrl),
-        backgroundColor: colorScheme.primaryContainer,
-        onBackgroundImageError: (e, s) {},
-      );
-    }
+    final previewMetadata = Metadata(
+      pubKey: pubkey ?? '',
+      picture: pictureUrl,
+      displayName: displayName,
+      name: name,
+    );
 
-    String initial = '?';
-    if (displayName.isNotEmpty) {
-      initial = displayName[0].toUpperCase();
-    } else if (name.isNotEmpty) {
-      initial = name[0].toUpperCase();
-    } else if (pubkey != null && pubkey.isNotEmpty) {
-      initial = pubkey.substring(0, 2).toUpperCase();
-    }
-
-    return CircleAvatar(
+    return NostrAvatar(
+      pubkey: pubkey ?? '',
+      metadata: previewMetadata,
       radius: 50,
-      backgroundColor: colorScheme.primaryContainer,
-      child: Text(
-        initial,
-        style: TextStyle(
-          color: colorScheme.primary,
-          fontWeight: FontWeight.bold,
-          fontSize: 32,
-        ),
-      ),
     );
   }
 }

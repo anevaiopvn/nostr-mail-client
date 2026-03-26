@@ -28,6 +28,16 @@ class ProfileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    final authController = Get.find<AuthController>();
+    final metadata = authController.userMetadata.value;
+    if (metadata != null) {
+      _currentMetadata.value = metadata;
+      nameController.text = metadata.name ?? '';
+      displayNameController.text = metadata.displayName ?? '';
+      pictureController.text = metadata.picture ?? '';
+      aboutController.text = metadata.about ?? '';
+      isLoading.value = false;
+    }
     loadMetadata();
   }
 
@@ -41,7 +51,8 @@ class ProfileController extends GetxController {
   }
 
   Future<void> loadMetadata() async {
-    final pubkey = Get.find<AuthController>().publicKey;
+    final authController = Get.find<AuthController>();
+    final pubkey = authController.publicKey;
     if (pubkey == null) {
       isLoading.value = false;
       return;
@@ -51,11 +62,14 @@ class ProfileController extends GetxController {
       final ndk = Get.find<Ndk>();
       final metadata = await ndk.metadata.loadMetadata(pubkey);
 
-      _currentMetadata.value = metadata;
-      nameController.text = metadata?.name ?? '';
-      displayNameController.text = metadata?.displayName ?? '';
-      pictureController.text = metadata?.picture ?? '';
-      aboutController.text = metadata?.about ?? '';
+      if (metadata != null) {
+        authController.userMetadata.value = metadata;
+        _currentMetadata.value = metadata;
+        nameController.text = metadata.name ?? '';
+        displayNameController.text = metadata.displayName ?? '';
+        pictureController.text = metadata.picture ?? '';
+        aboutController.text = metadata.about ?? '';
+      }
     } catch (e) {
       ToastHelper.error(Get.context!, 'Failed to load profile data');
     } finally {

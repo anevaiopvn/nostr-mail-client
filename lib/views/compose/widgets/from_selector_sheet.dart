@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ndk/ndk.dart';
 
+import '../../../controllers/auth_controller.dart';
 import '../../../controllers/compose_controller.dart';
 import '../../../models/from_option.dart';
+import '../../../widgets/email_avatar.dart';
+import '../../../widgets/nostr_avatar.dart';
 
 class FromSelectorSheet extends StatelessWidget {
   const FromSelectorSheet({super.key});
@@ -152,51 +156,27 @@ class _FromOptionTile extends StatelessWidget {
   }
 
   Widget _buildAvatar(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final authController = Get.find<AuthController>();
+    final pubkey = authController.publicKey;
 
-    // History items without nostr metadata
-    if (!option.isNostrAddress) {
-      final initial = option.address.isNotEmpty
-          ? option.address[0].toUpperCase()
-          : '?';
-      return CircleAvatar(
-        radius: 20,
-        backgroundColor: colorScheme.surfaceContainerHighest,
-        child: Text(
-          initial,
-          style: TextStyle(
-            color: colorScheme.onSurfaceVariant,
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-          ),
+    // Use current user's pubkey for all addresses that are the user's aliases
+    final isUserAddress = option.source != FromSource.history;
+
+    if (isUserAddress && pubkey != null) {
+      return NostrAvatar(
+        pubkey: pubkey,
+        metadata: Metadata(
+          pubKey: pubkey,
+          picture: option.picture,
+          displayName: option.displayName,
         ),
-      );
-    }
-
-    // Nostr addresses with potential picture
-    if (option.picture != null && option.picture!.isNotEmpty) {
-      return CircleAvatar(
         radius: 20,
-        backgroundImage: NetworkImage(option.picture!),
-        backgroundColor: colorScheme.primaryContainer,
       );
     }
 
-    final initial = option.displayName?.isNotEmpty == true
-        ? option.displayName![0].toUpperCase()
-        : 'N';
-
-    return CircleAvatar(
+    return EmailAvatar(
+      email: option.address,
       radius: 20,
-      backgroundColor: colorScheme.primaryContainer,
-      child: Text(
-        initial,
-        style: TextStyle(
-          color: colorScheme.primary,
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
-        ),
-      ),
     );
   }
 }

@@ -7,6 +7,8 @@ import '../../../controllers/auth_controller.dart';
 import '../../../controllers/inbox_controller.dart';
 import '../../../utils/nostr_utils.dart';
 import '../../../utils/responsive_helper.dart';
+import '../../../widgets/email_avatar.dart';
+import '../../../widgets/nostr_avatar.dart';
 
 class EmailTile extends StatefulWidget {
   final Email email;
@@ -497,60 +499,27 @@ class _EmailTileState extends State<EmailTile> {
   }
 
   Widget _buildBridgeBadge(ColorScheme colorScheme, {double radius = 10}) {
-    if (_bridgeMetadata?.picture != null &&
-        _bridgeMetadata!.picture!.isNotEmpty) {
-      return CircleAvatar(
-        radius: radius,
-        backgroundImage: NetworkImage(_bridgeMetadata!.picture!),
-        backgroundColor: colorScheme.secondaryContainer,
-      );
-    }
-    // Fallback: show last character of npub
-    final npub = Nip19.encodePubKey(_bridgePubkey);
-    final lastChar = npub[npub.length - 1].toUpperCase();
-    return CircleAvatar(
+    return NostrAvatar(
+      pubkey: _bridgePubkey,
+      metadata: _bridgeMetadata,
       radius: radius,
-      backgroundColor: colorScheme.secondaryContainer,
-      child: Text(
-        lastChar,
-        style: TextStyle(
-          color: colorScheme.onSecondaryContainer,
-          fontWeight: FontWeight.bold,
-          fontSize: radius * 0.9,
-        ),
-      ),
     );
   }
 
   Widget _buildMainAvatar(ColorScheme colorScheme, {double radius = 20}) {
-    if (_contactMetadata?.picture != null &&
-        _contactMetadata!.picture!.isNotEmpty) {
-      return CircleAvatar(
+    final contactPubkey = _contactPubkey;
+    if (contactPubkey == null) {
+      return EmailAvatar(
+        email: _displayAddress,
         radius: radius,
-        backgroundImage: NetworkImage(_contactMetadata!.picture!),
-        backgroundColor: colorScheme.primaryContainer,
       );
     }
-    return CircleAvatar(
-      radius: radius,
-      backgroundColor: colorScheme.primaryContainer,
-      child: Text(
-        _getInitial(),
-        style: TextStyle(
-          color: colorScheme.primary,
-          fontWeight: FontWeight.bold,
-          fontSize: radius * 0.8,
-        ),
-      ),
-    );
-  }
 
-  String _getInitial() {
-    if (_contactMetadata?.name != null && _contactMetadata!.name!.isNotEmpty) {
-      return _contactMetadata!.name![0].toUpperCase();
-    }
-    final address = _displayAddress;
-    return address.isNotEmpty ? address[0].toUpperCase() : '?';
+    return NostrAvatar(
+      pubkey: contactPubkey,
+      metadata: _contactMetadata,
+      radius: radius,
+    );
   }
 
   String _formatDate(DateTime date) {

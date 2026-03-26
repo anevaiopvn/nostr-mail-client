@@ -7,6 +7,7 @@ import 'package:toastification/toastification.dart';
 import '../../app/routes/app_routes.dart';
 import '../../controllers/auth_controller.dart';
 import '../../utils/platform_helper.dart';
+import '../../widgets/nostr_avatar.dart';
 import 'layout_constants.dart';
 
 class LeftRail extends StatelessWidget {
@@ -60,51 +61,12 @@ class LeftRail extends StatelessWidget {
 class _AccountMenuButton extends StatelessWidget {
   const _AccountMenuButton();
 
-  Color _avatarColor(BuildContext context) {
-    final pubkey = Get.find<AuthController>().publicKey;
-    if (pubkey == null || pubkey.isEmpty) {
-      return Theme.of(context).colorScheme.primary;
-    }
-    final hash = pubkey.hashCode;
-    return Color.fromARGB(
-      255,
-      (hash & 0xFF0000) >> 16,
-      (hash & 0x00FF00) >> 8,
-      hash & 0x0000FF,
-    ).withValues(alpha: 1);
-  }
-
   Widget _buildAvatar(BuildContext context) {
     final authController = Get.find<AuthController>();
-    final metadata = authController.userMetadata.value;
-    final pubkey = authController.publicKey;
-    final colorScheme = Theme.of(context).colorScheme;
-
-    if (metadata?.picture != null && metadata!.picture!.isNotEmpty) {
-      return CircleAvatar(
-        radius: 14,
-        backgroundImage: NetworkImage(metadata.picture!),
-        backgroundColor: _avatarColor(context),
-      );
-    }
-
-    final initial = metadata?.name?.isNotEmpty == true
-        ? metadata!.name![0].toUpperCase()
-        : pubkey != null && pubkey.isNotEmpty
-        ? pubkey.substring(0, 2).toUpperCase()
-        : '?';
-
-    return CircleAvatar(
+    return NostrAvatar(
+      pubkey: authController.publicKey ?? '',
+      metadata: authController.userMetadata.value,
       radius: 14,
-      backgroundColor: _avatarColor(context),
-      child: Text(
-        initial,
-        style: TextStyle(
-          color: colorScheme.onPrimary,
-          fontWeight: FontWeight.bold,
-          fontSize: 10,
-        ),
-      ),
     );
   }
 
