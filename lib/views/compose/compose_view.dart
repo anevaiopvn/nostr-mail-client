@@ -168,84 +168,88 @@ class _ComposeViewState extends State<ComposeView> {
           ),
         ],
       ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800),
-          child: Column(
-            children: [
-              _buildFromSelector(context),
-              const Divider(height: 1),
-              Obx(
-                () => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (controller.recipients.isNotEmpty)
-                      SizedBox(
-                        height: 48,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                          itemCount: controller.recipients.length,
-                          separatorBuilder: (_, _) => const SizedBox(width: 8),
-                          itemBuilder: (context, index) => RecipientChip(
-                            recipient: controller.recipients[index],
-                            onDelete: () => controller.removeRecipient(index),
+      body: SafeArea(
+        top: false,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: Column(
+              children: [
+                _buildFromSelector(context),
+                const Divider(height: 1),
+                Obx(
+                  () => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (controller.recipients.isNotEmpty)
+                        SizedBox(
+                          height: 48,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                            itemCount: controller.recipients.length,
+                            separatorBuilder: (_, _) =>
+                                const SizedBox(width: 8),
+                            itemBuilder: (context, index) => RecipientChip(
+                              recipient: controller.recipients[index],
+                              onDelete: () => controller.removeRecipient(index),
+                            ),
                           ),
                         ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: RecipientAutocomplete(
+                          textController: toController,
+                          hintText: controller.recipients.isEmpty
+                              ? 'To'
+                              : 'Add more',
+                          excludeIds: controller.recipientIds,
+                          onContactSelected: (contact) {
+                            controller.addRecipientFromContact(contact);
+                          },
+                          onManualInput: (input) async {
+                            return await controller.addRecipient(input);
+                          },
+                          onSubmitted: _handleToSubmit,
+                        ),
                       ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: RecipientAutocomplete(
-                        textController: toController,
-                        hintText: controller.recipients.isEmpty
-                            ? 'To'
-                            : 'Add more',
-                        excludeIds: controller.recipientIds,
-                        onContactSelected: (contact) {
-                          controller.addRecipientFromContact(contact);
-                        },
-                        onManualInput: (input) async {
-                          return await controller.addRecipient(input);
-                        },
-                        onSubmitted: _handleToSubmit,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(height: 1),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: TextField(
-                  controller: subjectController,
-                  decoration: InputDecoration(
-                    hintText: 'Subject',
-                    hintStyle: TextStyle(color: Colors.grey[400]),
-                    border: InputBorder.none,
+                    ],
                   ),
-                  style: const TextStyle(fontSize: 16),
-                  textCapitalization: TextCapitalization.sentences,
                 ),
-              ),
-              const Divider(height: 1),
-              _buildQuillToolbar(context),
-              const Divider(height: 1),
-              Expanded(
-                child: Padding(
+                const Divider(height: 1),
+                Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: QuillEditor(
-                    controller: quillController,
-                    focusNode: _editorFocusNode,
-                    scrollController: _editorScrollController,
-                    config: QuillEditorConfig(
-                      placeholder: 'Compose email',
-                      expands: true,
-                      padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: TextField(
+                    controller: subjectController,
+                    decoration: InputDecoration(
+                      hintText: 'Subject',
+                      hintStyle: TextStyle(color: Colors.grey[400]),
+                      border: InputBorder.none,
+                    ),
+                    style: const TextStyle(fontSize: 16),
+                    textCapitalization: TextCapitalization.sentences,
+                  ),
+                ),
+                const Divider(height: 1),
+                _buildQuillToolbar(context),
+                const Divider(height: 1),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: QuillEditor(
+                      controller: quillController,
+                      focusNode: _editorFocusNode,
+                      scrollController: _editorScrollController,
+                      config: QuillEditorConfig(
+                        placeholder: 'Compose email',
+                        expands: true,
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

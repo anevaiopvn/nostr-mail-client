@@ -17,25 +17,28 @@ class HostingSettingsView extends StatelessWidget {
 
     Widget content = Scaffold(
       appBar: AppBar(title: const Text('Hosting')),
-      body: SingleChildScrollView(
-        child: ResponsiveCenter(
-          maxWidth: 600,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Nip65RelaysSection(),
-                const SizedBox(height: 16),
-                const DmRelaysSection(),
-                const SizedBox(height: 16),
-                const BlossomServersSection(),
-                const SizedBox(height: 16),
-                const RelayConnectivitySection(),
-                const SizedBox(height: 8),
-                const SyncStatusSection(),
-                const SizedBox(height: 24),
-              ],
+      body: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          child: ResponsiveCenter(
+            maxWidth: 600,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Nip65RelaysSection(),
+                  const SizedBox(height: 16),
+                  const DmRelaysSection(),
+                  const SizedBox(height: 16),
+                  const BlossomServersSection(),
+                  const SizedBox(height: 16),
+                  const RelayConnectivitySection(),
+                  const SizedBox(height: 8),
+                  const SyncStatusSection(),
+                  const SizedBox(height: 24),
+                ],
+              ),
             ),
           ),
         ),

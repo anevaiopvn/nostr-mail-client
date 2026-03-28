@@ -252,41 +252,44 @@ class _EmailViewState extends State<EmailView> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: ResponsiveCenter(
-          maxWidth: 800,
-          padding: const EdgeInsets.all(16),
-          child: _showRawContent
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SelectableText(
-                      'Sender npub: ${Nip19.encodePubKey(email!.senderPubkey)}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontFamily: 'monospace',
-                        color: Theme.of(context).colorScheme.primary,
+      body: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          child: ResponsiveCenter(
+            maxWidth: 800,
+            padding: const EdgeInsets.all(16),
+            child: _showRawContent
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SelectableText(
+                        'Sender npub: ${Nip19.encodePubKey(email!.senderPubkey)}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontFamily: 'monospace',
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                       ),
-                    ),
-                    const Divider(height: 24),
-                    SelectableText(
-                      email!.rawContent,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontFamily: 'monospace',
-                        height: 1.4,
+                      const Divider(height: 24),
+                      SelectableText(
+                        email!.rawContent,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontFamily: 'monospace',
+                          height: 1.4,
+                        ),
                       ),
-                    ),
-                  ],
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildHeader(context),
-                    const Divider(height: 32),
-                    _buildEmailBody(),
-                  ],
-                ),
+                    ],
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildHeader(context),
+                      const Divider(height: 32),
+                      _buildEmailBody(),
+                    ],
+                  ),
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
