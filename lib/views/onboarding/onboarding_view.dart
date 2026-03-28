@@ -108,6 +108,8 @@ class OnboardingView extends StatelessWidget {
       done: const Text('Done', style: TextStyle(fontWeight: FontWeight.w600)),
       dotsDecorator: DotsDecorator(
         activeSize: const Size(22.0, 10.0),
+        activeColor: colorScheme.primary,
+        color: colorScheme.onSurface.withValues(alpha: 0.3),
         activeShape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(25.0)),
         ),
