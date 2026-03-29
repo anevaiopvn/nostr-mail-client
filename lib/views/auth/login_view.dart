@@ -28,7 +28,7 @@ class LoginView extends GetView<AuthController> {
                   Obx(
                     () => Stack(
                       children: [
-                        // Formulaire de Connexion
+                        // Login Form
                         AnimatedOpacity(
                           opacity: controller.isRegistering.value ? 0.0 : 1.0,
                           duration: const Duration(milliseconds: 300),
@@ -40,7 +40,7 @@ class LoginView extends GetView<AuthController> {
                             child: const LoginForm(),
                           ),
                         ),
-                        // Formulaire d'Inscription
+                        // Registration Form
                         AnimatedOpacity(
                           opacity: controller.isRegistering.value ? 1.0 : 0.0,
                           duration: const Duration(milliseconds: 300),

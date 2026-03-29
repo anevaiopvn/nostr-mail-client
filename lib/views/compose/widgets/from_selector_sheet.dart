@@ -41,7 +41,7 @@ class FromSelectorSheet extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Envoyer en tant que',
+            'Send as',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
