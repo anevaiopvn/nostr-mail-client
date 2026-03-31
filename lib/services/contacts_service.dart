@@ -86,19 +86,25 @@ class ContactsService extends GetxService {
 
         // Handle legacy emails - addresses NOT ending with @nostr
         // For sent emails
-        if (isSentByMe && _isLegacyEmail(email.to)) {
-          final legacyEmail = email.to.toLowerCase();
-          final existing = legacyEmailDates[legacyEmail];
-          if (existing == null || email.date.isAfter(existing)) {
-            legacyEmailDates[legacyEmail] = email.date;
+        if (isSentByMe) {
+          final toEmail = email.mime.to?.firstOrNull?.email;
+          if (toEmail != null && _isLegacyEmail(toEmail)) {
+            final legacyEmail = toEmail.toLowerCase();
+            final existing = legacyEmailDates[legacyEmail];
+            if (existing == null || email.date.isAfter(existing)) {
+              legacyEmailDates[legacyEmail] = email.date;
+            }
           }
         }
         // For received emails
-        if (!isSentByMe && _isLegacyEmail(email.from)) {
-          final legacyEmail = email.from.toLowerCase();
-          final existing = legacyEmailDates[legacyEmail];
-          if (existing == null || email.date.isAfter(existing)) {
-            legacyEmailDates[legacyEmail] = email.date;
+        if (!isSentByMe) {
+          final fromEmail = email.sender?.email;
+          if (fromEmail != null && _isLegacyEmail(fromEmail)) {
+            final legacyEmail = fromEmail.toLowerCase();
+            final existing = legacyEmailDates[legacyEmail];
+            if (existing == null || email.date.isAfter(existing)) {
+              legacyEmailDates[legacyEmail] = email.date;
+            }
           }
         }
       }

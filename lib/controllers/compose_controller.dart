@@ -206,29 +206,32 @@ class ComposeController extends GetxController {
       // Get plain text from document
       final plainText = document.toPlainText();
 
-      // Format From header with display name if available
-      String? formattedFrom;
-      if (from != null && selectedFrom.value != null) {
-        final displayName = selectedFrom.value!.displayName;
-        if (displayName != null && displayName.isNotEmpty) {
-          final mailAddress = MailAddress(displayName, from);
-          formattedFrom = mailAddress.encode();
-        } else {
-          formattedFrom = from;
-        }
-      } else {
-        formattedFrom = from;
+      // Build MIME message using MessageBuilder
+      final builder = MessageBuilder.prepareMultipartAlternativeMessage();
+
+      // Set From header
+      if (from != null) {
+        final displayName = selectedFrom.value?.displayName;
+        builder.from = [MailAddress(displayName, from)];
       }
 
-      for (final recipient in recipients) {
-        await _nostrMailService.client.send(
-          from: formattedFrom,
-          to: recipient.pubkey ?? recipient.input,
-          subject: subject,
-          body: plainText,
-          htmlBody: htmlBody,
+      // Set To recipients
+      builder.to = recipients.map((r) {
+        return MailAddress(r.displayName, r.pubkey ?? r.input);
+      }).toList();
+
+      builder.subject = subject;
+      builder.addTextPlain(plainText);
+      if (htmlBody.isNotEmpty) {
+        builder.addTextHtml(
+          htmlBody,
+          transferEncoding: TransferEncoding.base64,
         );
       }
+
+      final message = builder.buildMimeMessage();
+      await _nostrMailService.client.sendMime(message);
+
       return true;
     } catch (e) {
       return false;
@@ -248,8 +251,8 @@ class ComposeController extends GetxController {
       final sentEmail = emails
           .where((e) => e.senderPubkey == myPubkey)
           .firstOrNull;
-      if (sentEmail != null) {
-        return sentEmail.from;
+      if (sentEmail != null && sentEmail.sender != null) {
+        return sentEmail.sender!.encode();
       }
 
       // Fallback to received emails (use "to" which is my address)
@@ -257,7 +260,7 @@ class ComposeController extends GetxController {
           .where((e) => e.senderPubkey != myPubkey)
           .firstOrNull;
       if (receivedEmail != null) {
-        return receivedEmail.to;
+        return receivedEmail.mime.to?.firstOrNull?.encode();
       }
     } catch (_) {}
 
@@ -384,13 +387,19 @@ class ComposeController extends GetxController {
       final emails = await _nostrMailService.client.getEmails();
 
       for (final email in emails) {
-        // From sent emails: use the "from" field
-        if (email.senderPubkey == myPubkey && email.from.isNotEmpty) {
-          addresses.add(email.from);
+        // From sent emails: use the sender address
+        if (email.senderPubkey == myPubkey) {
+          final from = email.sender?.encode();
+          if (from != null && from.isNotEmpty) {
+            addresses.add(from);
+          }
         }
-        // From received emails: use the "to" field (my address)
-        if (email.senderPubkey != myPubkey && email.to.isNotEmpty) {
-          addresses.add(email.to);
+        // From received emails: use the first "to" address (my address)
+        if (email.senderPubkey != myPubkey) {
+          final to = email.mime.to?.firstOrNull?.encode();
+          if (to != null && to.isNotEmpty) {
+            addresses.add(to);
+          }
         }
       }
     } catch (_) {}

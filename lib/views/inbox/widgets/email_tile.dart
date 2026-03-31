@@ -55,8 +55,13 @@ class _EmailTileState extends State<EmailTile> {
   }
 
   /// Get the address to display (to for sent emails, from for received)
-  String get _displayAddress =>
-      _isSentByMe ? widget.email.to : widget.email.from;
+  String get _displayAddress {
+    if (_isSentByMe) {
+      return widget.email.mime.to?.firstOrNull?.encode() ?? '';
+    } else {
+      return widget.email.sender?.encode() ?? '';
+    }
+  }
 
   /// Get the contact pubkey (extracted from to/from address)
   String? get _contactPubkey => extractPubkeyFromAddress(_displayAddress);
@@ -354,9 +359,9 @@ class _EmailTileState extends State<EmailTile> {
   }
 
   Widget _buildCompactTile(BuildContext context, ColorScheme colorScheme) {
-    final subject = widget.email.subject.isEmpty
+    final subject = (widget.email.subject?.isEmpty ?? true)
         ? '(No subject)'
-        : widget.email.subject;
+        : widget.email.subject!;
 
     return InkWell(
       onTap: widget.onTap,
@@ -437,7 +442,9 @@ class _EmailTileState extends State<EmailTile> {
       onTap: widget.onTap,
       leading: _buildAvatar(context),
       title: Text(
-        widget.email.subject.isEmpty ? '(No subject)' : widget.email.subject,
+        (widget.email.subject?.isEmpty ?? true)
+            ? '(No subject)'
+            : widget.email.subject!,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: const TextStyle(fontWeight: FontWeight.w600),

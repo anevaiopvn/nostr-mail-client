@@ -42,12 +42,20 @@ class _EmailViewState extends State<EmailView> {
   }
 
   /// Get contact pubkey for sender (from address)
-  String? get _senderContactPubkey =>
-      email != null ? extractPubkeyFromAddress(email!.from) : null;
+  String? get _senderContactPubkey {
+    if (email == null) return null;
+    final senderAddress = email!.sender?.email;
+    return senderAddress != null
+        ? extractPubkeyFromAddress(senderAddress)
+        : null;
+  }
 
   /// Get contact pubkey for recipient (to address)
-  String? get _recipientContactPubkey =>
-      email != null ? extractPubkeyFromAddress(email!.to) : null;
+  String? get _recipientContactPubkey {
+    if (email == null) return null;
+    final toAddress = email!.mime.to?.firstOrNull?.email;
+    return toAddress != null ? extractPubkeyFromAddress(toAddress) : null;
+  }
 
   /// Check if sender has a bridge (for received emails)
   bool get _senderHasBridge {
@@ -89,7 +97,10 @@ class _EmailViewState extends State<EmailView> {
   Future<void> _loadSenderMetadata(Email loadedEmail) async {
     try {
       final ndk = Get.find<Ndk>();
-      final contactPubkey = extractPubkeyFromAddress(loadedEmail.from);
+      final senderAddress = loadedEmail.sender?.email;
+      final contactPubkey = senderAddress != null
+          ? extractPubkeyFromAddress(senderAddress)
+          : null;
       final hasBridge =
           contactPubkey == null || contactPubkey != loadedEmail.senderPubkey;
 
@@ -120,7 +131,10 @@ class _EmailViewState extends State<EmailView> {
   Future<void> _loadRecipientMetadata(Email loadedEmail) async {
     try {
       final ndk = Get.find<Ndk>();
-      final contactPubkey = extractPubkeyFromAddress(loadedEmail.to);
+      final toAddress = loadedEmail.mime.to?.firstOrNull?.email;
+      final contactPubkey = toAddress != null
+          ? extractPubkeyFromAddress(toAddress)
+          : null;
       final hasBridge =
           contactPubkey == null || contactPubkey != loadedEmail.recipientPubkey;
 
@@ -217,7 +231,7 @@ class _EmailViewState extends State<EmailView> {
     Widget content = Scaffold(
       appBar: AppBar(
         title: Text(
-          email!.subject.isEmpty ? '(No subject)' : email!.subject,
+          (email!.subject?.isEmpty ?? true) ? '(No subject)' : email!.subject!,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -316,7 +330,7 @@ class _EmailViewState extends State<EmailView> {
     if (_senderMetadata?.name != null && _senderMetadata!.name!.isNotEmpty) {
       return _senderMetadata!.name!;
     }
-    return email!.from;
+    return email!.sender?.encode() ?? '';
   }
 
   String get _recipientDisplayName {
@@ -325,7 +339,7 @@ class _EmailViewState extends State<EmailView> {
       return _recipientMetadata!.name!;
     }
     // Fallback to shortened address
-    final to = email!.to;
+    final to = email!.mime.to?.firstOrNull?.encode() ?? '';
     if (to.contains('@nostr')) {
       final npub = to.split('@').first;
       if (npub.length > 16) {
@@ -340,7 +354,7 @@ class _EmailViewState extends State<EmailView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          email!.subject.isEmpty ? '(No subject)' : email!.subject,
+          (email!.subject?.isEmpty ?? true) ? '(No subject)' : email!.subject!,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
         ),
         const SizedBox(height: 16),
@@ -432,7 +446,10 @@ class _EmailViewState extends State<EmailView> {
   Widget _buildMainRecipientAvatar(ColorScheme colorScheme) {
     final contactPubkey = _recipientContactPubkey;
     if (contactPubkey == null) {
-      return EmailAvatar(email: email!.to, radius: 12);
+      return EmailAvatar(
+        email: email!.mime.to?.firstOrNull?.email ?? '',
+        radius: 12,
+      );
     }
 
     return NostrAvatar(
@@ -489,7 +506,7 @@ class _EmailViewState extends State<EmailView> {
   Widget _buildMainSenderAvatar(ColorScheme colorScheme) {
     final contactPubkey = _senderContactPubkey;
     if (contactPubkey == null) {
-      return EmailAvatar(email: email!.from, radius: 24);
+      return EmailAvatar(email: email!.sender?.email ?? '', radius: 24);
     }
 
     return NostrAvatar(

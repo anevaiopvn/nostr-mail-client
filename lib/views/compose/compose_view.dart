@@ -73,13 +73,18 @@ class _ComposeViewState extends State<ComposeView> {
     final signature = Get.find<SettingsController>().emailSignature.value;
     final signatureBlock = signature.isEmpty ? '' : '\n\n$signature';
 
+    // Get sender display for quotes
+    final senderDisplay = email.sender?.encode() ?? '';
+
     if (mode == 'reply') {
       // Set recipient
-      final replyTo = isSentByMe ? email.to : email.from;
+      final replyTo = isSentByMe
+          ? email.mime.to?.firstOrNull?.encode() ?? ''
+          : senderDisplay;
       controller.addRecipient(replyTo);
 
       // Set subject (avoid Re: Re: Re:)
-      final subject = email.subject;
+      final subject = email.subject ?? '';
       subjectController.text = subject.startsWith('Re:')
           ? subject
           : 'Re: $subject';
@@ -91,11 +96,11 @@ class _ComposeViewState extends State<ComposeView> {
           .map((line) => '> $line')
           .join('\n');
       final bodyText =
-          '$signatureBlock\n\nOn ${dateFormat.format(email.date)}, ${email.from} wrote:\n$quotedBody';
+          '$signatureBlock\n\nOn ${dateFormat.format(email.date)}, $senderDisplay wrote:\n$quotedBody';
       _setQuillContent(bodyText);
     } else if (mode == 'forward') {
       // Set subject (avoid Fwd: Fwd: Fwd:)
-      final subject = email.subject;
+      final subject = email.subject ?? '';
       subjectController.text = subject.startsWith('Fwd:')
           ? subject
           : 'Fwd: $subject';
@@ -104,7 +109,7 @@ class _ComposeViewState extends State<ComposeView> {
       final dateFormat = DateFormat('EEE, MMM d, yyyy \'at\' h:mm a');
       final bodyText =
           '$signatureBlock\n\n---------- Forwarded message ----------\n'
-          'From: ${email.from}\n'
+          'From: $senderDisplay\n'
           'Date: ${dateFormat.format(email.date)}\n'
           'Subject: ${email.subject}\n\n'
           '${email.body}';
