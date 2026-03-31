@@ -35,6 +35,7 @@ dependencies:
   ndk_objectbox: ^0.2.8
   enough_mail_plus: ^2.2.0
   introduction_screen: ^4.0.0
+  collection: ^1.19.1
 
 dev_dependencies:
   flutter_test:

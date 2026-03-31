@@ -57,6 +57,7 @@ class Contact {
     return shortNpub ?? 'Unknown';
   }
 
+  // TODO make it nullable
   String get subtitle {
     if (nip05 != null && nip05!.isNotEmpty) {
       return _formatNip05(nip05!);

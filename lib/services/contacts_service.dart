@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -69,7 +70,7 @@ class ContactsService extends GetxService {
       // Collect unique pubkeys from emails with their last interaction date
       final pubkeyDates = <String, DateTime>{};
       // Collect unique legacy emails
-      final legacyEmailDates = <String, DateTime>{};
+      final legacyEmailDates = <MailAddress, DateTime>{};
 
       for (final email in emails) {
         final isSentByMe = email.senderPubkey == myPubkey;
@@ -88,23 +89,29 @@ class ContactsService extends GetxService {
         // Handle legacy emails - addresses NOT ending with @nostr
         // For sent emails
         if (isSentByMe) {
-          final toEmail = email.mime.to?.firstOrNull?.email;
-          if (toEmail != null && _isLegacyEmail(toEmail)) {
-            final legacyEmail = toEmail.toLowerCase();
-            final existing = legacyEmailDates[legacyEmail];
-            if (existing == null || email.date.isAfter(existing)) {
-              legacyEmailDates[legacyEmail] = email.date;
+          final toAddr = email.mime.to?.firstOrNull;
+          if (toAddr != null && _isLegacyEmail(toAddr.email)) {
+            final legacyEmail = toAddr.email.toLowerCase();
+            final existingEntry = legacyEmailDates.entries.firstWhereOrNull(
+              (e) => e.key.email.toLowerCase() == legacyEmail,
+            );
+            if (existingEntry == null ||
+                email.date.isAfter(existingEntry.value)) {
+              legacyEmailDates[toAddr] = email.date;
             }
           }
         }
         // For received emails
         if (!isSentByMe) {
-          final fromEmail = email.sender?.email;
-          if (fromEmail != null && _isLegacyEmail(fromEmail)) {
-            final legacyEmail = fromEmail.toLowerCase();
-            final existing = legacyEmailDates[legacyEmail];
-            if (existing == null || email.date.isAfter(existing)) {
-              legacyEmailDates[legacyEmail] = email.date;
+          final fromAddr = email.sender;
+          if (fromAddr != null && _isLegacyEmail(fromAddr.email)) {
+            final legacyEmail = fromAddr.email.toLowerCase();
+            final existingEntry = legacyEmailDates.entries.firstWhereOrNull(
+              (e) => e.key.email.toLowerCase() == legacyEmail,
+            );
+            if (existingEntry == null ||
+                email.date.isAfter(existingEntry.value)) {
+              legacyEmailDates[fromAddr] = email.date;
             }
           }
         }
@@ -115,14 +122,14 @@ class ContactsService extends GetxService {
       final npubEmailMap = <String, String>{}; // pubkey -> email address
 
       for (final entry in legacyEmailDates.entries) {
-        final email = entry.key;
-        final localPart = email.split('@').first;
+        final mailAddr = entry.key;
+        final localPart = mailAddr.email.split('@').first;
         if (localPart.startsWith('npub1')) {
           try {
             final pubkey = Nip19.decode(localPart);
             if (!pubkeyDates.containsKey(pubkey)) {
               allPubkeys.add(pubkey);
-              npubEmailMap[pubkey] = email;
+              npubEmailMap[pubkey] = mailAddr.email;
             }
           } catch (_) {}
         }
@@ -162,7 +169,14 @@ class ContactsService extends GetxService {
         final pubkey = entry.key;
         final email = entry.value;
         final metadata = metadataMap[pubkey];
-        final lastInteraction = legacyEmailDates[email];
+        final mailAddr = legacyEmailDates.entries
+            .firstWhereOrNull(
+              (e) => e.key.email.toLowerCase() == email.toLowerCase(),
+            )
+            ?.key;
+        final lastInteraction = mailAddr != null
+            ? legacyEmailDates[mailAddr]
+            : null;
         result.add(
           Contact(
             pubkey: pubkey,
@@ -177,13 +191,13 @@ class ContactsService extends GetxService {
 
       // Add regular legacy email contacts (non-npub)
       for (final entry in legacyEmailDates.entries) {
-        final email = entry.key;
-        final localPart = email.split('@').first;
+        final mailAddr = entry.key;
+        final localPart = mailAddr.email.split('@').first;
         // Skip npub@ addresses (already handled above)
         if (!localPart.startsWith('npub1')) {
           result.add(
             Contact(
-              mailAddress: MailAddress(null, email),
+              mailAddress: mailAddr,
               source: ContactSource.emailHistory,
               lastInteraction: entry.value,
             ),
