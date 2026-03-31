@@ -71,13 +71,7 @@ class _EmailTileState extends State<EmailTile> {
       _isSentByMe ? widget.email.recipientPubkey : widget.email.senderPubkey;
 
   /// Check if this email was relayed through a bridge
-  bool get _hasBridge {
-    final contact = _contactPubkey;
-    // Legacy email (can't extract pubkey) → always has bridge
-    if (contact == null) return true;
-    // Compare contact with bridge
-    return contact != _bridgePubkey;
-  }
+  bool get _hasBridge => widget.email.isBridged;
 
   Future<void> _loadMetadata() async {
     try {

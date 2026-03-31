@@ -58,20 +58,10 @@ class _EmailViewState extends State<EmailView> {
   }
 
   /// Check if sender has a bridge (for received emails)
-  bool get _senderHasBridge {
-    if (email == null) return false;
-    final contact = _senderContactPubkey;
-    if (contact == null) return true; // Legacy email
-    return contact != email!.senderPubkey;
-  }
+  bool get _senderHasBridge => email?.isBridged ?? false;
 
   /// Check if recipient has a bridge (for sent emails)
-  bool get _recipientHasBridge {
-    if (email == null) return false;
-    final contact = _recipientContactPubkey;
-    if (contact == null) return true; // Legacy email
-    return contact != email!.recipientPubkey;
-  }
+  bool get _recipientHasBridge => email?.isBridged ?? false;
 
   Future<void> _loadEmail() async {
     final emailId = Get.arguments as String?;
@@ -101,16 +91,14 @@ class _EmailViewState extends State<EmailView> {
       final contactPubkey = senderAddress != null
           ? extractPubkeyFromAddress(senderAddress)
           : null;
-      final hasBridge =
-          contactPubkey == null || contactPubkey != loadedEmail.senderPubkey;
 
-      // Always load senderPubkey metadata
+      // Always load senderPubkey metadata (the actual Nostr sender)
       final senderMeta = await ndk.metadata.loadMetadata(
         loadedEmail.senderPubkey,
       );
       if (mounted && senderMeta != null) {
         setState(() {
-          if (hasBridge) {
+          if (loadedEmail.isBridged) {
             _bridgeMetadata = senderMeta;
           } else {
             _senderMetadata = senderMeta;
@@ -118,8 +106,8 @@ class _EmailViewState extends State<EmailView> {
         });
       }
 
-      // If there's a bridge and we can extract contact pubkey, load it too
-      if (hasBridge && contactPubkey != null) {
+      // If bridged and we can extract contact pubkey, load it too
+      if (loadedEmail.isBridged && contactPubkey != null) {
         final contactMeta = await ndk.metadata.loadMetadata(contactPubkey);
         if (mounted && contactMeta != null) {
           setState(() => _senderMetadata = contactMeta);
@@ -135,16 +123,14 @@ class _EmailViewState extends State<EmailView> {
       final contactPubkey = toAddress != null
           ? extractPubkeyFromAddress(toAddress)
           : null;
-      final hasBridge =
-          contactPubkey == null || contactPubkey != loadedEmail.recipientPubkey;
 
-      // Always load recipientPubkey metadata
+      // Always load recipientPubkey metadata (the actual Nostr recipient)
       final recipientMeta = await ndk.metadata.loadMetadata(
         loadedEmail.recipientPubkey,
       );
       if (mounted && recipientMeta != null) {
         setState(() {
-          if (hasBridge) {
+          if (loadedEmail.isBridged) {
             _recipientBridgeMetadata = recipientMeta;
           } else {
             _recipientMetadata = recipientMeta;
@@ -152,8 +138,8 @@ class _EmailViewState extends State<EmailView> {
         });
       }
 
-      // If there's a bridge and we can extract contact pubkey, load it too
-      if (hasBridge && contactPubkey != null) {
+      // If bridged and we can extract contact pubkey, load it too
+      if (loadedEmail.isBridged && contactPubkey != null) {
         final contactMeta = await ndk.metadata.loadMetadata(contactPubkey);
         if (mounted && contactMeta != null) {
           setState(() => _recipientMetadata = contactMeta);
