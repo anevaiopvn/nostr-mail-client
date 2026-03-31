@@ -61,12 +61,13 @@ class ComposeController extends GetxController {
   }
 
   void addRecipientFromContact(Contact contact) {
-    // Check if already added (by pubkey or legacy email)
+    // Check if already added (by pubkey or email)
     if (contact.pubkey != null && contact.pubkey!.isNotEmpty) {
       if (recipients.any((r) => r.pubkey == contact.pubkey)) return;
-    } else if (contact.legacyEmail != null) {
+    } else if (contact.mailAddress?.email.isNotEmpty == true) {
       if (recipients.any(
-        (r) => r.input.toLowerCase() == contact.legacyEmail!.toLowerCase(),
+        (r) =>
+            r.input.toLowerCase() == contact.mailAddress!.email.toLowerCase(),
       )) {
         return;
       }
@@ -148,7 +149,11 @@ class ComposeController extends GetxController {
 
     // Validate legacy email format
     if (GetUtils.isEmail(input)) {
-      return Recipient(input: input, type: RecipientType.legacy);
+      return Recipient(
+        input: input,
+        mailAddress: MailAddress(null, input),
+        type: RecipientType.legacy,
+      );
     }
 
     // Invalid format

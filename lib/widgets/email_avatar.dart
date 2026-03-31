@@ -1,24 +1,24 @@
+import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:flutter/material.dart';
 
-// TODO: Update EmailAvatar to take a MailAddress object as parameter instead of String
 class EmailAvatar extends StatelessWidget {
-  final String email;
+  final MailAddress mailAddress;
   final double radius;
   final VoidCallback? onTap;
 
   const EmailAvatar({
     super.key,
-    required this.email,
+    required this.mailAddress,
     this.radius = 20,
     this.onTap,
   });
 
   Color _getAvatarColor(BuildContext context) {
-    if (email.isEmpty) {
+    if (mailAddress.email.isEmpty) {
       return Theme.of(context).colorScheme.surfaceContainerHighest;
     }
 
-    final hash = email.hashCode;
+    final hash = mailAddress.hashCode;
     return Color.fromARGB(
       255,
       (hash & 0xFF0000) >> 16,
@@ -28,8 +28,15 @@ class EmailAvatar extends StatelessWidget {
   }
 
   String _getInitial() {
-    if (email.isEmpty) return '?';
-    return email[0].toUpperCase();
+    if (mailAddress.email.isEmpty) return '?';
+    // Use personal name if available, otherwise use first letter of email address
+    if (mailAddress.hasPersonalName) {
+      return mailAddress.personalName![0].toUpperCase();
+    }
+    if (mailAddress.email.isNotEmpty) {
+      return mailAddress.email[0].toUpperCase();
+    }
+    return '?';
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
@@ -174,6 +175,10 @@ class _FromOptionTile extends StatelessWidget {
       );
     }
 
-    return EmailAvatar(email: option.address, radius: 20);
+    //? FromOption add MailAddress
+    return EmailAvatar(
+      mailAddress: MailAddress(null, option.address),
+      radius: 20,
+    );
   }
 }

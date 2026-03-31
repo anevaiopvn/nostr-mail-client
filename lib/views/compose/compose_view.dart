@@ -1,3 +1,4 @@
+import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:get/get.dart';
@@ -447,6 +448,9 @@ class _ComposeViewState extends State<ComposeView> {
       );
     }
 
-    return EmailAvatar(email: option.address, radius: 14);
+    return EmailAvatar(
+      mailAddress: MailAddress(null, option.address),
+      radius: 14,
+    );
   }
 }

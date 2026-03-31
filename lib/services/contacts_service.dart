@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:ndk/ndk.dart';
@@ -182,7 +183,7 @@ class ContactsService extends GetxService {
         if (!localPart.startsWith('npub1')) {
           result.add(
             Contact(
-              legacyEmail: email,
+              mailAddress: MailAddress(null, email),
               source: ContactSource.emailHistory,
               lastInteraction: entry.value,
             ),
@@ -290,22 +291,22 @@ class ContactsService extends GetxService {
     if (q.length < 2) return [];
 
     final filtered = contacts.where((contact) {
-      // Exclude already added recipients (check both pubkey and legacyEmail)
+      // Exclude already added recipients (check both pubkey and email)
       if (excludeIds != null) {
         if (contact.pubkey != null && excludeIds.contains(contact.pubkey)) {
           return false;
         }
-        if (contact.legacyEmail != null &&
-            excludeIds.contains(contact.legacyEmail!.toLowerCase())) {
+        if (contact.mailAddress?.email.isNotEmpty == true &&
+            excludeIds.contains(contact.mailAddress!.email.toLowerCase())) {
           return false;
         }
       }
 
-      // Exclude "npub only" contacts - must have displayName, nip05, or legacyEmail
+      // Exclude "npub only" contacts - must have displayName, nip05, or email
       final hasDisplayName = contact.displayName?.isNotEmpty == true;
       final hasNip05 = contact.nip05?.isNotEmpty == true;
-      final hasLegacyEmail = contact.legacyEmail?.isNotEmpty == true;
-      if (!hasDisplayName && !hasNip05 && !hasLegacyEmail) {
+      final hasEmail = contact.mailAddress?.email.isNotEmpty == true;
+      if (!hasDisplayName && !hasNip05 && !hasEmail) {
         return false;
       }
 

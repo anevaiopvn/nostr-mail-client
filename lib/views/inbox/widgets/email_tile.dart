@@ -1,3 +1,4 @@
+import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
@@ -54,17 +55,19 @@ class _EmailTileState extends State<EmailTile> {
     return widget.email.senderPubkey == myPubkey;
   }
 
+  //? should _displayAddress return a MailAddress ?
+
   /// Get the address to display (to for sent emails, from for received)
-  String get _displayAddress {
+  MailAddress get _displayAddress {
     if (_isSentByMe) {
-      return widget.email.mime.to?.firstOrNull?.encode() ?? '';
+      return widget.email.mime.to?.firstOrNull ?? MailAddress(null, '');
     } else {
-      return widget.email.sender?.encode() ?? '';
+      return widget.email.sender ?? MailAddress(null, '');
     }
   }
 
   /// Get the contact pubkey (extracted from to/from address)
-  String? get _contactPubkey => extractPubkeyFromAddress(_displayAddress);
+  String? get _contactPubkey => extractPubkeyFromAddress(_displayAddress.email);
 
   /// Get the bridge pubkey (recipientPubkey for sent, senderPubkey for received)
   String get _bridgePubkey =>
@@ -106,7 +109,10 @@ class _EmailTileState extends State<EmailTile> {
     if (_contactMetadata?.name != null && _contactMetadata!.name!.isNotEmpty) {
       return _contactMetadata!.name!;
     }
-    return _displayAddress;
+    if (_displayAddress.hasPersonalName) {
+      return _displayAddress.personalName!;
+    }
+    return _displayAddress.email;
   }
 
   @override
@@ -510,7 +516,7 @@ class _EmailTileState extends State<EmailTile> {
   Widget _buildMainAvatar(ColorScheme colorScheme, {double radius = 20}) {
     final contactPubkey = _contactPubkey;
     if (contactPubkey == null) {
-      return EmailAvatar(email: _displayAddress, radius: radius);
+      return EmailAvatar(mailAddress: _displayAddress, radius: radius);
     }
 
     return NostrAvatar(

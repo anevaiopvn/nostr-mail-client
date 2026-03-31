@@ -1,3 +1,5 @@
+import 'package:enough_mail_plus/enough_mail.dart';
+
 enum RecipientType { nostr, legacy }
 
 class Recipient {
@@ -5,6 +7,7 @@ class Recipient {
   final String? pubkey;
   final String? displayName;
   final String? picture;
+  final MailAddress? mailAddress;
   final RecipientType type;
   final bool isLoading;
 
@@ -13,6 +16,7 @@ class Recipient {
     this.pubkey,
     this.displayName,
     this.picture,
+    this.mailAddress,
     required this.type,
     this.isLoading = false,
   });
@@ -22,6 +26,7 @@ class Recipient {
     String? pubkey,
     String? displayName,
     String? picture,
+    MailAddress? mailAddress,
     RecipientType? type,
     bool? isLoading,
   }) {
@@ -30,6 +35,7 @@ class Recipient {
       pubkey: pubkey ?? this.pubkey,
       displayName: displayName ?? this.displayName,
       picture: picture ?? this.picture,
+      mailAddress: mailAddress ?? this.mailAddress,
       type: type ?? this.type,
       isLoading: isLoading ?? this.isLoading,
     );
@@ -43,6 +49,12 @@ class Recipient {
       if (pubkey != null && pubkey!.length > 16) {
         return 'npub1...${pubkey!.substring(pubkey!.length - 6)}';
       }
+    }
+    if (mailAddress?.hasPersonalName == true) {
+      return mailAddress!.personalName!;
+    }
+    if (mailAddress?.email.isNotEmpty == true) {
+      return mailAddress!.email;
     }
     return input;
   }

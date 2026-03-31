@@ -1,3 +1,4 @@
+import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:flutter/material.dart';
 import 'package:ndk/ndk.dart';
 
@@ -72,7 +73,7 @@ class ContactSuggestionTile extends StatelessWidget {
     final pubkey = contact.pubkey;
     if (pubkey == null) {
       return EmailAvatar(
-        email: contact.legacyEmail ?? contact.label,
+        mailAddress: contact.mailAddress ?? MailAddress(null, contact.label),
         radius: 18,
       );
     }

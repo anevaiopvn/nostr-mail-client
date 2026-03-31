@@ -1,3 +1,4 @@
+import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
@@ -433,7 +434,7 @@ class _EmailViewState extends State<EmailView> {
     final contactPubkey = _recipientContactPubkey;
     if (contactPubkey == null) {
       return EmailAvatar(
-        email: email!.mime.to?.firstOrNull?.email ?? '',
+        mailAddress: email!.mime.to?.firstOrNull ?? MailAddress(null, ''),
         radius: 12,
       );
     }
@@ -492,7 +493,10 @@ class _EmailViewState extends State<EmailView> {
   Widget _buildMainSenderAvatar(ColorScheme colorScheme) {
     final contactPubkey = _senderContactPubkey;
     if (contactPubkey == null) {
-      return EmailAvatar(email: email!.sender?.email ?? '', radius: 24);
+      return EmailAvatar(
+        mailAddress: email!.sender ?? MailAddress(null, ''),
+        radius: 24,
+      );
     }
 
     return NostrAvatar(

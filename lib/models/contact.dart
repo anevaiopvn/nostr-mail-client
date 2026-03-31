@@ -1,3 +1,4 @@
+import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:ndk/ndk.dart';
 
 import 'recipient.dart';
@@ -9,7 +10,7 @@ class Contact {
   final String? displayName;
   final String? picture;
   final String? nip05;
-  final String? legacyEmail;
+  final MailAddress? mailAddress;
   final ContactSource source;
   final DateTime? lastInteraction;
 
@@ -18,7 +19,7 @@ class Contact {
     this.displayName,
     this.picture,
     this.nip05,
-    this.legacyEmail,
+    this.mailAddress,
     required this.source,
     this.lastInteraction,
   });
@@ -47,8 +48,11 @@ class Contact {
     if (displayName != null && displayName!.isNotEmpty) {
       return displayName!;
     }
-    if (legacyEmail != null && legacyEmail!.isNotEmpty) {
-      return legacyEmail!;
+    if (mailAddress?.hasPersonalName == true) {
+      return mailAddress!.personalName!;
+    }
+    if (mailAddress?.email.isNotEmpty == true) {
+      return mailAddress!.email;
     }
     return shortNpub ?? 'Unknown';
   }
@@ -57,8 +61,8 @@ class Contact {
     if (nip05 != null && nip05!.isNotEmpty) {
       return _formatNip05(nip05!);
     }
-    if (legacyEmail != null && legacyEmail!.isNotEmpty) {
-      return legacyEmail!;
+    if (mailAddress?.email.isNotEmpty == true) {
+      return mailAddress!.email;
     }
     return shortNpub ?? '';
   }
@@ -81,11 +85,15 @@ class Contact {
   }
 
   /// Unique identifier for this contact
-  String get id => pubkey ?? legacyEmail ?? '';
+  String get id => pubkey ?? mailAddress?.email ?? '';
 
   Recipient toRecipient() {
     if (isLegacy) {
-      return Recipient(input: legacyEmail ?? '', type: RecipientType.legacy);
+      return Recipient(
+        input: mailAddress?.email ?? '',
+        mailAddress: mailAddress,
+        type: RecipientType.legacy,
+      );
     }
     return Recipient(
       input: npub ?? pubkey!,
@@ -123,9 +131,9 @@ class Contact {
       }
     }
 
-    // Legacy email match
-    if (legacyEmail != null) {
-      final e = legacyEmail!.toLowerCase();
+    // Email match
+    if (mailAddress?.email.isNotEmpty == true) {
+      final e = mailAddress!.email.toLowerCase();
       if (e.startsWith(q)) {
         score += 60;
       } else if (e.contains(q)) {
