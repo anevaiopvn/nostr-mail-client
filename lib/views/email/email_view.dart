@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:enough_mail_plus/enough_mail.dart';
+import 'package:file_saver/file_saver.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
@@ -149,6 +153,34 @@ class _EmailViewState extends State<EmailView> {
     } catch (_) {}
   }
 
+  Future<void> _downloadEmail() async {
+    if (email == null) return;
+
+    try {
+      final subject = (email!.subject?.isEmpty ?? true)
+          ? 'email'
+          : email!.subject!;
+      final fileName = subject.replaceAll(RegExp(r'[<>:"/\\|?*]'), '_');
+
+      final bytes = utf8.encode(email!.rawContent);
+
+      final result = await FileSaver.instance.saveFile(
+        name: fileName,
+        bytes: Uint8List.fromList(bytes),
+        fileExtension: 'eml',
+        mimeType: MimeType.other,
+      );
+
+      if (mounted) {
+        ToastHelper.success(context, 'Email saved: $result');
+      }
+    } catch (e) {
+      if (mounted) {
+        ToastHelper.error(context, 'Failed to save email: $e');
+      }
+    }
+  }
+
   Future<void> _deleteEmail() async {
     if (email == null) return;
 
@@ -180,9 +212,6 @@ class _EmailViewState extends State<EmailView> {
       }
     } else {
       inboxController.deleteEmail(email!.id);
-      if (mounted) {
-        ToastHelper.success(context, 'Email moved to trash');
-      }
     }
     Get.back();
   }
@@ -247,10 +276,52 @@ class _EmailViewState extends State<EmailView> {
             }
             return const SizedBox.shrink();
           }),
-          IconButton(
-            icon: const Icon(Icons.delete_outline),
-            onPressed: _deleteEmail,
+          MenuAnchor(
+            alignmentOffset: const Offset(-110, 4),
+            style: MenuStyle(
+              shape: WidgetStatePropertyAll(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(
+                    width: 2,
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                  ),
+                ),
+              ),
+            ),
+            builder: (context, controller, child) {
+              return IconButton(
+                icon: const Icon(Icons.more_vert),
+                onPressed: () {
+                  if (controller.isOpen) {
+                    controller.close();
+                  } else {
+                    controller.open();
+                  }
+                },
+              );
+            },
+            menuChildren: [
+              MenuItemButton(
+                leadingIcon: const Icon(Icons.download, size: 20),
+                onPressed: _downloadEmail,
+                child: const Text('Download email'),
+              ),
+              MenuItemButton(
+                leadingIcon: const Icon(
+                  Icons.delete_outline,
+                  size: 20,
+                  color: Colors.red,
+                ),
+                onPressed: _deleteEmail,
+                child: const Text(
+                  'Delete',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: SafeArea(
