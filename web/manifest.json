@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Everyone has an email address but nobody own it. Nostr solve this.",
+    "description": "Everyone has an email address but nobody owns it. Nostr solves this.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
