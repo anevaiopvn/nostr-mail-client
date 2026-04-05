@@ -231,7 +231,7 @@ packages:
       path: "/home/gringo/Desktop/coding/pull_requests/enough_mail"
       relative: false
     source: path
-    version: "2.2.0"
+    version: "2.2.1"
   equatable:
     dependency: transitive
     description:
@@ -722,7 +722,7 @@ packages:
       path: "../nostr-mail-dart"
       relative: true
     source: path
-    version: "1.9.0"
+    version: "1.9.1"
   objectbox:
     dependency: transitive
     description:

@@ -1,7 +1,7 @@
 name: nostr_mail_client
 description: "Everyone has an email address but nobody owns it. Nostr solves this."
 publish_to: 'none'
-version: 0.7.2+8
+version: 0.7.3+9
 
 environment:
   sdk: ^3.10.8
@@ -17,7 +17,7 @@ dependencies:
   path_provider: ^2.1.5
   sembast: ^3.8.6
   toastification: ^3.0.3
-  nostr_mail: ^1.9.0
+  nostr_mail: ^1.9.1
   sembast_cache_manager: ^1.0.8-dev.2
   http: ^1.6.0
   intl: ^0.20.2
@@ -33,7 +33,7 @@ dependencies:
   file_picker: ^10.3.10
   ndk_flutter: ^0.0.2-dev.16
   ndk_objectbox: ^0.2.8
-  enough_mail_plus: ^2.2.0
+  enough_mail_plus: ^2.2.1
   introduction_screen: ^4.0.0
   collection: ^1.19.1
   file_saver: ^0.3.1
