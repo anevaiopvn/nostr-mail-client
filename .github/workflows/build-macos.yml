@@ -20,7 +20,7 @@ jobs:
         run: flutter pub get
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-action@stable
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Build macOS app
         run: flutter build macos --release
