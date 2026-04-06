@@ -352,14 +352,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
-  flat_buffers:
-    dependency: transitive
-    description:
-      name: flat_buffers
-      sha256: "7c1de2d6eb5f3e61e5c50040841109f509deaaf2b12ec0d57b92456d9ea50345"
-      url: "https://pub.dev"
-    source: hosted
-    version: "25.9.23"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -736,10 +728,10 @@ packages:
     dependency: "direct main"
     description:
       name: ndk
-      sha256: "4b2c2fbf8aa6883582e6c33e07e084677cb0f8cd876c4ed9d7f86cabb65a42ce"
+      sha256: b45ce59d9a5c2b090ccf442d4cad3144102bb35db81fd918b98f03bc2f774531
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.1"
+    version: "0.8.2-dev.1"
   ndk_bip32_keys:
     dependency: transitive
     description:
@@ -756,14 +748,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.8.1"
-  ndk_objectbox:
-    dependency: "direct main"
-    description:
-      name: ndk_objectbox
-      sha256: "24a54aea7aae083bf7efb8bded6d90a3760ef206d98d57b7319c71a13fcfcac8"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.9"
   nip07_event_signer:
     dependency: transitive
     description:
@@ -779,22 +763,6 @@ packages:
       relative: true
     source: path
     version: "1.9.1"
-  objectbox:
-    dependency: transitive
-    description:
-      name: objectbox
-      sha256: ac1e1ef852f60ea0af01fddb28811c8aa169f2b1ae9284e91e7b822abe5ed603
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.2.0"
-  objectbox_flutter_libs:
-    dependency: transitive
-    description:
-      name: objectbox_flutter_libs
-      sha256: "928aeabb2c246db225866cd931f2fea6c7684cc7046d54c02355a7b227ae5ba5"
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.2.0"
   objective_c:
     dependency: transitive
     description:
@@ -1059,14 +1027,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.8.6"
-  sembast_cache_manager:
-    dependency: "direct main"
-    description:
-      name: sembast_cache_manager
-      sha256: b0cf6bf85d299bee58a7d91a3a802b0c1dc8b30b7349f74b9b68041e522ea751
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.8-dev.4"
   sembast_web:
     dependency: "direct main"
     description:
