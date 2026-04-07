@@ -25,13 +25,11 @@ class SettingsController extends GetxController {
 
   static const _showRawEmailKey = 'show_raw_email';
   static const _alwaysLoadImagesKey = 'always_load_images';
-  static const _emailSignatureKey = 'email_signature';
   static const _backgroundImageKey = 'background_image';
   static const themeModeKey = 'theme_mode';
   static const skipEventVerificationKey = 'skip_event_verification';
   static const backgroundsDirName = 'backgrounds';
-  static const _defaultSignature =
-      '--\nSent with Nmail\nhttps://github.com/nogringo/nostr-mail-client';
+  static const _defaultSignature = '--\nSent with Nmail\nhttps://nostrmail.org';
 
   final showRawEmail = false.obs;
   final alwaysLoadImages = false.obs;
@@ -43,10 +41,9 @@ class SettingsController extends GetxController {
   final lightColorScheme = Rxn<ColorScheme>();
   final darkColorScheme = Rxn<ColorScheme>();
 
-  String? get _pubkey => Get.find<NostrMailService>().getPublicKey();
+  NostrMailService get _nostrMailService => Get.find<NostrMailService>();
 
-  String get _signatureKey =>
-      _pubkey != null ? '${_emailSignatureKey}_$_pubkey' : _emailSignatureKey;
+  String? get _pubkey => _nostrMailService.getPublicKey();
 
   String get _backgroundKey =>
       _pubkey != null ? '${_backgroundImageKey}_$_pubkey' : _backgroundImageKey;
@@ -71,7 +68,6 @@ class SettingsController extends GetxController {
       _storageService.getSetting<bool>(_showRawEmailKey),
       _storageService.getSetting<bool>(_alwaysLoadImagesKey),
       _storageService.getSetting<bool>(skipEventVerificationKey),
-      _storageService.getSetting<String>(_signatureKey),
       _storageService.getSetting<String>(_backgroundKey),
       _storageService.getSetting<int>(themeModeKey),
       _storageService.getSetting<bool>(ThemeService.dynamicThemeKey),
@@ -82,20 +78,60 @@ class SettingsController extends GetxController {
     showRawEmail.value = (results[0] as bool?) ?? false;
     alwaysLoadImages.value = (results[1] as bool?) ?? false;
     skipEventVerification.value = (results[2] as bool?) ?? false;
-    emailSignature.value = (results[3] as String?) ?? _defaultSignature;
-    backgroundImage.value = results[4] as String?;
-    themeMode.value = ThemeMode.values[(results[5] as int?) ?? 0];
-    dynamicTheme.value = (results[6] as bool?) ?? true;
 
-    final savedLightScheme = results[7] as String?;
+    // Signature starts as default, will be updated by _loadSignatureFromNostr
+    // if a synced value is available
+    emailSignature.value = _defaultSignature;
+
+    backgroundImage.value = results[3] as String?;
+    themeMode.value = ThemeMode.values[(results[4] as int?) ?? 0];
+    dynamicTheme.value = (results[5] as bool?) ?? true;
+
+    final savedLightScheme = results[6] as String?;
     if (savedLightScheme != null) {
       lightColorScheme.value = colorSchemeFromJson(savedLightScheme);
     }
 
-    final savedDarkScheme = results[8] as String?;
+    final savedDarkScheme = results[7] as String?;
     if (savedDarkScheme != null) {
       darkColorScheme.value = colorSchemeFromJson(savedDarkScheme);
     }
+
+    // Fetch synced signature async (non-blocking)
+    _loadSignatureFromNostr();
+  }
+
+  /// Fetch signature from Nostr private settings (synced across devices).
+  Future<void> _loadSignatureFromNostr() async {
+    if (!_nostrMailService.isClientInitialized) return;
+
+    // First try the local decrypted cache (no signer/network needed)
+    final cached = await _nostrMailService.client.getCachedPrivateSettings();
+    if (cached?.signature != null && cached!.signature!.isNotEmpty) {
+      emailSignature.value = cached.signature!;
+    }
+
+    // Then refresh from relays (requires signer)
+    try {
+      final settings = await _nostrMailService.client.getPrivateSettings();
+      final syncedSignature = settings?.signature;
+      if (syncedSignature != null && syncedSignature.isNotEmpty) {
+        emailSignature.value = syncedSignature;
+      }
+    } catch (e) {
+      debugPrint('Failed to fetch signature from Nostr: $e');
+    }
+  }
+
+  /// Get the current email signature.
+  ///
+  /// Returns the cached Nostr-synced signature if available, otherwise
+  /// falls back to the local reactive value or default.
+  String get currentSignature {
+    final cached = _nostrMailService.isClientInitialized
+        ? _nostrMailService.client.cachedPrivateSettings?.signature
+        : null;
+    return cached ?? emailSignature.value;
   }
 
   Future<void> setShowRawEmail(bool value) async {
@@ -123,9 +159,17 @@ class SettingsController extends GetxController {
     }
   }
 
+  /// Set the email signature and sync to Nostr.
   Future<void> setEmailSignature(String value) async {
     emailSignature.value = value;
-    await _storageService.saveSetting(_signatureKey, value);
+
+    if (_nostrMailService.isClientInitialized) {
+      try {
+        await _nostrMailService.client.updatePrivateSettings(signature: value);
+      } catch (e) {
+        debugPrint('Failed to sync signature to Nostr: $e');
+      }
+    }
   }
 
   Future<void> setBackgroundImage(String? value) async {

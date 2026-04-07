@@ -40,7 +40,7 @@ class _ComposeViewState extends State<ComposeView> {
   void initState() {
     super.initState();
     final args = Get.arguments as Map<String, dynamic>?;
-    final signature = Get.find<SettingsController>().emailSignature.value;
+    final signature = Get.find<SettingsController>().currentSignature;
 
     toController = TextEditingController();
     subjectController = TextEditingController();
@@ -71,7 +71,7 @@ class _ComposeViewState extends State<ComposeView> {
   void _initFromEmail(Email email, String mode) {
     final myPubkey = Get.find<NostrMailService>().getPublicKey();
     final isSentByMe = email.senderPubkey == myPubkey;
-    final signature = Get.find<SettingsController>().emailSignature.value;
+    final signature = Get.find<SettingsController>().currentSignature;
     final signatureBlock = signature.isEmpty ? '' : '\n\n$signature';
 
     // Get sender display for quotes

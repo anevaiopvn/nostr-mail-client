@@ -792,11 +792,10 @@ packages:
   nostr_mail:
     dependency: "direct main"
     description:
-      name: nostr_mail
-      sha256: "9db75e14fceb47aba8880a7f88e21e0123a026f4e6d4d9cb6d1be8e53a449668"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.9.1"
+      path: "../nostr-mail-dart"
+      relative: true
+    source: path
+    version: "1.10.0"
   objective_c:
     dependency: transitive
     description:
