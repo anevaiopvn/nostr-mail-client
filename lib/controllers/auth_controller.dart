@@ -17,6 +17,7 @@ class AuthController extends GetxController {
   final isLoggedIn = false.obs;
   final showMoreOptions = false.obs;
   final isRegistering = false.obs;
+  final showSyncCodeExplanation = false.obs;
   final username = ''.obs;
   final usernameController = TextEditingController();
   final Rxn<Metadata> userMetadata = Rxn<Metadata>();
@@ -122,14 +123,15 @@ class AuthController extends GetxController {
 
     onLoggedIn();
 
-    Get.offAllNamed(AppRoutes.inbox);
-
     // Clear registration state
     username.value = '';
     usernameController.clear();
     isRegistering.value = false;
 
     isLoading.value = false;
+
+    // Show sync code explanation screen
+    showSyncCodeExplanation.value = true;
   }
 
   Future<void> logout() async {

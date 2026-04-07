@@ -6,6 +6,7 @@ import '../../utils/responsive_helper.dart';
 import 'widgets/auth_header.dart';
 import 'widgets/login_form.dart';
 import 'widgets/registration_form.dart';
+import 'widgets/sync_code_explanation_view.dart';
 
 class LoginView extends GetView<AuthController> {
   const LoginView({super.key});
@@ -19,14 +20,19 @@ class LoginView extends GetView<AuthController> {
             child: ResponsiveCenter(
               maxWidth: 400,
               padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const AuthHeader(),
-                  const SizedBox(height: 48),
-                  Obx(
-                    () => Stack(
+              child: Obx(() {
+                // Show sync code explanation after registration
+                if (controller.showSyncCodeExplanation.value) {
+                  return SyncCodeExplanationView();
+                }
+
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const AuthHeader(),
+                    const SizedBox(height: 48),
+                    Stack(
                       children: [
                         // Login Form
                         AnimatedOpacity(
@@ -54,9 +60,9 @@ class LoginView extends GetView<AuthController> {
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                );
+              }),
             ),
           ),
         ),
