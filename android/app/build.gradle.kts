@@ -17,7 +17,8 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "app.nostrmail.client"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // NDK r27+ is required for 16KB page alignment (Android 15+ devices)
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -46,6 +47,11 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // 16KB page alignment for Android 15+ compatibility
+        ndk {
+            abiFilters += listOf("arm64-v8a", "x86_64")
+        }
     }
 
     buildTypes {
