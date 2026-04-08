@@ -222,7 +222,13 @@ class ComposeController extends GetxController {
 
       // Set To recipients
       builder.to = recipients.map((r) {
-        return MailAddress(r.displayName, r.pubkey ?? r.input);
+        // For nostr recipients, use npub@nostr format
+        // For legacy recipients, use the original input (email address)
+        if (r.isNostr && r.pubkey != null) {
+          final npub = Nip19.encodePubKey(r.pubkey!);
+          return MailAddress(r.displayName, '$npub@nostr');
+        }
+        return MailAddress(r.displayName, r.input);
       }).toList();
 
       builder.subject = subject;
