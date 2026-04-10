@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ndk/ndk.dart';
 
+import '../utils/nostr_avatar_colors.dart';
+
 class NostrAvatar extends StatelessWidget {
   final String pubkey;
   final Metadata? metadata;
@@ -15,38 +17,9 @@ class NostrAvatar extends StatelessWidget {
     this.onTap,
   });
 
-  Color _getAvatarColor(BuildContext context) {
-    if (pubkey.isEmpty) {
-      return Theme.of(context).colorScheme.primaryContainer;
-    }
-
-    //!! WARNING: pubkey.hashCode can be negative, potentially creating invalid colors
-    // Consider using pubkey.hashCode.abs() or a proper hash function
-    final hash = pubkey.hashCode;
-    return Color.fromARGB(
-      255,
-      (hash & 0xFF0000) >> 16,
-      (hash & 0x00FF00) >> 8,
-      hash & 0x0000FF,
-    ).withValues(alpha: 1);
-  }
-
-  String _getInitial() {
-    if (metadata?.name != null && metadata!.name!.isNotEmpty) {
-      return metadata!.name![0].toUpperCase();
-    }
-    if (metadata?.displayName != null && metadata!.displayName!.isNotEmpty) {
-      return metadata!.displayName![0].toUpperCase();
-    }
-    if (pubkey.length >= 2) {
-      return pubkey.substring(0, 2).toUpperCase();
-    }
-    return '?';
-  }
-
   @override
   Widget build(BuildContext context) {
-    final avatarColor = _getAvatarColor(context);
+    final avatarColor = getAvatarColorFromPubkey(pubkey);
     final pictureUrl = metadata?.picture;
 
     Widget avatar;
@@ -54,19 +27,17 @@ class NostrAvatar extends StatelessWidget {
       avatar = CircleAvatar(
         radius: radius,
         backgroundImage: NetworkImage(pictureUrl),
-        backgroundColor: avatarColor,
+        backgroundColor: avatarColor.background,
         onBackgroundImageError: (e, s) {},
       );
     } else {
-      final isDark =
-          ThemeData.estimateBrightnessForColor(avatarColor) == Brightness.dark;
       avatar = CircleAvatar(
         radius: radius,
-        backgroundColor: avatarColor,
+        backgroundColor: avatarColor.background,
         child: Text(
-          _getInitial(),
+          getInitialFromMetadata(pubkey, metadata?.displayName, metadata?.name),
           style: TextStyle(
-            color: isDark ? Colors.white : Colors.black87,
+            color: avatarColor.text,
             fontWeight: FontWeight.bold,
             fontSize: radius * 0.8,
           ),
