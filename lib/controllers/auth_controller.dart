@@ -134,6 +134,11 @@ class AuthController extends GetxController {
     showSyncCodeExplanation.value = true;
   }
 
+  void continueToInbox() {
+    showSyncCodeExplanation.value = false;
+    Get.offAllNamed(AppRoutes.inbox);
+  }
+
   Future<void> logout() async {
     isLoading.value = true;
     try {

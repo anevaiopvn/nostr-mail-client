@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-import '../../../app/routes/app_routes.dart';
 import '../../../controllers/auth_controller.dart';
 import '../../../utils/toast_helper.dart';
 
@@ -123,7 +122,10 @@ class SyncCodeExplanationView extends StatelessWidget {
         const SizedBox(height: 16),
 
         OutlinedButton(
-          onPressed: () => Get.offAllNamed(AppRoutes.inbox),
+          onPressed: () {
+            final authController = Get.find<AuthController>();
+            authController.continueToInbox();
+          },
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16),
           ),
