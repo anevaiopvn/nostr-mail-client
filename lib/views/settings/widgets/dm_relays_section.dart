@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../services/nostr_mail_service.dart';
@@ -70,6 +71,12 @@ class _DmRelaysSectionState extends State<DmRelaysSection> {
                   errorText: errorText,
                 ),
                 autofocus: true,
+                inputFormatters: [
+                  FilteringTextInputFormatter.deny(
+                    RegExp(r'\s'),
+                    replacementString: '',
+                  ),
+                ],
                 onChanged: (value) {
                   setDialogState(() {
                     errorText = null;

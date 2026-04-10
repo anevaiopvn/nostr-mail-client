@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../utils/responsive_helper.dart';
 import '../shared/desktop_shell.dart';
+import 'widgets/bridges_section.dart';
 import 'widgets/blossom_servers_section.dart';
 import 'widgets/dm_relays_section.dart';
 import 'widgets/nip65_relays_section.dart';
@@ -32,6 +33,8 @@ class HostingSettingsView extends StatelessWidget {
                   const DmRelaysSection(),
                   const SizedBox(height: 16),
                   const BlossomServersSection(),
+                  const SizedBox(height: 16),
+                  const BridgesSection(),
                   const SizedBox(height: 16),
                   const RelayConnectivitySection(),
                   const SizedBox(height: 8),

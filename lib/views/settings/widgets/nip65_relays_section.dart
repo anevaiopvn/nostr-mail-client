@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:ndk/domain_layer/entities/read_write_marker.dart';
 
@@ -73,6 +74,12 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
                   errorText: errorText,
                 ),
                 autofocus: true,
+                inputFormatters: [
+                  FilteringTextInputFormatter.deny(
+                    RegExp(r'\s'),
+                    replacementString: '',
+                  ),
+                ],
                 onChanged: (value) {
                   setDialogState(() {
                     errorText = null;

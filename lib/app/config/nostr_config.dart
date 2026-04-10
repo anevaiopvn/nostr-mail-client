@@ -30,4 +30,6 @@ class NostrConfig {
     'https://blossom-02.uid.ovh',
     'https://blossom.primal.net',
   ];
+
+  static const recommendedBridges = ['uid.ovh'];
 }
