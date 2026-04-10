@@ -297,32 +297,32 @@ class ComposeController extends GetxController {
       ),
     );
 
-    // 2. Always add npub@uid.ovh (default bridge)
-    options.add(
-      FromOption(
-        address: '$npub@$_defaultBridgeDomain',
-        displayName: metadata?.name,
-        picture: metadata?.picture,
-        source: FromSource.npubBridge,
-      ),
-    );
+    // 2. Add npub@<bridge> for each configured bridge
+    final settings = await _nostrMailService.client.getPrivateSettings();
+    List<String> bridges = settings?.bridges ?? [];
 
-    // 3. Add npub@testnmail.uid.ovh (test bridge)
-    options.add(
-      FromOption(
-        address: '$npub@testnmail.uid.ovh',
-        displayName: metadata?.name,
-        picture: metadata?.picture,
-        source: FromSource.npubBridge,
-      ),
-    );
+    // Fallback to default bridge if none configured
+    if (bridges.isEmpty) {
+      bridges = [_defaultBridgeDomain];
+    }
 
-    // 4. Check if user's NIP-05 domain is a bridge
+    for (final bridge in bridges) {
+      options.add(
+        FromOption(
+          address: '$npub@$bridge',
+          displayName: metadata?.name,
+          picture: metadata?.picture,
+          source: FromSource.npubBridge,
+        ),
+      );
+    }
+
+    // 3. Check if user's NIP-05 domain is a bridge
     final nip05 = metadata?.nip05;
     if (nip05 != null && nip05.contains('@')) {
       final domain = nip05.split('@').last;
-      // Don't add if it's the default bridge domain (already added)
-      if (domain != _defaultBridgeDomain) {
+      // Don't add if it's already in bridges list
+      if (!bridges.contains(domain)) {
         final isBridge = await _isDomainBridge(domain);
         if (isBridge) {
           options.add(
@@ -334,15 +334,6 @@ class ComposeController extends GetxController {
             ),
           );
         }
-      }
-    }
-
-    // 5. Scan emails for history
-    final historyAddresses = await _getHistoryFromAddresses();
-    for (final address in historyAddresses) {
-      // Don't add duplicates
-      if (!options.any((o) => o.address == address)) {
-        options.add(FromOption(address: address, source: FromSource.history));
       }
     }
 
@@ -385,37 +376,6 @@ class ComposeController extends GetxController {
     } catch (_) {
       return false;
     }
-  }
-
-  /// Get From addresses from email history
-  Future<Set<String>> _getHistoryFromAddresses() async {
-    final addresses = <String>{};
-
-    try {
-      final myPubkey = _nostrMailService.getPublicKey();
-      if (myPubkey == null) return addresses;
-
-      final emails = await _nostrMailService.client.getEmails();
-
-      for (final email in emails) {
-        // From sent emails: use the sender address
-        if (email.senderPubkey == myPubkey) {
-          final from = email.sender?.encode();
-          if (from != null && from.isNotEmpty) {
-            addresses.add(from);
-          }
-        }
-        // From received emails: use the first "to" address (my address)
-        if (email.senderPubkey != myPubkey) {
-          final to = email.mime.to?.firstOrNull?.encode();
-          if (to != null && to.isNotEmpty) {
-            addresses.add(to);
-          }
-        }
-      }
-    } catch (_) {}
-
-    return addresses;
   }
 
   void selectFrom(FromOption option) {

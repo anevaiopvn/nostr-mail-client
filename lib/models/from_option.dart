@@ -1,3 +1,7 @@
+// TODO: Refactor FromOption to use MailAddress from enough_mail_plus instead of
+// redundant fields (address, displayName). Picture stays separate since it's
+// Nostr-specific and not part of MailAddress.
+
 enum FromSource {
   npubNostr, // npub@nostr (always available)
   npubBridge, // npub@uid.ovh (default bridge)
