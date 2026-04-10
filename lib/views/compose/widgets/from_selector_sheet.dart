@@ -1,4 +1,3 @@
-import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
@@ -6,7 +5,6 @@ import 'package:ndk/ndk.dart';
 import '../../../controllers/auth_controller.dart';
 import '../../../controllers/compose_controller.dart';
 import '../../../models/from_option.dart';
-import '../../../widgets/email_avatar.dart';
 import '../../../widgets/nostr_avatar.dart';
 
 class FromSelectorSheet extends StatelessWidget {
@@ -148,8 +146,6 @@ class _FromOptionTile extends StatelessWidget {
                 ],
               ),
             ),
-            if (option.source == FromSource.history)
-              Icon(Icons.history, size: 18, color: colorScheme.outline),
           ],
         ),
       ),
@@ -158,26 +154,15 @@ class _FromOptionTile extends StatelessWidget {
 
   Widget _buildAvatar(BuildContext context) {
     final authController = Get.find<AuthController>();
-    final pubkey = authController.publicKey;
+    final pubkey = authController.publicKey!;
 
-    // Use current user's pubkey for all addresses that are the user's aliases
-    final isUserAddress = option.source != FromSource.history;
-
-    if (isUserAddress && pubkey != null) {
-      return NostrAvatar(
-        pubkey: pubkey,
-        metadata: Metadata(
-          pubKey: pubkey,
-          picture: option.picture,
-          displayName: option.displayName,
-        ),
-        radius: 20,
-      );
-    }
-
-    //? FromOption add MailAddress
-    return EmailAvatar(
-      mailAddress: MailAddress(null, option.address),
+    return NostrAvatar(
+      pubkey: pubkey,
+      metadata: Metadata(
+        pubKey: pubkey,
+        picture: option.picture,
+        displayName: option.displayName,
+      ),
       radius: 20,
     );
   }

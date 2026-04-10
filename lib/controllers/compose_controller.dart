@@ -290,8 +290,7 @@ class ComposeController extends GetxController {
     // 1. Always add npub@nostr
     options.add(
       FromOption(
-        address: '$npub@nostr',
-        displayName: metadata?.name,
+        mailAddress: MailAddress(metadata?.name, '$npub@nostr'),
         picture: metadata?.picture,
         source: FromSource.npubNostr,
       ),
@@ -309,8 +308,7 @@ class ComposeController extends GetxController {
     for (final bridge in bridges) {
       options.add(
         FromOption(
-          address: '$npub@$bridge',
-          displayName: metadata?.name,
+          mailAddress: MailAddress(metadata?.name, '$npub@$bridge'),
           picture: metadata?.picture,
           source: FromSource.npubBridge,
         ),
@@ -327,8 +325,7 @@ class ComposeController extends GetxController {
         if (isBridge) {
           options.add(
             FromOption(
-              address: nip05,
-              displayName: metadata?.name,
+              mailAddress: MailAddress(metadata?.name, nip05),
               picture: metadata?.picture,
               source: FromSource.nip05Bridge,
             ),

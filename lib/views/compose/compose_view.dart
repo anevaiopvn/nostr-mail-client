@@ -1,4 +1,3 @@
-import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:get/get.dart';
@@ -13,7 +12,6 @@ import '../../models/from_option.dart';
 import '../../services/nostr_mail_service.dart';
 import '../../utils/responsive_helper.dart';
 import '../../utils/toast_helper.dart';
-import '../../widgets/email_avatar.dart';
 import '../../widgets/nostr_avatar.dart';
 import '../shared/desktop_shell.dart';
 import 'widgets/from_selector_sheet.dart';
@@ -431,25 +429,15 @@ class _ComposeViewState extends State<ComposeView> {
 
   Widget _buildFromAvatar(BuildContext context, FromOption option) {
     final authController = Get.find<AuthController>();
-    final pubkey = authController.publicKey;
+    final pubkey = authController.publicKey!;
 
-    // Use current user's pubkey for all addresses that are the user's aliases
-    final isUserAddress = option.source != FromSource.history;
-
-    if (isUserAddress && pubkey != null) {
-      return NostrAvatar(
-        pubkey: pubkey,
-        metadata: Metadata(
-          pubKey: pubkey,
-          picture: option.picture,
-          displayName: option.displayName,
-        ),
-        radius: 14,
-      );
-    }
-
-    return EmailAvatar(
-      mailAddress: MailAddress(null, option.address),
+    return NostrAvatar(
+      pubkey: pubkey,
+      metadata: Metadata(
+        pubKey: pubkey,
+        picture: option.picture,
+        displayName: option.displayName,
+      ),
       radius: 14,
     );
   }

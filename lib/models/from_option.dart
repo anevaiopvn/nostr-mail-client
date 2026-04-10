@@ -1,29 +1,27 @@
-// TODO: Refactor FromOption to use MailAddress from enough_mail_plus instead of
-// redundant fields (address, displayName). Picture stays separate since it's
-// Nostr-specific and not part of MailAddress.
+import 'package:enough_mail_plus/enough_mail.dart';
 
 enum FromSource {
   npubNostr, // npub@nostr (always available)
   npubBridge, // npub@uid.ovh (default bridge)
   nip05Bridge, // nip05@domain (if domain is a bridge)
-  history, // From sent/received emails
 }
 
 class FromOption {
-  final String address;
-  final String? displayName;
+  final MailAddress mailAddress;
   final String? picture;
   final FromSource source;
 
   const FromOption({
-    required this.address,
-    this.displayName,
+    required this.mailAddress,
     this.picture,
     required this.source,
   });
 
+  String get address => mailAddress.email;
+  String? get displayName => mailAddress.personalName;
+
   String get label {
-    if (displayName != null && displayName!.isNotEmpty) {
+    if (displayName?.isNotEmpty ?? false) {
       return displayName!;
     }
     return shortAddress;
@@ -31,8 +29,8 @@ class FromOption {
 
   /// Returns a shortened address with domain visible (except @nostr)
   String get shortAddress {
-    final parts = address.split('@');
-    if (parts.length != 2) return address;
+    final parts = mailAddress.email.split('@');
+    if (parts.length != 2) return mailAddress.email;
 
     final localPart = parts[0];
     final domain = parts[1];
@@ -52,8 +50,6 @@ class FromOption {
 
     return address;
   }
-
-  bool get isNostrAddress => source != FromSource.history;
 
   @override
   bool operator ==(Object other) =>
