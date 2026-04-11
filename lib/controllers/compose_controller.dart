@@ -12,6 +12,7 @@ import '../models/from_option.dart';
 import '../models/recipient.dart';
 import '../services/contacts_service.dart';
 import '../services/nostr_mail_service.dart';
+import '../utils/sender_name_helper.dart';
 import 'auth_controller.dart';
 
 const String _defaultBridgeDomain = 'uid.ovh';
@@ -284,13 +285,14 @@ class ComposeController extends GetxController {
     final authController = Get.find<AuthController>();
     final npub = authController.npub;
     final metadata = authController.userMetadata.value;
+    final senderName = getSenderName(metadata);
 
     if (npub == null) return;
 
     // 1. Always add npub@nostr
     options.add(
       FromOption(
-        mailAddress: MailAddress(metadata?.name, '$npub@nostr'),
+        mailAddress: MailAddress(senderName, '$npub@nostr'),
         picture: metadata?.picture,
         source: FromSource.npubNostr,
       ),
@@ -308,7 +310,7 @@ class ComposeController extends GetxController {
     for (final bridge in bridges) {
       options.add(
         FromOption(
-          mailAddress: MailAddress(metadata?.name, '$npub@$bridge'),
+          mailAddress: MailAddress(senderName, '$npub@$bridge'),
           picture: metadata?.picture,
           source: FromSource.npubBridge,
         ),
@@ -325,7 +327,7 @@ class ComposeController extends GetxController {
         if (isBridge) {
           options.add(
             FromOption(
-              mailAddress: MailAddress(metadata?.name, nip05),
+              mailAddress: MailAddress(senderName, nip05),
               picture: metadata?.picture,
               source: FromSource.nip05Bridge,
             ),
