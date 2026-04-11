@@ -180,7 +180,10 @@ class ProfileController extends GetxController {
       await broadcast.broadcastDoneFuture;
 
       // Refresh metadata in AuthController
-      Get.find<AuthController>().userMetadata.value = metadata;
+      // Use refresh() to force rebuild even with same object reference
+      final authController = Get.find<AuthController>();
+      authController.userMetadata.value = metadata;
+      authController.userMetadata.refresh();
 
       Get.back();
     } catch (e) {
