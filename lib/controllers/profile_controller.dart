@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 
+import '../app/config/nostr_config.dart';
+import '../services/nostr_mail_service.dart';
 import '../utils/toast_helper.dart';
 import 'auth_controller.dart';
 
@@ -92,9 +94,18 @@ class ProfileController extends GetxController {
 
     try {
       final ndk = Get.find<Ndk>();
+      final nostrMailService = Get.find<NostrMailService>();
+
+      // Check if user has configured servers, otherwise use defaults
+      final userServers = await nostrMailService.getBlossomServers();
+      final serverUrls = userServers.isNotEmpty
+          ? userServers
+          : NostrConfig.recommendedBlossomServers;
+
       final uploadResults = await ndk.blossom.uploadBlob(
         data: file.bytes!,
         contentType: file.extension != null ? 'image/${file.extension}' : null,
+        serverUrls: serverUrls,
       );
 
       if (uploadResults.isEmpty) {
