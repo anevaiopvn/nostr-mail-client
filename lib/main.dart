@@ -10,6 +10,7 @@ import 'package:nostr_mail_client/utils/responsive_helper.dart';
 import 'package:system_theme/system_theme.dart';
 import 'package:toastification/toastification.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
 import 'app/bindings/initial_binding.dart';
 import 'app/config/nostr_config.dart';
@@ -24,6 +25,7 @@ import 'utils/event_verifiers.dart';
 import 'utils/platform_helper.dart';
 
 void main() async {
+  usePathUrlStrategy();
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize window manager for desktop
