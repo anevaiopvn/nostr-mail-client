@@ -98,7 +98,7 @@ class MainApp extends StatelessWidget {
     final themeService = Get.find<ThemeService>();
 
     return Obx(() {
-      final systemAccent = SystemTheme.accentColor.accent;
+      final systemAccent = kIsWeb ? Colors.deepPurple : SystemTheme.accentColor.accent;
 
       final lightScheme =
           themeService.lightColorScheme.value ??
