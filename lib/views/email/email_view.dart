@@ -21,6 +21,7 @@ import '../../utils/responsive_helper.dart';
 import '../../utils/toast_helper.dart';
 import '../../widgets/nostr_avatar.dart';
 import '../shared/desktop_shell.dart';
+import 'widgets/nip59_events_dialog.dart';
 
 class EmailView extends StatefulWidget {
   const EmailView({super.key});
@@ -216,6 +217,25 @@ class _EmailViewState extends State<EmailView> {
     Get.back();
   }
 
+  Future<void> _showNip59Events() async {
+    if (email == null) return;
+
+    final nostrMailService = Get.find<NostrMailService>();
+
+    final giftWrap = await nostrMailService.client.getGiftWrap(email!.id);
+    final seal = await nostrMailService.client.getSeal(email!.id);
+    final rumor = await nostrMailService.client.getRumor(email!.id);
+
+    if (!mounted) return;
+
+    await showNip59EventsDialog(
+      context: context,
+      giftWrap: giftWrap,
+      seal: seal,
+      rumor: rumor,
+    );
+  }
+
   void _restoreEmail() {
     if (email == null) return;
 
@@ -302,6 +322,11 @@ class _EmailViewState extends State<EmailView> {
               );
             },
             menuChildren: [
+              MenuItemButton(
+                leadingIcon: const Icon(Icons.info_outline, size: 20),
+                onPressed: email != null ? _showNip59Events : null,
+                child: const Text('NIP-59 Events'),
+              ),
               MenuItemButton(
                 leadingIcon: const Icon(Icons.download, size: 20),
                 onPressed: _downloadEmail,
