@@ -20,5 +20,6 @@ jobs:
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_NOSTR_MAIL }}
-          channelId: live
           projectId: nostr-mail
+          site: nostr-mail-client
+          channelId: live
