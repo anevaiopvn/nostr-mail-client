@@ -12,6 +12,7 @@ import '../models/from_option.dart';
 import '../models/recipient.dart';
 import '../services/contacts_service.dart';
 import '../services/nostr_mail_service.dart';
+import '../utils/metadata_extensions.dart';
 import '../utils/sender_name_helper.dart';
 import 'auth_controller.dart';
 
@@ -109,7 +110,7 @@ class ComposeController extends GetxController {
         return Recipient(
           input: input,
           pubkey: pubkey,
-          displayName: metadata?.name,
+          displayName: metadata?.getBestName(),
           picture: metadata?.picture,
           type: RecipientType.nostr,
         );
@@ -124,7 +125,7 @@ class ComposeController extends GetxController {
         return Recipient(
           input: input,
           pubkey: pubkey,
-          displayName: metadata?.name,
+          displayName: metadata?.getBestName(),
           picture: metadata?.picture,
           type: RecipientType.nostr,
         );
@@ -140,7 +141,7 @@ class ComposeController extends GetxController {
           return Recipient(
             input: input,
             pubkey: pubkey,
-            displayName: metadata?.name,
+            displayName: metadata?.getBestName(),
             picture: metadata?.picture,
             type: RecipientType.nostr,
           );

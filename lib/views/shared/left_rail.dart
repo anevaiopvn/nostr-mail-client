@@ -7,6 +7,7 @@ import 'package:toastification/toastification.dart';
 import '../../app/routes/app_routes.dart';
 import '../../controllers/auth_controller.dart';
 import '../../utils/platform_helper.dart';
+import '../../utils/metadata_extensions.dart';
 import '../../widgets/nostr_avatar.dart';
 import 'layout_constants.dart';
 
@@ -78,11 +79,7 @@ class _AccountMenuButton extends StatelessWidget {
         ? '${npub.substring(0, 10)}...${npub.substring(npub.length - 6)}'
         : npub;
 
-    final displayName = metadata?.displayName?.isNotEmpty == true
-        ? metadata!.displayName!
-        : metadata?.name?.isNotEmpty == true
-        ? metadata!.name!
-        : shortNpub;
+    final displayName = metadata?.getBestName() ?? shortNpub;
 
     return Container(
       width: 220,

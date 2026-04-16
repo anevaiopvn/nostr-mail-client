@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:ndk/ndk.dart';
 
 import '../models/contact.dart';
+import '../utils/metadata_extensions.dart';
 import 'nostr_mail_service.dart';
 
 class ContactsService extends GetxService {
@@ -155,7 +156,7 @@ class ContactsService extends GetxService {
         result.add(
           Contact(
             pubkey: entry.key,
-            displayName: metadata?.name,
+            displayName: metadata?.getBestName(),
             picture: metadata?.picture,
             nip05: metadata?.nip05,
             source: ContactSource.emailHistory,
@@ -180,7 +181,7 @@ class ContactsService extends GetxService {
         result.add(
           Contact(
             pubkey: pubkey,
-            displayName: metadata?.name,
+            displayName: metadata?.getBestName(),
             picture: metadata?.picture,
             nip05: metadata?.nip05 ?? email,
             source: ContactSource.emailHistory,
@@ -252,7 +253,7 @@ class ContactsService extends GetxService {
         result.add(
           Contact(
             pubkey: pubkey,
-            displayName: metadata?.name,
+            displayName: metadata?.getBestName(),
             picture: metadata?.picture,
             nip05: metadata?.nip05,
             source: ContactSource.nostrFollow,

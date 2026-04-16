@@ -7,6 +7,7 @@ import 'package:nostr_mail/nostr_mail.dart';
 import '../../../controllers/auth_controller.dart';
 import '../../../controllers/inbox_controller.dart';
 import '../../../utils/nostr_utils.dart';
+import '../../../utils/metadata_extensions.dart';
 import '../../../utils/responsive_helper.dart';
 import '../../../widgets/email_avatar.dart';
 import '../../../widgets/nostr_avatar.dart';
@@ -106,8 +107,8 @@ class _EmailTileState extends State<EmailTile> {
   }
 
   String get _displayName {
-    if (_contactMetadata?.name != null && _contactMetadata!.name!.isNotEmpty) {
-      return _contactMetadata!.name!;
+    if (_contactMetadata != null) {
+      return _contactMetadata!.getBestName();
     }
     if (_displayAddress.hasPersonalName) {
       return _displayAddress.personalName!;

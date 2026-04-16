@@ -35,7 +35,7 @@ class NostrAvatar extends StatelessWidget {
         radius: radius,
         backgroundColor: avatarColor.background,
         child: Text(
-          getInitialFromMetadata(pubkey, metadata?.displayName, metadata?.name),
+          getInitialFromMetadata(pubkey, metadata),
           style: TextStyle(
             color: avatarColor.text,
             fontWeight: FontWeight.bold,

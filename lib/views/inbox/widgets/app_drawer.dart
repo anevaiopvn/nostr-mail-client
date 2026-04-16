@@ -6,6 +6,7 @@ import 'package:toastification/toastification.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../controllers/auth_controller.dart';
 import '../../../controllers/inbox_controller.dart';
+import '../../../utils/metadata_extensions.dart';
 import '../../../widgets/nostr_avatar.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -42,11 +43,9 @@ class AppDrawer extends StatelessWidget {
   String _displayName() {
     final authController = Get.find<AuthController>();
     final metadata = authController.userMetadata.value;
+    final pubkey = authController.publicKey ?? '';
 
-    if (metadata?.name != null && metadata!.name!.isNotEmpty) {
-      return metadata.name!;
-    }
-    return _shortNpub();
+    return metadata?.getBestName() ?? getAnonName(pubkey);
   }
 
   @override

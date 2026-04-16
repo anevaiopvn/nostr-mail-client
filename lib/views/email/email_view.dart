@@ -16,6 +16,7 @@ import '../../app/routes/app_routes.dart';
 import '../../controllers/inbox_controller.dart';
 import '../../controllers/settings_controller.dart';
 import '../../services/nostr_mail_service.dart';
+import '../../utils/metadata_extensions.dart';
 import '../../utils/nostr_utils.dart';
 import '../../utils/responsive_helper.dart';
 import '../../utils/toast_helper.dart';
@@ -410,16 +411,12 @@ class _EmailViewState extends State<EmailView> {
 
   String get _senderDisplayName {
     // Always show the from address/name
-    if (_senderMetadata?.name != null && _senderMetadata!.name!.isNotEmpty) {
-      return _senderMetadata!.name!;
-    }
-    return email!.sender?.encode() ?? '';
+    return _senderMetadata?.getBestName() ?? email!.sender?.encode() ?? '';
   }
 
   String get _recipientDisplayName {
-    if (_recipientMetadata?.name != null &&
-        _recipientMetadata!.name!.isNotEmpty) {
-      return _recipientMetadata!.name!;
+    if (_recipientMetadata != null) {
+      return _recipientMetadata!.getBestName();
     }
     // Fallback to shortened address
     final to = email!.mime.to?.firstOrNull?.encode() ?? '';

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ndk/ndk.dart';
+import 'metadata_extensions.dart';
 
 /// Standardized Nostr avatar color palette (NIP-XX).
 /// Each entry contains the background color and its associated text color for optimal contrast.
@@ -45,15 +47,8 @@ NostrAvatarColor getAvatarColorFromPubkey(String pubkey) {
 }
 
 /// Derives a single initial from metadata or pubkey fallback.
-/// Priority: display_name > name > pubkey character at index 28 mapped to A-P.
-String getInitialFromMetadata(
-  String pubkey,
-  String? displayName,
-  String? name,
-) {
-  if (displayName != null && displayName.isNotEmpty) {
-    return displayName[0].toUpperCase();
-  }
+String getInitialFromMetadata(String pubkey, Metadata? metadata) {
+  final name = metadata?.getBestName();
   if (name != null && name.isNotEmpty) {
     return name[0].toUpperCase();
   }

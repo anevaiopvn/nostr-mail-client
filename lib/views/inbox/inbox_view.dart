@@ -6,6 +6,7 @@ import 'package:nostr_mail/nostr_mail.dart';
 import '../../app/routes/app_routes.dart';
 import '../../controllers/auth_controller.dart';
 import '../../controllers/inbox_controller.dart';
+import '../../utils/metadata_extensions.dart';
 import '../../utils/responsive_helper.dart';
 import '../../widgets/nostr_avatar.dart';
 import '../shared/desktop_shell.dart';
@@ -24,11 +25,7 @@ class InboxView extends GetView<InboxController> {
         ? '${npub.substring(0, 10)}...${npub.substring(npub.length - 6)}'
         : npub;
 
-    final displayName = metadata?.displayName?.isNotEmpty == true
-        ? metadata!.displayName!
-        : metadata?.name?.isNotEmpty == true
-        ? metadata!.name!
-        : shortNpub;
+    final displayName = metadata?.getBestName() ?? shortNpub;
 
     return Container(
       width: 240,
