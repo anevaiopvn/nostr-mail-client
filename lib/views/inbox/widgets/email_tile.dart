@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 import 'package:nostr_mail/nostr_mail.dart';
+import 'package:nostr_mail_client/utils/get_attachements.dart';
 
 import '../../../controllers/auth_controller.dart';
 import '../../../controllers/inbox_controller.dart';
@@ -12,6 +13,7 @@ import '../../../utils/responsive_helper.dart';
 import '../../../widgets/email_avatar.dart';
 import '../../../widgets/nostr_avatar.dart';
 
+// TODO convert to stateless widget
 class EmailTile extends StatefulWidget {
   final Email email;
   final VoidCallback onTap;
@@ -363,6 +365,7 @@ class _EmailTileState extends State<EmailTile> {
     final subject = (widget.email.subject?.isEmpty ?? true)
         ? '(No subject)'
         : widget.email.subject!;
+    final attachments = getAttachements(widget.email.mime);
 
     return InkWell(
       onTap: widget.onTap,
@@ -401,29 +404,82 @@ class _EmailTileState extends State<EmailTile> {
             ),
             const SizedBox(width: 16),
             Expanded(
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Flexible(
-                    flex: 2,
-                    child: Text(
-                      subject,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontWeight: FontWeight.w500),
-                    ),
+                  Row(
+                    children: [
+                      Flexible(
+                        flex: 2,
+                        child: Text(
+                          subject,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text('—', style: TextStyle(color: Colors.grey[400])),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        flex: 3,
+                        child: Text(
+                          widget.email.body,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: Colors.grey[500]),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  Text('—', style: TextStyle(color: Colors.grey[400])),
-                  const SizedBox(width: 8),
-                  Flexible(
-                    flex: 3,
-                    child: Text(
-                      widget.email.body,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: Colors.grey[500]),
+                  if (attachments.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 300),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Visibility(
+                              visible: attachments.isNotEmpty,
+                              maintainSize: true,
+                              maintainAnimation: true,
+                              maintainState: true,
+                              child: _buildAttachmentChip(
+                                context,
+                                attachments.isNotEmpty ? attachments[0] : null,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            flex: 1,
+                            child: Visibility(
+                              visible: attachments.length >= 2,
+                              maintainSize: true,
+                              maintainAnimation: true,
+                              maintainState: true,
+                              child: _buildAttachmentChip(
+                                context,
+                                attachments.length > 1 ? attachments[1] : null,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Visibility(
+                            visible: attachments.length > 2,
+                            maintainSize: true,
+                            maintainAnimation: true,
+                            maintainState: true,
+                            child: _buildAttachmentChip(
+                              context,
+                              '+${attachments.length - 2}',
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),
@@ -439,6 +495,8 @@ class _EmailTileState extends State<EmailTile> {
   }
 
   Widget _buildDefaultTile(BuildContext context) {
+    final attachments = getAttachements(widget.email.mime);
+
     return ListTile(
       onTap: widget.onTap,
       leading: _buildAvatar(context),
@@ -466,6 +524,54 @@ class _EmailTileState extends State<EmailTile> {
             overflow: TextOverflow.ellipsis,
             style: TextStyle(color: Colors.grey[500], fontSize: 13),
           ),
+          if (attachments.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 300),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Visibility(
+                      visible: attachments.isNotEmpty,
+                      maintainSize: true,
+                      maintainAnimation: true,
+                      maintainState: true,
+                      child: _buildAttachmentChip(
+                        context,
+                        attachments.isNotEmpty ? attachments[0] : null,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    flex: 1,
+                    child: Visibility(
+                      visible: attachments.length >= 2,
+                      maintainSize: true,
+                      maintainAnimation: true,
+                      maintainState: true,
+                      child: _buildAttachmentChip(
+                        context,
+                        attachments.length > 1 ? attachments[1] : null,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Visibility(
+                    visible: attachments.length > 2,
+                    maintainSize: true,
+                    maintainAnimation: true,
+                    maintainState: true,
+                    child: _buildAttachmentChip(
+                      context,
+                      '+${attachments.length - 2}',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
       trailing: Text(
@@ -541,5 +647,118 @@ class _EmailTileState extends State<EmailTile> {
     } else {
       return '${date.day}/${date.month}';
     }
+  }
+
+  /// Get the appropriate icon for an attachment based on its file extension
+  IconData _getAttachmentIcon(String filename) {
+    final extension = filename.split('.').last.toLowerCase();
+
+    // Images
+    if ([
+      'jpg',
+      'jpeg',
+      'png',
+      'gif',
+      'bmp',
+      'webp',
+      'svg',
+      'ico',
+    ].contains(extension)) {
+      return Icons.image;
+    }
+
+    // PDF
+    if (extension == 'pdf') {
+      return Icons.picture_as_pdf;
+    }
+
+    // Documents
+    if (['doc', 'docx', 'txt', 'rtf', 'odt', 'pages'].contains(extension)) {
+      return Icons.description;
+    }
+
+    // Spreadsheets
+    if (['xls', 'xlsx', 'csv', 'ods', 'numbers'].contains(extension)) {
+      return Icons.table_chart;
+    }
+
+    // Presentations
+    if (['ppt', 'pptx', 'odp', 'key'].contains(extension)) {
+      return Icons.slideshow;
+    }
+
+    // Archives
+    if (['zip', 'rar', '7z', 'tar', 'gz', 'bz2'].contains(extension)) {
+      return Icons.folder_zip;
+    }
+
+    // Audio
+    if ([
+      'mp3',
+      'wav',
+      'ogg',
+      'flac',
+      'aac',
+      'm4a',
+      'wma',
+    ].contains(extension)) {
+      return Icons.audio_file;
+    }
+
+    // Video
+    if ([
+      'mp4',
+      'avi',
+      'mkv',
+      'mov',
+      'wmv',
+      'flv',
+      'webm',
+    ].contains(extension)) {
+      return Icons.video_file;
+    }
+
+    // Code
+    if ([
+      'js',
+      'ts',
+      'py',
+      'java',
+      'c',
+      'cpp',
+      'h',
+      'hpp',
+      'cs',
+      'php',
+      'rb',
+      'go',
+      'rs',
+      'swift',
+      'kt',
+      'dart',
+      'html',
+      'css',
+      'json',
+      'xml',
+      'yaml',
+      'yml',
+    ].contains(extension)) {
+      return Icons.code;
+    }
+
+    // Default attachment icon
+    return Icons.attach_file;
+  }
+
+  /// Build a chip widget for an attachment
+  Widget _buildAttachmentChip(BuildContext context, String? label) {
+    if (label == null) {
+      return const SizedBox.shrink();
+    }
+    return Chip(
+      avatar: Icon(_getAttachmentIcon(label)),
+      label: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+      shape: const StadiumBorder(),
+    );
   }
 }
