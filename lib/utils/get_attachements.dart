@@ -41,11 +41,9 @@ List<AttachmentDetails> getAttachmentDetails(MimeMessage mime) {
         }
       } catch (_) {}
 
-      attachments.add(AttachmentDetails(
-        filename: filename,
-        size: size,
-        fetchId: fetchId,
-      ));
+      attachments.add(
+        AttachmentDetails(filename: filename, size: size, fetchId: fetchId),
+      );
     }
   }
 

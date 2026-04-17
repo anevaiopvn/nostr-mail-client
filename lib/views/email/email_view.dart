@@ -729,21 +729,79 @@ class _EmailViewState extends State<EmailView> {
     );
   }
 
-  Widget _buildAttachmentsSection(BuildContext context, List<AttachmentDetails> attachments) {
+  Widget _buildAttachmentsSection(
+    BuildContext context,
+    List<AttachmentDetails> attachments,
+  ) {
+    final totalSize = attachments.fold<int>(
+      0,
+      (sum, attachment) => sum + attachment.size,
+    );
+    final totalSizeText = formatFileSize(totalSize);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: Text(
-            'Attachments (${attachments.length})',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Theme.of(context).colorScheme.onSurface,
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(
+                'Attachments (${attachments.length})',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
             ),
-          ),
+            const Spacer(),
+            if (attachments.length > 1) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.folder_zip,
+                      size: 16,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      totalSizeText,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              FilledButton.icon(
+                onPressed: () => _downloadAllAttachments(attachments),
+                icon: const Icon(Icons.file_download, size: 18),
+                label: const Text('Download all'),
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  textStyle: const TextStyle(fontSize: 13),
+                ),
+              ),
+            ],
+          ],
         ),
+        const SizedBox(height: 12),
         Wrap(
           spacing: 12,
           runSpacing: 8,
@@ -755,7 +813,10 @@ class _EmailViewState extends State<EmailView> {
     );
   }
 
-  Widget _buildAttachmentCard(BuildContext context, AttachmentDetails attachment) {
+  Widget _buildAttachmentCard(
+    BuildContext context,
+    AttachmentDetails attachment,
+  ) {
     final filename = attachment.filename;
     final icon = getAttachmentIcon(filename);
     final isImage = isImageFile(filename);
@@ -766,10 +827,7 @@ class _EmailViewState extends State<EmailView> {
       onTap: () => _handleAttachmentTap(filename, isImage, isPdf),
       borderRadius: BorderRadius.circular(8),
       child: Container(
-        constraints: const BoxConstraints(
-          minWidth: 140,
-          maxWidth: 200,
-        ),
+        constraints: const BoxConstraints(minWidth: 140, maxWidth: 200),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surfaceContainerHighest,
@@ -913,10 +971,7 @@ class _EmailViewState extends State<EmailView> {
             ),
             body: Center(
               child: InteractiveViewer(
-                child: Image.memory(
-                  imageData,
-                  fit: BoxFit.contain,
-                ),
+                child: Image.memory(imageData, fit: BoxFit.contain),
               ),
             ),
           ),
@@ -955,10 +1010,7 @@ class _EmailViewState extends State<EmailView> {
                 ),
               ],
             ),
-            body: PdfViewer.data(
-              pdfData,
-              sourceName: filename,
-            ),
+            body: PdfViewer.data(pdfData, sourceName: filename),
           ),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(opacity: animation, child: child);
@@ -1002,6 +1054,60 @@ class _EmailViewState extends State<EmailView> {
     } catch (e) {
       if (mounted) {
         ToastHelper.error(context, 'Failed to save file: $e');
+      }
+    }
+  }
+
+  Future<void> _downloadAllAttachments(
+    List<AttachmentDetails> attachments,
+  ) async {
+    int successCount = 0;
+    int failureCount = 0;
+
+    for (final attachment in attachments) {
+      final fileData = getAttachmentData(email!.mime, attachment.filename);
+      if (fileData == null) {
+        failureCount++;
+        continue;
+      }
+
+      try {
+        // Extract file extension
+        final extension = attachment.filename.contains('.')
+            ? attachment.filename.split('.').last.toLowerCase()
+            : '';
+
+        // Map common extensions to MIME types
+        MimeType mimeType = _getMimeType(extension);
+
+        // Clean filename (remove path if any)
+        final cleanName = attachment.filename.split('/').last;
+
+        await FileSaver.instance.saveFile(
+          name: cleanName,
+          bytes: fileData,
+          fileExtension: extension,
+          mimeType: mimeType,
+        );
+        successCount++;
+      } catch (e) {
+        failureCount++;
+      }
+    }
+
+    if (mounted) {
+      if (failureCount == 0) {
+        ToastHelper.success(
+          context,
+          'Downloaded $successCount files successfully',
+        );
+      } else if (successCount == 0) {
+        ToastHelper.error(context, 'Failed to download $failureCount files');
+      } else {
+        ToastHelper.info(
+          context,
+          'Downloaded $successCount files, $failureCount failed',
+        );
       }
     }
   }
