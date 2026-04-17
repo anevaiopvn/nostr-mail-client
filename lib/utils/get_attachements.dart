@@ -86,30 +86,14 @@ bool isPdfFile(String filename) {
   return extension == 'pdf';
 }
 
-// TODO a mime can have multiple attachments with the same filename, we should handle that case by using the fetchId instead of filename as the unique identifier for attachments
-
 /// Get the binary data for a specific attachment
-Uint8List? getAttachmentData(MimeMessage mime, String filename) {
-  final contentInfos = mime.findContentInfo(
-    disposition: ContentDisposition.attachment,
-  );
-
-  for (final info in contentInfos) {
-    if (info.contentDisposition?.filename == filename) {
-      try {
-        // Get the part from fetchId
-        final part = mime.getPart(info.fetchId);
-        if (part != null) {
-          // Decode the part data
-          return part.decodeContentBinary();
-        }
-      } catch (e) {
-        return null;
-      }
-    }
-  }
-
-  return null;
+Uint8List? getAttachmentData({
+  required MimeMessage mime,
+  required String fetchId,
+}) {
+  final part = mime.getPart(fetchId);
+  if (part == null) return null;
+  return part.decodeContentBinary();
 }
 
 /// Get the appropriate icon for an attachment based on its file extension

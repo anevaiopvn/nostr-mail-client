@@ -3,18 +3,21 @@ import 'package:nostr_mail/nostr_mail.dart';
 import 'package:nostr_mail_client/utils/get_attachements.dart';
 
 class ImageThumbnailView extends StatelessWidget {
-  final String filename;
+  final AttachmentDetails attachmentDetails;
   final Email email;
 
   const ImageThumbnailView({
     super.key,
-    required this.filename,
+    required this.attachmentDetails,
     required this.email,
   });
 
   @override
   Widget build(BuildContext context) {
-    final imageData = getAttachmentData(email.mime, filename);
+    final imageData = getAttachmentData(
+      mime: email.mime,
+      fetchId: attachmentDetails.fetchId,
+    );
 
     if (imageData != null) {
       return ClipRRect(

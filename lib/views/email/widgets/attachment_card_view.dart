@@ -24,8 +24,11 @@ class AttachmentCardView extends StatelessWidget {
     final size = formatFileSize(attachment.size);
 
     return InkWell(
-      onTap: () =>
-          EmailController.to.handleAttachmentTap(filename, isImage, isPdf),
+      onTap: () => EmailController.to.handleAttachmentTap(
+        attachmentDetails: attachment,
+        isImage: isImage,
+        isPdf: isPdf,
+      ),
       borderRadius: BorderRadius.circular(8),
       child: Container(
         constraints: const BoxConstraints(minWidth: 140, maxWidth: 200),
@@ -42,7 +45,7 @@ class AttachmentCardView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (isImage)
-              ImageThumbnailView(filename: filename, email: email)
+              ImageThumbnailView(attachmentDetails: attachment, email: email)
             else if (isPdf)
               PdfThumbnailView()
             else

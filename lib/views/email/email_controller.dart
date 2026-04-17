@@ -218,13 +218,17 @@ class EmailController extends GetxController {
     Get.back();
   }
 
-  void handleAttachmentTap(String filename, bool isImage, bool isPdf) {
+  void handleAttachmentTap({
+    required AttachmentDetails attachmentDetails,
+    bool isImage = false,
+    bool isPdf = false,
+  }) {
     if (isImage) {
-      showImageViewer(filename);
+      showImageViewer(attachmentDetails: attachmentDetails);
     } else if (isPdf) {
-      showPdfViewer(filename);
+      showPdfViewer(attachmentDetails: attachmentDetails);
     } else {
-      downloadAttachment(filename);
+      downloadAttachment(attachmentDetails: attachmentDetails);
     }
   }
 
@@ -252,8 +256,13 @@ class EmailController extends GetxController {
     }
   }
 
-  Future<void> downloadAttachment(String filename) async {
-    final fileData = getAttachmentData(email!.mime, filename);
+  Future<void> downloadAttachment({
+    required AttachmentDetails attachmentDetails,
+  }) async {
+    final fileData = getAttachmentData(
+      mime: email!.mime,
+      fetchId: attachmentDetails.fetchId,
+    );
     if (fileData == null) {
       ToastHelper.error(Get.context!, 'Failed to load attachment');
       return;
@@ -261,15 +270,15 @@ class EmailController extends GetxController {
 
     try {
       // Extract file extension
-      final extension = filename.contains('.')
-          ? filename.split('.').last.toLowerCase()
+      final extension = attachmentDetails.filename.contains('.')
+          ? attachmentDetails.filename.split('.').last.toLowerCase()
           : '';
 
       // Map common extensions to MIME types
       MimeType mimeType = getMimeType(extension);
 
       // Clean filename (remove path if any)
-      final cleanName = filename.split('/').last;
+      final cleanName = attachmentDetails.filename.split('/').last;
 
       final result = await FileSaver.instance.saveFile(
         name: cleanName,
@@ -291,7 +300,10 @@ class EmailController extends GetxController {
     int failureCount = 0;
 
     for (final attachment in attachments) {
-      final fileData = getAttachmentData(email!.mime, attachment.filename);
+      final fileData = getAttachmentData(
+        mime: email!.mime,
+        fetchId: attachment.fetchId,
+      );
       if (fileData == null) {
         failureCount++;
         continue;
@@ -336,8 +348,11 @@ class EmailController extends GetxController {
     }
   }
 
-  void showImageViewer(String filename) {
-    final imageData = getAttachmentData(email!.mime, filename);
+  void showImageViewer({required AttachmentDetails attachmentDetails}) {
+    final imageData = getAttachmentData(
+      mime: email!.mime,
+      fetchId: attachmentDetails.fetchId,
+    );
     if (imageData != null) {
       Navigator.of(Get.context!).push(
         PageRouteBuilder(
@@ -350,7 +365,7 @@ class EmailController extends GetxController {
                 onPressed: () => Navigator.of(context).pop(),
               ),
               title: Text(
-                filename,
+                attachmentDetails.filename,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(color: Colors.white),
@@ -358,7 +373,8 @@ class EmailController extends GetxController {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.download, color: Colors.white),
-                  onPressed: () => downloadAttachment(filename),
+                  onPressed: () =>
+                      downloadAttachment(attachmentDetails: attachmentDetails),
                   tooltip: 'Download',
                 ),
               ],
@@ -379,8 +395,11 @@ class EmailController extends GetxController {
     }
   }
 
-  void showPdfViewer(String filename) {
-    final pdfData = getAttachmentData(email!.mime, filename);
+  void showPdfViewer({required AttachmentDetails attachmentDetails}) {
+    final pdfData = getAttachmentData(
+      mime: email!.mime,
+      fetchId: attachmentDetails.fetchId,
+    );
     if (pdfData != null) {
       Navigator.of(Get.context!).push(
         PageRouteBuilder(
@@ -388,7 +407,7 @@ class EmailController extends GetxController {
             backgroundColor: Colors.white,
             appBar: AppBar(
               title: Text(
-                filename,
+                attachmentDetails.filename,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -399,12 +418,16 @@ class EmailController extends GetxController {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.download),
-                  onPressed: () => downloadAttachment(filename),
+                  onPressed: () =>
+                      downloadAttachment(attachmentDetails: attachmentDetails),
                   tooltip: 'Download',
                 ),
               ],
             ),
-            body: PdfViewer.data(pdfData, sourceName: filename),
+            body: PdfViewer.data(
+              pdfData,
+              sourceName: attachmentDetails.filename,
+            ),
           ),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(opacity: animation, child: child);
