@@ -365,7 +365,7 @@ class _EmailTileState extends State<EmailTile> {
     final subject = (widget.email.subject?.isEmpty ?? true)
         ? '(No subject)'
         : widget.email.subject!;
-    final attachments = getAttachements(widget.email.mime);
+    final attachments = getAttachmentDetails(widget.email.mime);
 
     return InkWell(
       onTap: widget.onTap,
@@ -495,7 +495,7 @@ class _EmailTileState extends State<EmailTile> {
   }
 
   Widget _buildDefaultTile(BuildContext context) {
-    final attachments = getAttachements(widget.email.mime);
+    final attachments = getAttachmentDetails(widget.email.mime);
 
     return ListTile(
       onTap: widget.onTap,
@@ -650,13 +650,27 @@ class _EmailTileState extends State<EmailTile> {
   }
 
   /// Build a chip widget for an attachment
-  Widget _buildAttachmentChip(BuildContext context, String? label) {
+  Widget _buildAttachmentChip(BuildContext context, dynamic label) {
     if (label == null) {
       return const SizedBox.shrink();
     }
+
+    String labelText;
+    IconData? icon;
+
+    // Check if label is AttachmentDetails or String
+    if (label is AttachmentDetails) {
+      labelText = label.filename;
+      icon = getAttachmentIcon(label.filename);
+    } else {
+      // It's a String (for "+N" case)
+      labelText = label.toString();
+      icon = Icons.attach_file;
+    }
+
     return Chip(
-      avatar: Icon(getAttachmentIcon(label)),
-      label: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+      avatar: Icon(icon),
+      label: Text(labelText, maxLines: 1, overflow: TextOverflow.ellipsis),
       shape: const StadiumBorder(),
     );
   }

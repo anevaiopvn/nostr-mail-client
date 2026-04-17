@@ -647,7 +647,7 @@ class _EmailViewState extends State<EmailView> {
 
   Widget _buildEmailBody() {
     final htmlBody = email!.htmlBody;
-    final attachments = getAttachements(email!.mime);
+    final attachments = getAttachmentDetails(email!.mime);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -729,7 +729,7 @@ class _EmailViewState extends State<EmailView> {
     );
   }
 
-  Widget _buildAttachmentsSection(BuildContext context, List<String> attachments) {
+  Widget _buildAttachmentsSection(BuildContext context, List<AttachmentDetails> attachments) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -748,24 +748,26 @@ class _EmailViewState extends State<EmailView> {
           spacing: 12,
           runSpacing: 8,
           children: attachments
-              .map((filename) => _buildAttachmentCard(context, filename))
+              .map((attachment) => _buildAttachmentCard(context, attachment))
               .toList(),
         ),
       ],
     );
   }
 
-  Widget _buildAttachmentCard(BuildContext context, String filename) {
+  Widget _buildAttachmentCard(BuildContext context, AttachmentDetails attachment) {
+    final filename = attachment.filename;
     final icon = getAttachmentIcon(filename);
     final isImage = isImageFile(filename);
     final isPdf = isPdfFile(filename);
+    final size = formatFileSize(attachment.size);
 
     return InkWell(
       onTap: () => _handleAttachmentTap(filename, isImage, isPdf),
       borderRadius: BorderRadius.circular(8),
       child: Container(
         constraints: const BoxConstraints(
-          minWidth: 120,
+          minWidth: 140,
           maxWidth: 200,
         ),
         padding: const EdgeInsets.all(12),
@@ -792,15 +794,31 @@ class _EmailViewState extends State<EmailView> {
               ),
             const SizedBox(width: 8),
             Expanded(
-              child: Text(
-                filename,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    filename,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (attachment.size > 0) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      size,
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
           ],
