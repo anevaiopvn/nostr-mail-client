@@ -27,60 +27,27 @@ class AttachmentsSectionView extends StatelessWidget {
       children: [
         Row(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Text(
-                'Attachments (${attachments.length})',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+            Text(
+              'Attachments',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const Spacer(),
             if (attachments.length > 1) ...[
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.folder_zip,
-                      size: 16,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      totalSizeText,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
+              Chip(
+                avatar: Icon(Icons.folder_zip),
+                label: Text(totalSizeText),
+                shape: StadiumBorder(),
               ),
               const SizedBox(width: 8),
               FilledButton.icon(
                 onPressed: () =>
                     EmailController.to.downloadAllAttachments(attachments),
-                icon: const Icon(Icons.file_download, size: 18),
+                icon: const Icon(Icons.file_download),
                 label: const Text('Download all'),
-                style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  textStyle: const TextStyle(fontSize: 13),
-                ),
               ),
             ],
           ],

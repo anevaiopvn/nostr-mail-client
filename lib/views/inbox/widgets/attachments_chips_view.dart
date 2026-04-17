@@ -11,7 +11,7 @@ class AttachmentsChipsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 600),
+      constraints: const BoxConstraints(maxWidth: 400),
       child: Row(
         children: [
           Expanded(
