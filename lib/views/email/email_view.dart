@@ -16,6 +16,7 @@ import '../../app/routes/app_routes.dart';
 import '../../controllers/inbox_controller.dart';
 import '../../controllers/settings_controller.dart';
 import '../../services/nostr_mail_service.dart';
+import '../../utils/get_attachements.dart';
 import '../../utils/metadata_extensions.dart';
 import '../../utils/nostr_utils.dart';
 import '../../utils/responsive_helper.dart';
@@ -23,6 +24,7 @@ import '../../utils/toast_helper.dart';
 import '../../widgets/nostr_avatar.dart';
 import '../shared/desktop_shell.dart';
 import 'widgets/nip59_events_dialog.dart';
+import 'package:pdfrx/pdfrx.dart';
 
 class EmailView extends StatefulWidget {
   const EmailView({super.key});
@@ -645,68 +647,370 @@ class _EmailViewState extends State<EmailView> {
 
   Widget _buildEmailBody() {
     final htmlBody = email!.htmlBody;
-    if (htmlBody != null && htmlBody.isNotEmpty) {
-      final hasImages = _htmlHasImages(htmlBody);
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (hasImages && !_showImages)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              margin: const EdgeInsets.only(bottom: 16),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.image_not_supported_outlined,
-                    size: 18,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Images are hidden for privacy',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+    final attachments = getAttachements(email!.mime);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Attachments section
+        if (attachments.isNotEmpty) ...[
+          _buildAttachmentsSection(context, attachments),
+          const Divider(height: 32),
+        ],
+        // Email body
+        if (htmlBody != null && htmlBody.isNotEmpty)
+          _buildHtmlBody(htmlBody)
+        else
+          SelectableText(
+            email!.body,
+            style: const TextStyle(fontSize: 16, height: 1.5),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildHtmlBody(String htmlBody) {
+    final hasImages = _htmlHasImages(htmlBody);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (hasImages && !_showImages)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.image_not_supported_outlined,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Images are hidden for privacy',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
-                  TextButton(
-                    onPressed: () => setState(() => _showImages = true),
-                    child: const Text('Load images'),
-                  ),
-                ],
-              ),
-            ),
-          SelectionArea(
-            child: HtmlWidget(
-              htmlBody,
-              key: ValueKey(_showImages),
-              customWidgetBuilder: _showImages
-                  ? null
-                  : (element) {
-                      if (element.localName == 'img') {
-                        return const SizedBox.shrink();
-                      }
-                      return null;
-                    },
-              onTapUrl: (url) {
-                _confirmOpenLink(url);
-                return true;
-              },
+                ),
+                TextButton(
+                  onPressed: () => setState(() => _showImages = true),
+                  child: const Text('Load images'),
+                ),
+              ],
             ),
           ),
-        ],
+        SelectionArea(
+          child: HtmlWidget(
+            htmlBody,
+            key: ValueKey(_showImages),
+            customWidgetBuilder: _showImages
+                ? null
+                : (element) {
+                    if (element.localName == 'img') {
+                      return const SizedBox.shrink();
+                    }
+                    return null;
+                  },
+            onTapUrl: (url) {
+              _confirmOpenLink(url);
+              return true;
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAttachmentsSection(BuildContext context, List<String> attachments) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Text(
+            'Attachments (${attachments.length})',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+        ),
+        Wrap(
+          spacing: 12,
+          runSpacing: 8,
+          children: attachments
+              .map((filename) => _buildAttachmentCard(context, filename))
+              .toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAttachmentCard(BuildContext context, String filename) {
+    final icon = getAttachmentIcon(filename);
+    final isImage = isImageFile(filename);
+    final isPdf = isPdfFile(filename);
+
+    return InkWell(
+      onTap: () => _handleAttachmentTap(filename, isImage, isPdf),
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        constraints: const BoxConstraints(
+          minWidth: 120,
+          maxWidth: 200,
+        ),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (isImage)
+              _buildImageThumbnail(filename)
+            else if (isPdf)
+              _buildPdfThumbnail()
+            else
+              Icon(
+                icon,
+                size: 24,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                filename,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImageThumbnail(String filename) {
+    final imageData = getAttachmentData(email!.mime, filename);
+
+    if (imageData != null) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(4),
+        child: Image.memory(
+          imageData,
+          width: 32,
+          height: 32,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Icon(
+              Icons.broken_image,
+              size: 24,
+              color: Theme.of(context).colorScheme.error,
+            );
+          },
+        ),
       );
     }
-    return SelectableText(
-      email!.body,
-      style: const TextStyle(fontSize: 16, height: 1.5),
+
+    return Icon(
+      Icons.broken_image,
+      size: 24,
+      color: Theme.of(context).colorScheme.error,
     );
+  }
+
+  Widget _buildPdfThumbnail() {
+    return Container(
+      width: 32,
+      height: 32,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.errorContainer,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Center(
+        child: Icon(
+          Icons.picture_as_pdf,
+          size: 20,
+          color: Theme.of(context).colorScheme.error,
+        ),
+      ),
+    );
+  }
+
+  void _handleAttachmentTap(String filename, bool isImage, bool isPdf) {
+    if (isImage) {
+      _showImageViewer(filename);
+    } else if (isPdf) {
+      _showPdfViewer(filename);
+    } else {
+      _downloadAttachment(filename);
+    }
+  }
+
+  void _showImageViewer(String filename) {
+    final imageData = getAttachmentData(email!.mime, filename);
+    if (imageData != null && mounted) {
+      Navigator.of(context).push(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => Scaffold(
+            backgroundColor: Colors.black,
+            appBar: AppBar(
+              backgroundColor: Colors.black,
+              leading: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              title: Text(
+                filename,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(color: Colors.white),
+              ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.download, color: Colors.white),
+                  onPressed: () => _downloadAttachment(filename),
+                  tooltip: 'Download',
+                ),
+              ],
+            ),
+            body: Center(
+              child: InteractiveViewer(
+                child: Image.memory(
+                  imageData,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+          ),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        ),
+      );
+    } else if (mounted) {
+      ToastHelper.error(context, 'Failed to load image');
+    }
+  }
+
+  void _showPdfViewer(String filename) {
+    final pdfData = getAttachmentData(email!.mime, filename);
+    if (pdfData != null && mounted) {
+      Navigator.of(context).push(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AppBar(
+              title: Text(
+                filename,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              leading: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.download),
+                  onPressed: () => _downloadAttachment(filename),
+                  tooltip: 'Download',
+                ),
+              ],
+            ),
+            body: PdfViewer.data(
+              pdfData,
+              sourceName: filename,
+            ),
+          ),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        ),
+      );
+    } else if (mounted) {
+      ToastHelper.error(context, 'Failed to load PDF');
+    }
+  }
+
+  Future<void> _downloadAttachment(String filename) async {
+    final fileData = getAttachmentData(email!.mime, filename);
+    if (fileData == null) {
+      ToastHelper.error(context, 'Failed to load attachment');
+      return;
+    }
+
+    try {
+      // Extract file extension
+      final extension = filename.contains('.')
+          ? filename.split('.').last.toLowerCase()
+          : '';
+
+      // Map common extensions to MIME types
+      MimeType mimeType = _getMimeType(extension);
+
+      // Clean filename (remove path if any)
+      final cleanName = filename.split('/').last;
+
+      final result = await FileSaver.instance.saveFile(
+        name: cleanName,
+        bytes: fileData,
+        fileExtension: extension,
+        mimeType: mimeType,
+      );
+
+      if (mounted) {
+        ToastHelper.success(context, 'File saved: $result');
+      }
+    } catch (e) {
+      if (mounted) {
+        ToastHelper.error(context, 'Failed to save file: $e');
+      }
+    }
+  }
+
+  MimeType _getMimeType(String extension) {
+    switch (extension) {
+      case 'pdf':
+        return MimeType.pdf;
+      case 'jpg':
+      case 'jpeg':
+        return MimeType.jpeg;
+      case 'png':
+        return MimeType.png;
+      case 'gif':
+        return MimeType.gif;
+      case 'webp':
+        return MimeType.webp;
+      case 'txt':
+        return MimeType.text;
+      case 'xml':
+        return MimeType.xml;
+      case 'json':
+        return MimeType.json;
+      case 'zip':
+        return MimeType.zip;
+      default:
+        return MimeType.other;
+    }
   }
 }

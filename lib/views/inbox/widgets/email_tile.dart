@@ -649,114 +649,13 @@ class _EmailTileState extends State<EmailTile> {
     }
   }
 
-  /// Get the appropriate icon for an attachment based on its file extension
-  IconData _getAttachmentIcon(String filename) {
-    final extension = filename.split('.').last.toLowerCase();
-
-    // Images
-    if ([
-      'jpg',
-      'jpeg',
-      'png',
-      'gif',
-      'bmp',
-      'webp',
-      'svg',
-      'ico',
-    ].contains(extension)) {
-      return Icons.image;
-    }
-
-    // PDF
-    if (extension == 'pdf') {
-      return Icons.picture_as_pdf;
-    }
-
-    // Documents
-    if (['doc', 'docx', 'txt', 'rtf', 'odt', 'pages'].contains(extension)) {
-      return Icons.description;
-    }
-
-    // Spreadsheets
-    if (['xls', 'xlsx', 'csv', 'ods', 'numbers'].contains(extension)) {
-      return Icons.table_chart;
-    }
-
-    // Presentations
-    if (['ppt', 'pptx', 'odp', 'key'].contains(extension)) {
-      return Icons.slideshow;
-    }
-
-    // Archives
-    if (['zip', 'rar', '7z', 'tar', 'gz', 'bz2'].contains(extension)) {
-      return Icons.folder_zip;
-    }
-
-    // Audio
-    if ([
-      'mp3',
-      'wav',
-      'ogg',
-      'flac',
-      'aac',
-      'm4a',
-      'wma',
-    ].contains(extension)) {
-      return Icons.audio_file;
-    }
-
-    // Video
-    if ([
-      'mp4',
-      'avi',
-      'mkv',
-      'mov',
-      'wmv',
-      'flv',
-      'webm',
-    ].contains(extension)) {
-      return Icons.video_file;
-    }
-
-    // Code
-    if ([
-      'js',
-      'ts',
-      'py',
-      'java',
-      'c',
-      'cpp',
-      'h',
-      'hpp',
-      'cs',
-      'php',
-      'rb',
-      'go',
-      'rs',
-      'swift',
-      'kt',
-      'dart',
-      'html',
-      'css',
-      'json',
-      'xml',
-      'yaml',
-      'yml',
-    ].contains(extension)) {
-      return Icons.code;
-    }
-
-    // Default attachment icon
-    return Icons.attach_file;
-  }
-
   /// Build a chip widget for an attachment
   Widget _buildAttachmentChip(BuildContext context, String? label) {
     if (label == null) {
       return const SizedBox.shrink();
     }
     return Chip(
-      avatar: Icon(_getAttachmentIcon(label)),
+      avatar: Icon(getAttachmentIcon(label)),
       label: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
       shape: const StadiumBorder(),
     );
