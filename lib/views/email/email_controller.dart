@@ -15,6 +15,7 @@ import 'package:nostr_mail_client/utils/metadata_extensions.dart';
 import 'package:nostr_mail_client/utils/nostr_utils.dart';
 import 'package:nostr_mail_client/utils/toast_helper.dart';
 import 'package:nostr_mail_client/views/email/widgets/nip59_events_dialog.dart';
+import 'package:path/path.dart' as p;
 import 'package:pdfrx/pdfrx.dart';
 
 class EmailController extends GetxController {
@@ -270,15 +271,13 @@ class EmailController extends GetxController {
 
     try {
       // Extract file extension
-      final extension = attachmentDetails.filename.contains('.')
-          ? attachmentDetails.filename.split('.').last.toLowerCase()
-          : '';
+      final extension = p.extension(attachmentDetails.filename).toLowerCase().replaceFirst('.', '');
 
       // Map common extensions to MIME types
       MimeType mimeType = getMimeType(extension);
 
       // Clean filename (remove path if any)
-      final cleanName = attachmentDetails.filename.split('/').last;
+      final cleanName = p.basename(attachmentDetails.filename);
 
       final result = await FileSaver.instance.saveFile(
         name: cleanName,
@@ -311,15 +310,13 @@ class EmailController extends GetxController {
 
       try {
         // Extract file extension
-        final extension = attachment.filename.contains('.')
-            ? attachment.filename.split('.').last.toLowerCase()
-            : '';
+        final extension = p.extension(attachment.filename).toLowerCase().replaceFirst('.', '');
 
         // Map common extensions to MIME types
         MimeType mimeType = getMimeType(extension);
 
         // Clean filename (remove path if any)
-        final cleanName = attachment.filename.split('/').last;
+        final cleanName = p.basename(attachment.filename);
 
         await FileSaver.instance.saveFile(
           name: cleanName,

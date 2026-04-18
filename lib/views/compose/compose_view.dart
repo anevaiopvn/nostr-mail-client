@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:get/get.dart';
+import 'package:nostr_mail_client/views/compose/widgets/attachment_chip.dart';
 import 'package:nostr_mail_client/views/compose/widgets/from_selector_view.dart';
 import 'package:nostr_mail_client/views/compose/widgets/quill_toolbar_view.dart';
 
@@ -90,15 +91,18 @@ class ComposeView extends StatelessWidget {
                 ),
                 const Divider(height: 1),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.only(left: 16, right: 8),
                   child: TextField(
                     controller: controller.subjectController,
                     decoration: InputDecoration(
                       hintText: 'Subject',
                       hintStyle: TextStyle(color: Colors.grey[400]),
                       border: InputBorder.none,
+                      suffixIcon: IconButton(
+                        onPressed: controller.pickAttachments,
+                        icon: Icon(Icons.attach_file),
+                      ),
                     ),
-                    style: const TextStyle(fontSize: 16),
                     textCapitalization: TextCapitalization.sentences,
                   ),
                 ),
@@ -120,6 +124,35 @@ class ComposeView extends StatelessWidget {
                     ),
                   ),
                 ),
+
+                Obx(() {
+                  if (controller.attachments.isEmpty) return Container();
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Divider(height: 1),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                        child: Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            for (
+                              int i = 0;
+                              i < controller.attachments.length;
+                              i++
+                            )
+                              AttachmentChip(
+                                attachment: controller.attachments[i],
+                                onDelete: () => controller.removeAttachment(i),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                }),
               ],
             ),
           ),
