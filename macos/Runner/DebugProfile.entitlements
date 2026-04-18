@@ -12,5 +12,7 @@
 	<array>
 		<string>$(AppIdentifierPrefix)app.nostrmail.client</string>
 	</array>
+	<key>com.apple.security.files.user-selected.read-only</key>
+	<true/>
 </dict>
 </plist>

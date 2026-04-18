@@ -271,7 +271,10 @@ class EmailController extends GetxController {
 
     try {
       // Extract file extension
-      final extension = p.extension(attachmentDetails.filename).toLowerCase().replaceFirst('.', '');
+      final extension = p
+          .extension(attachmentDetails.filename)
+          .toLowerCase()
+          .replaceFirst('.', '');
 
       // Map common extensions to MIME types
       MimeType mimeType = getMimeType(extension);
@@ -310,7 +313,10 @@ class EmailController extends GetxController {
 
       try {
         // Extract file extension
-        final extension = p.extension(attachment.filename).toLowerCase().replaceFirst('.', '');
+        final extension = p
+            .extension(attachment.filename)
+            .toLowerCase()
+            .replaceFirst('.', '');
 
         // Map common extensions to MIME types
         MimeType mimeType = getMimeType(extension);

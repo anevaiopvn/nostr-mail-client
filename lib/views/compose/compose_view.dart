@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:get/get.dart';
 import 'package:nostr_mail_client/views/compose/widgets/attachment_chip.dart';
+import 'package:nostr_mail_client/views/compose/widgets/bottom_toolbar_view.dart';
 import 'package:nostr_mail_client/views/compose/widgets/from_selector_view.dart';
 import 'package:nostr_mail_client/views/compose/widgets/quill_toolbar_view.dart';
 
@@ -24,21 +25,22 @@ class ComposeView extends StatelessWidget {
         title: const Text('Compose'),
         actionsPadding: const EdgeInsets.only(right: 8),
         actions: [
-          Obx(
-            () => controller.isSending.value
-                ? const Padding(
-                    padding: EdgeInsets.all(16),
-                    child: SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+          if (!isWide)
+            Obx(
+              () => controller.isSending.value
+                  ? const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    )
+                  : IconButton(
+                      icon: const Icon(Icons.send),
+                      onPressed: controller.firstSend,
                     ),
-                  )
-                : IconButton(
-                    icon: const Icon(Icons.send),
-                    onPressed: controller.firstSend,
-                  ),
-          ),
+            ),
         ],
       ),
       body: SafeArea(
@@ -98,10 +100,12 @@ class ComposeView extends StatelessWidget {
                       hintText: 'Subject',
                       hintStyle: TextStyle(color: Colors.grey[400]),
                       border: InputBorder.none,
-                      suffixIcon: IconButton(
-                        onPressed: controller.pickAttachments,
-                        icon: Icon(Icons.attach_file),
-                      ),
+                      suffixIcon: isWide
+                          ? null
+                          : IconButton(
+                              onPressed: controller.pickAttachments,
+                              icon: const Icon(Icons.attach_file),
+                            ),
                     ),
                     textCapitalization: TextCapitalization.sentences,
                   ),
@@ -153,6 +157,7 @@ class ComposeView extends StatelessWidget {
                     ],
                   );
                 }),
+                if (isWide) BottomToolbarView(),
               ],
             ),
           ),

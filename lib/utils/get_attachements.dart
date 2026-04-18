@@ -141,12 +141,28 @@ IconData getAttachmentIcon(String filename) {
   }
 
   // Audio
-  if (['.mp3', '.wav', '.ogg', '.flac', '.aac', '.m4a', '.wma'].contains(extension)) {
+  if ([
+    '.mp3',
+    '.wav',
+    '.ogg',
+    '.flac',
+    '.aac',
+    '.m4a',
+    '.wma',
+  ].contains(extension)) {
     return Icons.audio_file;
   }
 
   // Video
-  if (['.mp4', '.avi', '.mkv', '.mov', '.wmv', '.flv', '.webm'].contains(extension)) {
+  if ([
+    '.mp4',
+    '.avi',
+    '.mkv',
+    '.mov',
+    '.wmv',
+    '.flv',
+    '.webm',
+  ].contains(extension)) {
     return Icons.video_file;
   }
 

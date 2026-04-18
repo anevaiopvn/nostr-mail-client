@@ -167,13 +167,14 @@ class MainApp extends StatelessWidget {
                         child: Row(
                           children: [
                             Expanded(child: DragToMoveArea(child: Container())),
-                            SizedBox(
-                              width: 154,
-                              child: WindowCaption(
-                                brightness: Theme.of(context).brightness,
-                                backgroundColor: Colors.transparent,
+                            if (!GetPlatform.isMacOS)
+                              SizedBox(
+                                width: 154,
+                                child: WindowCaption(
+                                  brightness: Theme.of(context).brightness,
+                                  backgroundColor: Colors.transparent,
+                                ),
                               ),
-                            ),
                           ],
                         ),
                       ),
