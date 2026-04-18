@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 import 'package:nostr_mail/nostr_mail.dart';
+import 'package:nostr_mail_client/utils/format_date.dart';
+import 'package:nostr_mail_client/utils/get_attachements.dart';
+import 'package:nostr_mail_client/views/inbox/widgets/attachments_chips_view.dart';
 
 import '../../../controllers/auth_controller.dart';
 import '../../../controllers/inbox_controller.dart';
@@ -12,6 +15,7 @@ import '../../../utils/responsive_helper.dart';
 import '../../../widgets/email_avatar.dart';
 import '../../../widgets/nostr_avatar.dart';
 
+// TODO convert to stateless widget
 class EmailTile extends StatefulWidget {
   final Email email;
   final VoidCallback onTap;
@@ -363,6 +367,7 @@ class _EmailTileState extends State<EmailTile> {
     final subject = (widget.email.subject?.isEmpty ?? true)
         ? '(No subject)'
         : widget.email.subject!;
+    final attachments = getAttachmentDetails(widget.email.mime);
 
     return InkWell(
       onTap: widget.onTap,
@@ -401,35 +406,43 @@ class _EmailTileState extends State<EmailTile> {
             ),
             const SizedBox(width: 16),
             Expanded(
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Flexible(
-                    flex: 2,
-                    child: Text(
-                      subject,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontWeight: FontWeight.w500),
-                    ),
+                  Row(
+                    children: [
+                      Flexible(
+                        flex: 2,
+                        child: Text(
+                          subject,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text('—', style: TextStyle(color: Colors.grey[400])),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        flex: 3,
+                        child: Text(
+                          widget.email.body,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: Colors.grey[500]),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  Text('—', style: TextStyle(color: Colors.grey[400])),
-                  const SizedBox(width: 8),
-                  Flexible(
-                    flex: 3,
-                    child: Text(
-                      widget.email.body,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: Colors.grey[500]),
-                    ),
-                  ),
+                  if (attachments.isNotEmpty) ...[
+                    AttachmentsChipsView(attachments: attachments),
+                  ],
                 ],
               ),
             ),
             const SizedBox(width: 16),
             Text(
-              _formatDate(widget.email.date),
+              formatDate(widget.email.date),
               style: TextStyle(color: Colors.grey[500], fontSize: 12),
             ),
           ],
@@ -439,40 +452,52 @@ class _EmailTileState extends State<EmailTile> {
   }
 
   Widget _buildDefaultTile(BuildContext context) {
-    return ListTile(
-      onTap: widget.onTap,
-      leading: _buildAvatar(context),
-      title: Text(
-        (widget.email.subject?.isEmpty ?? true)
-            ? '(No subject)'
-            : widget.email.subject!,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: const TextStyle(fontWeight: FontWeight.w600),
-      ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            _displayName,
+    final attachments = getAttachmentDetails(widget.email.mime);
+
+    return Column(
+      children: [
+        ListTile(
+          onTap: widget.onTap,
+          leading: _buildAvatar(context),
+          title: Text(
+            (widget.email.subject?.isEmpty ?? true)
+                ? '(No subject)'
+                : widget.email.subject!,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: Colors.grey[600], fontSize: 12),
+            style: const TextStyle(fontWeight: FontWeight.w600),
           ),
-          const SizedBox(height: 2),
-          Text(
-            widget.email.body,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: Colors.grey[500], fontSize: 13),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _displayName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: Colors.grey[600], fontSize: 12),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                widget.email.body,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: Colors.grey[500], fontSize: 13),
+              ),
+            ],
+          ),
+          trailing: Text(
+            formatDate(widget.email.date),
+            style: TextStyle(color: Colors.grey[500], fontSize: 11),
+          ),
+          isThreeLine: true,
+        ),
+        if (attachments.isNotEmpty) ...[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: AttachmentsChipsView(attachments: attachments),
           ),
         ],
-      ),
-      trailing: Text(
-        _formatDate(widget.email.date),
-        style: TextStyle(color: Colors.grey[500], fontSize: 11),
-      ),
-      isThreeLine: true,
+      ],
     );
   }
 
@@ -525,21 +550,5 @@ class _EmailTileState extends State<EmailTile> {
       metadata: _contactMetadata,
       radius: radius,
     );
-  }
-
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final diff = now.difference(date);
-
-    if (diff.inDays == 0) {
-      return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-    } else if (diff.inDays == 1) {
-      return 'Yesterday';
-    } else if (diff.inDays < 7) {
-      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-      return days[date.weekday - 1];
-    } else {
-      return '${date.day}/${date.month}';
-    }
   }
 }

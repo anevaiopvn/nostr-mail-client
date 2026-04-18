@@ -1,156 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
-import 'package:ndk/ndk.dart';
-import 'package:nostr_mail/nostr_mail.dart';
+import 'package:nostr_mail_client/views/compose/widgets/attachment_chip.dart';
+import 'package:nostr_mail_client/views/compose/widgets/from_selector_view.dart';
+import 'package:nostr_mail_client/views/compose/widgets/quill_toolbar_view.dart';
 
-import '../../controllers/auth_controller.dart';
 import '../../controllers/compose_controller.dart';
-import '../../controllers/settings_controller.dart';
-import '../../models/from_option.dart';
-import '../../services/nostr_mail_service.dart';
 import '../../utils/responsive_helper.dart';
-import '../../utils/toast_helper.dart';
-import '../../widgets/nostr_avatar.dart';
 import '../shared/desktop_shell.dart';
-import 'widgets/from_selector_sheet.dart';
 import 'widgets/recipient_autocomplete.dart';
 import 'widgets/recipient_chip.dart';
 
-class ComposeView extends StatefulWidget {
+class ComposeView extends StatelessWidget {
   const ComposeView({super.key});
 
   @override
-  State<ComposeView> createState() => _ComposeViewState();
-}
-
-class _ComposeViewState extends State<ComposeView> {
-  final controller = Get.find<ComposeController>();
-
-  late final TextEditingController toController;
-  late final TextEditingController subjectController;
-  late final QuillController quillController;
-  final FocusNode _editorFocusNode = FocusNode();
-  final ScrollController _editorScrollController = ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-    final args = Get.arguments as Map<String, dynamic>?;
-    final signature = Get.find<SettingsController>().currentSignature;
-
-    toController = TextEditingController();
-    subjectController = TextEditingController();
-
-    // Initialize Quill controller with signature
-    if (signature.isEmpty) {
-      quillController = QuillController.basic();
-    } else {
-      final doc = Document()..insert(0, '\n\n$signature');
-      quillController = QuillController(
-        document: doc,
-        selection: const TextSelection.collapsed(offset: 0),
-      );
-    }
-
-    // Load from options
-    controller.loadFromOptions();
-
-    // Handle reply/forward mode
-    final email = args?['email'] as Email?;
-    final mode = args?['mode'] as String?;
-
-    if (email != null && mode != null) {
-      _initFromEmail(email, mode);
-    }
-  }
-
-  void _initFromEmail(Email email, String mode) {
-    final myPubkey = Get.find<NostrMailService>().getPublicKey();
-    final isSentByMe = email.senderPubkey == myPubkey;
-    final signature = Get.find<SettingsController>().currentSignature;
-    final signatureBlock = signature.isEmpty ? '' : '\n\n$signature';
-
-    // Get sender display for quotes
-    final senderDisplay = email.sender?.encode() ?? '';
-
-    if (mode == 'reply') {
-      // Set recipient
-      final replyTo = isSentByMe
-          ? email.mime.to?.firstOrNull?.encode() ?? ''
-          : senderDisplay;
-      controller.addRecipient(replyTo);
-
-      // Set subject (avoid Re: Re: Re:)
-      final subject = email.subject ?? '';
-      subjectController.text = subject.startsWith('Re:')
-          ? subject
-          : 'Re: $subject';
-
-      // Set body with quoted original message
-      final dateFormat = DateFormat('EEE, MMM d, yyyy \'at\' h:mm a');
-      final quotedBody = email.body
-          .split('\n')
-          .map((line) => '> $line')
-          .join('\n');
-      final bodyText =
-          '$signatureBlock\n\nOn ${dateFormat.format(email.date)}, $senderDisplay wrote:\n$quotedBody';
-      _setQuillContent(bodyText);
-    } else if (mode == 'forward') {
-      // Set subject (avoid Fwd: Fwd: Fwd:)
-      final subject = email.subject ?? '';
-      subjectController.text = subject.startsWith('Fwd:')
-          ? subject
-          : 'Fwd: $subject';
-
-      // Set body with forwarded message
-      final dateFormat = DateFormat('EEE, MMM d, yyyy \'at\' h:mm a');
-      final bodyText =
-          '$signatureBlock\n\n---------- Forwarded message ----------\n'
-          'From: $senderDisplay\n'
-          'Date: ${dateFormat.format(email.date)}\n'
-          'Subject: ${email.subject}\n\n'
-          '${email.body}';
-      _setQuillContent(bodyText);
-    }
-  }
-
-  void _setQuillContent(String text) {
-    final doc = Document()..insert(0, text);
-    quillController.document = doc;
-    quillController.updateSelection(
-      const TextSelection.collapsed(offset: 0),
-      ChangeSource.local,
-    );
-  }
-
-  @override
-  void dispose() {
-    toController.dispose();
-    subjectController.dispose();
-    quillController.dispose();
-    _editorFocusNode.dispose();
-    _editorScrollController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _handleToSubmit(String value) async {
-    final input = value.trim();
-    if (input.isNotEmpty) {
-      final added = await controller.addRecipient(input);
-      if (added) {
-        toController.clear();
-      } else {
-        if (mounted) {
-          ToastHelper.error(context, 'Invalid recipient format');
-        }
-      }
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final controller = ComposeController.to;
     final isWide = ResponsiveHelper.isNotMobile(context);
 
     Widget content = Scaffold(
@@ -168,7 +34,10 @@ class _ComposeViewState extends State<ComposeView> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     ),
                   )
-                : IconButton(icon: const Icon(Icons.send), onPressed: _send),
+                : IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: controller.firstSend,
+                  ),
           ),
         ],
       ),
@@ -179,7 +48,7 @@ class _ComposeViewState extends State<ComposeView> {
             constraints: const BoxConstraints(maxWidth: 800),
             child: Column(
               children: [
-                _buildFromSelector(context),
+                FromSelectorView(),
                 const Divider(height: 1),
                 Obx(
                   () => Column(
@@ -203,7 +72,7 @@ class _ComposeViewState extends State<ComposeView> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: RecipientAutocomplete(
-                          textController: toController,
+                          textController: controller.toController,
                           hintText: controller.recipients.isEmpty
                               ? 'To'
                               : 'Add more',
@@ -214,7 +83,7 @@ class _ComposeViewState extends State<ComposeView> {
                           onManualInput: (input) async {
                             return await controller.addRecipient(input);
                           },
-                          onSubmitted: _handleToSubmit,
+                          onSubmitted: controller.handleToSubmit,
                         ),
                       ),
                     ],
@@ -222,28 +91,31 @@ class _ComposeViewState extends State<ComposeView> {
                 ),
                 const Divider(height: 1),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.only(left: 16, right: 8),
                   child: TextField(
-                    controller: subjectController,
+                    controller: controller.subjectController,
                     decoration: InputDecoration(
                       hintText: 'Subject',
                       hintStyle: TextStyle(color: Colors.grey[400]),
                       border: InputBorder.none,
+                      suffixIcon: IconButton(
+                        onPressed: controller.pickAttachments,
+                        icon: Icon(Icons.attach_file),
+                      ),
                     ),
-                    style: const TextStyle(fontSize: 16),
                     textCapitalization: TextCapitalization.sentences,
                   ),
                 ),
                 const Divider(height: 1),
-                _buildQuillToolbar(context),
+                QuillToolbarView(),
                 const Divider(height: 1),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: QuillEditor(
-                      controller: quillController,
-                      focusNode: _editorFocusNode,
-                      scrollController: _editorScrollController,
+                      controller: controller.quillController,
+                      focusNode: controller.editorFocusNode,
+                      scrollController: controller.editorScrollController,
                       config: QuillEditorConfig(
                         placeholder: 'Compose email',
                         expands: true,
@@ -252,6 +124,35 @@ class _ComposeViewState extends State<ComposeView> {
                     ),
                   ),
                 ),
+
+                Obx(() {
+                  if (controller.attachments.isEmpty) return Container();
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Divider(height: 1),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                        child: Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            for (
+                              int i = 0;
+                              i < controller.attachments.length;
+                              i++
+                            )
+                              AttachmentChip(
+                                attachment: controller.attachments[i],
+                                onDelete: () => controller.removeAttachment(i),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                }),
               ],
             ),
           ),
@@ -263,182 +164,5 @@ class _ComposeViewState extends State<ComposeView> {
       return DesktopShell(body: content);
     }
     return content;
-  }
-
-  Future<void> _send() async {
-    // Try to add current input as recipient if not empty
-    if (toController.text.trim().isNotEmpty) {
-      await _handleToSubmit(toController.text);
-      if (!mounted) return;
-      // If still not empty, it was invalid and toast was already shown
-      if (toController.text.trim().isNotEmpty) return;
-    }
-
-    if (controller.recipients.isEmpty) {
-      ToastHelper.error(context, 'Add at least one recipient');
-      return;
-    }
-
-    final selectedFrom = controller.selectedFrom.value;
-    final hasLegacyRecipient = controller.recipients.any((r) => r.isLegacy);
-    if (hasLegacyRecipient && selectedFrom == null) {
-      ToastHelper.error(context, 'Select a From address for legacy email');
-      return;
-    }
-
-    final success = await controller.send(
-      from: selectedFrom?.address,
-      subject: subjectController.text,
-      document: quillController.document,
-    );
-
-    if (!mounted) return;
-
-    if (success) {
-      Get.back();
-    } else {
-      ToastHelper.error(context, 'Failed to send email');
-    }
-  }
-
-  Widget _buildQuillToolbar(BuildContext context) {
-    final iconTheme = QuillIconTheme(
-      iconButtonSelectedData: IconButtonData(
-        color: Theme.of(context).colorScheme.primary,
-        style: const ButtonStyle(
-          backgroundColor: WidgetStatePropertyAll(Colors.transparent),
-        ),
-      ),
-      iconButtonUnselectedData: const IconButtonData(),
-    );
-
-    return QuillSimpleToolbar(
-      controller: quillController,
-      config: QuillSimpleToolbarConfig(
-        buttonOptions: QuillSimpleToolbarButtonOptions(
-          bold: QuillToolbarToggleStyleButtonOptions(iconTheme: iconTheme),
-          italic: QuillToolbarToggleStyleButtonOptions(iconTheme: iconTheme),
-          underLine: QuillToolbarToggleStyleButtonOptions(iconTheme: iconTheme),
-          strikeThrough: QuillToolbarToggleStyleButtonOptions(
-            iconTheme: iconTheme,
-          ),
-          listNumbers: QuillToolbarToggleStyleButtonOptions(
-            iconTheme: iconTheme,
-          ),
-          listBullets: QuillToolbarToggleStyleButtonOptions(
-            iconTheme: iconTheme,
-          ),
-        ),
-        showAlignmentButtons: false,
-        showBackgroundColorButton: false,
-        showCenterAlignment: false,
-        showClearFormat: false,
-        showCodeBlock: false,
-        showColorButton: false,
-        showDirection: false,
-        showFontFamily: false,
-        showFontSize: false,
-        showHeaderStyle: false,
-        showIndent: false,
-        showInlineCode: false,
-        showJustifyAlignment: false,
-        showLeftAlignment: false,
-        showListBullets: true,
-        showListCheck: false,
-        showListNumbers: true,
-        showQuote: false,
-        showRightAlignment: false,
-        showSearchButton: false,
-        showSmallButton: false,
-        showStrikeThrough: true,
-        showSubscript: false,
-        showSuperscript: false,
-        showUndo: false,
-        showRedo: false,
-        showClipboardCopy: false,
-        showClipboardCut: false,
-        showClipboardPaste: false,
-        multiRowsDisplay: false,
-      ),
-    );
-  }
-
-  Widget _buildFromSelector(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return InkWell(
-      onTap: () => FromSelectorSheet.show(),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
-            Text(
-              'From',
-              style: TextStyle(
-                color: colorScheme.onSurfaceVariant,
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Obx(() {
-                final selected = controller.selectedFrom.value;
-                if (selected == null) {
-                  return Text(
-                    'Loading...',
-                    style: TextStyle(color: colorScheme.outline),
-                  );
-                }
-                return Row(
-                  children: [
-                    _buildFromAvatar(context, selected),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            selected.label,
-                            style: const TextStyle(fontSize: 16),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          if (selected.displayName != null &&
-                              selected.displayName!.isNotEmpty)
-                            Text(
-                              selected.shortAddress,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                        ],
-                      ),
-                    ),
-                    Icon(Icons.arrow_drop_down, color: colorScheme.primary),
-                  ],
-                );
-              }),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFromAvatar(BuildContext context, FromOption option) {
-    final authController = Get.find<AuthController>();
-    final pubkey = authController.publicKey!;
-
-    return NostrAvatar(
-      pubkey: pubkey,
-      metadata: Metadata(
-        pubKey: pubkey,
-        picture: option.picture,
-        displayName: option.displayName,
-      ),
-      radius: 14,
-    );
   }
 }

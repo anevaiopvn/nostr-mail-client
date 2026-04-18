@@ -1,712 +1,196 @@
-import 'dart:convert';
-
-import 'package:enough_mail_plus/enough_mail.dart';
-import 'package:file_saver/file_saver.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
-import 'package:nostr_mail/nostr_mail.dart';
-import 'package:nostr_mail_client/widgets/email_avatar.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:nostr_mail_client/views/email/email_controller.dart';
 
 import '../../app/routes/app_routes.dart';
 import '../../controllers/inbox_controller.dart';
 import '../../controllers/settings_controller.dart';
-import '../../services/nostr_mail_service.dart';
-import '../../utils/metadata_extensions.dart';
-import '../../utils/nostr_utils.dart';
 import '../../utils/responsive_helper.dart';
-import '../../utils/toast_helper.dart';
-import '../../widgets/nostr_avatar.dart';
 import '../shared/desktop_shell.dart';
-import 'widgets/nip59_events_dialog.dart';
+import 'widgets/email_body_view.dart';
+import 'widgets/header_view.dart';
 
-class EmailView extends StatefulWidget {
+class EmailView extends StatelessWidget {
   const EmailView({super.key});
 
   @override
-  State<EmailView> createState() => _EmailViewState();
-}
-
-class _EmailViewState extends State<EmailView> {
-  Email? email;
-  Metadata? _senderMetadata;
-  Metadata? _bridgeMetadata; // Bridge for sender
-  Metadata? _recipientMetadata;
-  Metadata? _recipientBridgeMetadata; // Bridge for recipient
-  bool isLoading = true;
-  bool _showRawContent = false;
-  late bool _showImages;
-
-  @override
-  void initState() {
-    super.initState();
-    _showImages = Get.find<SettingsController>().alwaysLoadImages.value;
-    _loadEmail();
-  }
-
-  /// Get contact pubkey for sender (from address)
-  String? get _senderContactPubkey {
-    if (email == null) return null;
-    final senderAddress = email!.sender?.email;
-    return senderAddress != null
-        ? extractPubkeyFromAddress(senderAddress)
-        : null;
-  }
-
-  /// Get contact pubkey for recipient (to address)
-  String? get _recipientContactPubkey {
-    if (email == null) return null;
-    final toAddress = email!.mime.to?.firstOrNull?.email;
-    return toAddress != null ? extractPubkeyFromAddress(toAddress) : null;
-  }
-
-  /// Check if sender has a bridge (for received emails)
-  bool get _senderHasBridge => email?.isBridged ?? false;
-
-  /// Check if recipient has a bridge (for sent emails)
-  bool get _recipientHasBridge => email?.isBridged ?? false;
-
-  Future<void> _loadEmail() async {
-    final emailId = Get.arguments as String?;
-    if (emailId == null) {
-      Get.back();
-      return;
-    }
-
-    final nostrMailService = Get.find<NostrMailService>();
-    final loaded = await nostrMailService.client.getEmail(emailId);
-
-    if (loaded != null) {
-      _loadSenderMetadata(loaded);
-      _loadRecipientMetadata(loaded);
-    }
-
-    setState(() {
-      email = loaded;
-      isLoading = false;
-    });
-  }
-
-  Future<void> _loadSenderMetadata(Email loadedEmail) async {
-    try {
-      final ndk = Get.find<Ndk>();
-      final senderAddress = loadedEmail.sender?.email;
-      final contactPubkey = senderAddress != null
-          ? extractPubkeyFromAddress(senderAddress)
-          : null;
-
-      // Always load senderPubkey metadata (the actual Nostr sender)
-      final senderMeta = await ndk.metadata.loadMetadata(
-        loadedEmail.senderPubkey,
-      );
-      if (mounted && senderMeta != null) {
-        setState(() {
-          if (loadedEmail.isBridged) {
-            _bridgeMetadata = senderMeta;
-          } else {
-            _senderMetadata = senderMeta;
-          }
-        });
-      }
-
-      // If bridged and we can extract contact pubkey, load it too
-      if (loadedEmail.isBridged && contactPubkey != null) {
-        final contactMeta = await ndk.metadata.loadMetadata(contactPubkey);
-        if (mounted && contactMeta != null) {
-          setState(() => _senderMetadata = contactMeta);
-        }
-      }
-    } catch (_) {}
-  }
-
-  Future<void> _loadRecipientMetadata(Email loadedEmail) async {
-    try {
-      final ndk = Get.find<Ndk>();
-      final toAddress = loadedEmail.mime.to?.firstOrNull?.email;
-      final contactPubkey = toAddress != null
-          ? extractPubkeyFromAddress(toAddress)
-          : null;
-
-      // Always load recipientPubkey metadata (the actual Nostr recipient)
-      final recipientMeta = await ndk.metadata.loadMetadata(
-        loadedEmail.recipientPubkey,
-      );
-      if (mounted && recipientMeta != null) {
-        setState(() {
-          if (loadedEmail.isBridged) {
-            _recipientBridgeMetadata = recipientMeta;
-          } else {
-            _recipientMetadata = recipientMeta;
-          }
-        });
-      }
-
-      // If bridged and we can extract contact pubkey, load it too
-      if (loadedEmail.isBridged && contactPubkey != null) {
-        final contactMeta = await ndk.metadata.loadMetadata(contactPubkey);
-        if (mounted && contactMeta != null) {
-          setState(() => _recipientMetadata = contactMeta);
-        }
-      }
-    } catch (_) {}
-  }
-
-  Future<void> _downloadEmail() async {
-    if (email == null) return;
-
-    try {
-      final subject = (email!.subject?.isEmpty ?? true)
-          ? 'email'
-          : email!.subject!;
-      final fileName = subject.replaceAll(RegExp(r'[<>:"/\\|?*]'), '_');
-
-      final bytes = utf8.encode(email!.rawContent);
-
-      final result = await FileSaver.instance.saveFile(
-        name: fileName,
-        bytes: Uint8List.fromList(bytes),
-        fileExtension: 'eml',
-        mimeType: MimeType.other,
-      );
-
-      if (mounted) {
-        ToastHelper.success(context, 'Email saved: $result');
-      }
-    } catch (e) {
-      if (mounted) {
-        ToastHelper.error(context, 'Failed to save email: $e');
-      }
-    }
-  }
-
-  Future<void> _deleteEmail() async {
-    if (email == null) return;
-
-    final inboxController = Get.find<InboxController>();
-    final isInTrash = inboxController.currentFolder.value == MailFolder.trash;
-
-    if (isInTrash) {
-      final confirmed = await Get.dialog<bool>(
-        AlertDialog(
-          title: const Text('Delete permanently?'),
-          content: const Text('This action cannot be undone.'),
-          actions: [
-            TextButton(
-              onPressed: () => Get.back(result: false),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () => Get.back(result: true),
-              style: TextButton.styleFrom(foregroundColor: Colors.red),
-              child: const Text('Delete'),
-            ),
-          ],
-        ),
-      );
-      if (confirmed != true) return;
-      await inboxController.deleteEmail(email!.id);
-      if (mounted) {
-        ToastHelper.success(context, 'Email deleted permanently');
-      }
-    } else {
-      inboxController.deleteEmail(email!.id);
-    }
-    Get.back();
-  }
-
-  Future<void> _showNip59Events() async {
-    if (email == null) return;
-
-    final nostrMailService = Get.find<NostrMailService>();
-
-    final giftWrap = await nostrMailService.client.getGiftWrap(email!.id);
-    final seal = await nostrMailService.client.getSeal(email!.id);
-    final rumor = await nostrMailService.client.getRumor(email!.id);
-
-    if (!mounted) return;
-
-    await showNip59EventsDialog(
-      context: context,
-      giftWrap: giftWrap,
-      seal: seal,
-      rumor: rumor,
-    );
-  }
-
-  void _restoreEmail() {
-    if (email == null) return;
-
-    Get.find<InboxController>().restoreFromTrash(email!.id);
-    ToastHelper.success(context, 'Email restored');
-    Get.back();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final isWide = ResponsiveHelper.isNotMobile(context);
+    Get.put(EmailController());
 
-    if (isLoading) {
-      Widget content = Scaffold(
-        appBar: AppBar(),
-        body: const Center(child: CircularProgressIndicator()),
-      );
-      return isWide ? DesktopShell(body: content) : content;
-    }
+    return GetBuilder<EmailController>(
+      builder: (controller) {
+        final isWide = ResponsiveHelper.isNotMobile(context);
 
-    if (email == null) {
-      Widget content = Scaffold(
-        appBar: AppBar(),
-        body: const Center(child: Text('Email not found')),
-      );
-      return isWide ? DesktopShell(body: content) : content;
-    }
+        if (controller.isLoading) {
+          Widget content = Scaffold(
+            appBar: AppBar(),
+            body: const Center(child: CircularProgressIndicator()),
+          );
+          return isWide ? DesktopShell(body: content) : content;
+        }
 
-    Widget content = Scaffold(
-      appBar: AppBar(
-        title: Text(
-          (email!.subject?.isEmpty ?? true) ? '(No subject)' : email!.subject!,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        actions: [
-          Obx(() {
-            if (!Get.find<SettingsController>().showRawEmail.value) {
-              return const SizedBox.shrink();
-            }
-            return IconButton(
-              icon: Icon(_showRawContent ? Icons.article : Icons.code),
-              tooltip: _showRawContent ? 'Show formatted' : 'Show raw',
-              onPressed: () =>
-                  setState(() => _showRawContent = !_showRawContent),
-            );
-          }),
-          Obx(() {
-            final isInTrash =
-                Get.find<InboxController>().currentFolder.value ==
-                MailFolder.trash;
-            if (isInTrash) {
-              return IconButton(
-                icon: const Icon(Icons.restore_from_trash_outlined),
-                tooltip: 'Restore',
-                onPressed: _restoreEmail,
-              );
-            }
-            return const SizedBox.shrink();
-          }),
-          MenuAnchor(
-            alignmentOffset: const Offset(-110, 4),
-            style: MenuStyle(
-              shape: WidgetStatePropertyAll(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(
-                    width: 2,
-                    color: Theme.of(context).colorScheme.outlineVariant,
+        if (controller.email == null) {
+          Widget content = Scaffold(
+            appBar: AppBar(),
+            body: const Center(child: Text('Email not found')),
+          );
+          return isWide ? DesktopShell(body: content) : content;
+        }
+
+        Widget content = Scaffold(
+          appBar: AppBar(
+            title: Text(
+              (controller.email!.subject?.isEmpty ?? true)
+                  ? '(No subject)'
+                  : controller.email!.subject!,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            actions: [
+              Obx(() {
+                if (!Get.find<SettingsController>().showRawEmail.value) {
+                  return const SizedBox.shrink();
+                }
+                return IconButton(
+                  icon: Icon(
+                    controller.showRawContent ? Icons.article : Icons.code,
+                  ),
+                  tooltip: controller.showRawContent
+                      ? 'Show formatted'
+                      : 'Show raw',
+                  onPressed: () {
+                    controller.showRawContent = !controller.showRawContent;
+                    controller.update();
+                  },
+                );
+              }),
+              Obx(() {
+                final isInTrash =
+                    Get.find<InboxController>().currentFolder.value ==
+                    MailFolder.trash;
+                if (isInTrash) {
+                  return IconButton(
+                    icon: const Icon(Icons.restore_from_trash_outlined),
+                    tooltip: 'Restore',
+                    onPressed: controller.restoreEmail,
+                  );
+                }
+                return const SizedBox.shrink();
+              }),
+              MenuAnchor(
+                alignmentOffset: const Offset(-110, 4),
+                style: MenuStyle(
+                  shape: WidgetStatePropertyAll(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      side: BorderSide(
+                        width: 2,
+                        color: Theme.of(context).colorScheme.outlineVariant,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-            builder: (context, controller, child) {
-              return IconButton(
-                icon: const Icon(Icons.more_vert),
-                onPressed: () {
-                  if (controller.isOpen) {
-                    controller.close();
-                  } else {
-                    controller.open();
-                  }
+                builder: (context, controller, child) {
+                  return IconButton(
+                    icon: const Icon(Icons.more_vert),
+                    onPressed: () {
+                      if (controller.isOpen) {
+                        controller.close();
+                      } else {
+                        controller.open();
+                      }
+                    },
+                  );
                 },
-              );
-            },
-            menuChildren: [
-              MenuItemButton(
-                leadingIcon: const Icon(Icons.info_outline, size: 20),
-                onPressed: email != null ? _showNip59Events : null,
-                child: const Text('NIP-59 Events'),
+                menuChildren: [
+                  MenuItemButton(
+                    leadingIcon: const Icon(Icons.info_outline, size: 20),
+                    onPressed: controller.email != null
+                        ? controller.showNip59Events
+                        : null,
+                    child: const Text('NIP-59 Events'),
+                  ),
+                  MenuItemButton(
+                    leadingIcon: const Icon(Icons.download, size: 20),
+                    onPressed: controller.downloadEmail,
+                    child: const Text('Download email'),
+                  ),
+                  MenuItemButton(
+                    leadingIcon: const Icon(
+                      Icons.delete_outline,
+                      size: 20,
+                      color: Colors.red,
+                    ),
+                    onPressed: controller.deleteEmail,
+                    child: const Text(
+                      'Delete',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ],
               ),
-              MenuItemButton(
-                leadingIcon: const Icon(Icons.download, size: 20),
-                onPressed: _downloadEmail,
-                child: const Text('Download email'),
-              ),
-              MenuItemButton(
-                leadingIcon: const Icon(
-                  Icons.delete_outline,
-                  size: 20,
-                  color: Colors.red,
-                ),
-                onPressed: _deleteEmail,
-                child: const Text(
-                  'Delete',
-                  style: TextStyle(color: Colors.red),
-                ),
-              ),
+              const SizedBox(width: 8),
             ],
           ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: SafeArea(
-        top: false,
-        child: SingleChildScrollView(
-          child: ResponsiveCenter(
-            maxWidth: 800,
-            padding: const EdgeInsets.all(16),
-            child: _showRawContent
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SelectableText(
-                        'Sender npub: ${Nip19.encodePubKey(email!.senderPubkey)}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontFamily: 'monospace',
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+          body: SafeArea(
+            top: false,
+            child: SingleChildScrollView(
+              child: ResponsiveCenter(
+                maxWidth: 800,
+                padding: const EdgeInsets.all(16),
+                child: controller.showRawContent
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SelectableText(
+                            'Sender npub: ${Nip19.encodePubKey(controller.email!.senderPubkey)}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontFamily: 'monospace',
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          const Divider(height: 24),
+                          SelectableText(
+                            controller.email!.rawContent,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontFamily: 'monospace',
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          HeaderView(),
+                          const Divider(height: 32),
+                          EmailBodyView(email: controller.email!),
+                        ],
                       ),
-                      const Divider(height: 24),
-                      SelectableText(
-                        email!.rawContent,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontFamily: 'monospace',
-                          height: 1.4,
-                        ),
-                      ),
-                    ],
-                  )
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildHeader(context),
-                      const Divider(height: 32),
-                      _buildEmailBody(),
-                    ],
-                  ),
-          ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.toNamed(
-          AppRoutes.compose,
-          arguments: {'email': email, 'mode': 'reply'},
-        ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: Icon(
-          Icons.reply,
-          color: Theme.of(context).colorScheme.onPrimary,
-        ),
-      ),
-    );
-
-    if (isWide) {
-      return DesktopShell(body: content);
-    }
-    return content;
-  }
-
-  String get _senderDisplayName {
-    // Always show the from address/name
-    return _senderMetadata?.getBestName() ?? email!.sender?.encode() ?? '';
-  }
-
-  String get _recipientDisplayName {
-    if (_recipientMetadata != null) {
-      return _recipientMetadata!.getBestName();
-    }
-    // Fallback to shortened address
-    final to = email!.mime.to?.firstOrNull?.encode() ?? '';
-    if (to.contains('@nostr')) {
-      final npub = to.split('@').first;
-      if (npub.length > 16) {
-        return 'npub...${npub.substring(npub.length - 6)}';
-      }
-    }
-    return to;
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          (email!.subject?.isEmpty ?? true) ? '(No subject)' : email!.subject!,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            _buildSenderAvatar(context),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _senderDisplayName,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    _formatDateTime(email!.date),
-                    style: TextStyle(color: Colors.grey[600], fontSize: 13),
-                  ),
-                ],
               ),
             ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        _buildRecipientRow(context),
-      ],
-    );
-  }
-
-  Widget _buildRecipientRow(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        SizedBox(
-          width: 40,
-          child: Text(
-            'To',
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () => Get.toNamed(
+              AppRoutes.compose,
+              arguments: {'email': controller.email, 'mode': 'reply'},
+            ),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            child: Icon(
+              Icons.reply,
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
-        ),
-        _buildRecipientAvatar(context),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            _recipientDisplayName,
-            style: const TextStyle(fontSize: 14),
-          ),
-        ),
-      ],
-    );
-  }
+        );
 
-  Widget _buildRecipientAvatar(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final mainAvatar = _buildMainRecipientAvatar(colorScheme);
-
-    if (!_recipientHasBridge) {
-      return mainAvatar;
-    }
-
-    // Show bridge badge on avatar
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        mainAvatar,
-        Positioned(
-          right: -3,
-          bottom: -3,
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: colorScheme.surface, width: 1.5),
-            ),
-            child: _buildRecipientBridgeBadge(colorScheme),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMainRecipientAvatar(ColorScheme colorScheme) {
-    final contactPubkey = _recipientContactPubkey;
-    if (contactPubkey == null) {
-      return EmailAvatar(
-        mailAddress: email!.mime.to?.firstOrNull ?? MailAddress(null, ''),
-        radius: 12,
-      );
-    }
-
-    return NostrAvatar(
-      pubkey: contactPubkey,
-      metadata: _recipientMetadata,
-      radius: 12,
-    );
-  }
-
-  Widget _buildRecipientBridgeBadge(ColorScheme colorScheme) {
-    return NostrAvatar(
-      pubkey: email!.recipientPubkey,
-      metadata: _recipientBridgeMetadata,
-      radius: 7,
-    );
-  }
-
-  Widget _buildSenderAvatar(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final mainAvatar = _buildMainSenderAvatar(colorScheme);
-
-    if (!_senderHasBridge) {
-      return mainAvatar;
-    }
-
-    // Show bridge badge on avatar
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        mainAvatar,
-        Positioned(
-          right: -4,
-          bottom: -4,
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: colorScheme.surface, width: 2),
-            ),
-            child: _buildSenderBridgeBadge(colorScheme),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSenderBridgeBadge(ColorScheme colorScheme) {
-    return NostrAvatar(
-      pubkey: email!.senderPubkey,
-      metadata: _bridgeMetadata,
-      radius: 12,
-    );
-  }
-
-  Widget _buildMainSenderAvatar(ColorScheme colorScheme) {
-    final contactPubkey = _senderContactPubkey;
-    if (contactPubkey == null) {
-      return EmailAvatar(
-        mailAddress: email!.sender ?? MailAddress(null, ''),
-        radius: 24,
-      );
-    }
-
-    return NostrAvatar(
-      pubkey: contactPubkey,
-      metadata: _senderMetadata,
-      radius: 24,
-    );
-  }
-
-  String _formatDateTime(DateTime date) {
-    return '${date.day}/${date.month}/${date.year} '
-        '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-  }
-
-  // TODO: Add option to trust domain and skip confirmation for trusted domains (maybe at nostr level)
-  // TODO: Show warning when link text differs from actual URL (phishing detection)
-  Future<void> _confirmOpenLink(String url) async {
-    final confirmed = await Get.dialog<bool>(
-      AlertDialog(
-        title: const Text('Open link?'),
-        content: SelectableText(
-          url,
-          style: TextStyle(color: Theme.of(context).colorScheme.primary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(result: false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Clipboard.setData(ClipboardData(text: url));
-              Get.back(result: false);
-              ToastHelper.success(context, 'Link copied');
-            },
-            child: const Text('Copy'),
-          ),
-          TextButton(
-            onPressed: () => Get.back(result: true),
-            child: const Text('Open'),
-          ),
-        ],
-      ),
-    );
-    if (confirmed == true) {
-      launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-    }
-  }
-
-  bool _htmlHasImages(String html) {
-    return RegExp(r'<img[\s>/]', caseSensitive: false).hasMatch(html);
-  }
-
-  Widget _buildEmailBody() {
-    final htmlBody = email!.htmlBody;
-    if (htmlBody != null && htmlBody.isNotEmpty) {
-      final hasImages = _htmlHasImages(htmlBody);
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (hasImages && !_showImages)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              margin: const EdgeInsets.only(bottom: 16),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.image_not_supported_outlined,
-                    size: 18,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Images are hidden for privacy',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () => setState(() => _showImages = true),
-                    child: const Text('Load images'),
-                  ),
-                ],
-              ),
-            ),
-          SelectionArea(
-            child: HtmlWidget(
-              htmlBody,
-              key: ValueKey(_showImages),
-              customWidgetBuilder: _showImages
-                  ? null
-                  : (element) {
-                      if (element.localName == 'img') {
-                        return const SizedBox.shrink();
-                      }
-                      return null;
-                    },
-              onTapUrl: (url) {
-                _confirmOpenLink(url);
-                return true;
-              },
-            ),
-          ),
-        ],
-      );
-    }
-    return SelectableText(
-      email!.body,
-      style: const TextStyle(fontSize: 16, height: 1.5),
+        if (isWide) {
+          return DesktopShell(body: content);
+        }
+        return content;
+      },
     );
   }
 }

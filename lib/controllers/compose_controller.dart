@@ -1,12 +1,19 @@
 import 'dart:convert';
 
 import 'package:enough_mail_plus/enough_mail.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:mime/mime.dart';
 import 'package:ndk/ndk.dart';
+import 'package:nostr_mail/nostr_mail.dart';
+import 'package:nostr_mail_client/utils/toast_helper.dart';
 import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
 
+import '../models/compose_attachment.dart';
 import '../models/contact.dart';
 import '../models/from_option.dart';
 import '../models/recipient.dart';
@@ -15,10 +22,15 @@ import '../services/nostr_mail_service.dart';
 import '../utils/metadata_extensions.dart';
 import '../utils/sender_name_helper.dart';
 import 'auth_controller.dart';
+import 'settings_controller.dart';
+
+// TODO: allow attachments renaming
 
 const String _defaultBridgeDomain = 'uid.ovh';
 
 class ComposeController extends GetxController {
+  static ComposeController get to => Get.find();
+
   final _nostrMailService = Get.find<NostrMailService>();
   final _contactsService = Get.find<ContactsService>();
 
@@ -26,11 +38,46 @@ class ComposeController extends GetxController {
   final recipients = <Recipient>[].obs;
   final Rxn<FromOption> selectedFrom = Rxn<FromOption>();
   final fromOptions = <FromOption>[].obs;
+  final attachments = <ComposeAttachment>[].obs;
+
+  late final TextEditingController toController;
+  late final TextEditingController subjectController;
+  late final QuillController quillController;
+  final FocusNode editorFocusNode = FocusNode();
+  final ScrollController editorScrollController = ScrollController();
 
   @override
   void onInit() {
     super.onInit();
     _contactsService.loadContacts();
+
+    final args = Get.arguments as Map<String, dynamic>?;
+    final signature = Get.find<SettingsController>().currentSignature;
+
+    toController = TextEditingController();
+    subjectController = TextEditingController();
+
+    // Initialize Quill controller with signature
+    if (signature.isEmpty) {
+      quillController = QuillController.basic();
+    } else {
+      final doc = Document()..insert(0, '\n\n$signature');
+      quillController = QuillController(
+        document: doc,
+        selection: const TextSelection.collapsed(offset: 0),
+      );
+    }
+
+    // Load from options
+    loadFromOptions();
+
+    // Handle reply/forward mode
+    final email = args?['email'] as Email?;
+    final mode = args?['mode'] as String?;
+
+    if (email != null && mode != null) {
+      initFromEmail(email, mode);
+    }
   }
 
   Future<bool> addRecipient(String input) async {
@@ -88,6 +135,51 @@ class ComposeController extends GetxController {
       ids.add(r.input.toLowerCase());
     }
     return ids;
+  }
+
+  /// Pick files and add them as attachments
+  Future<void> pickAttachments() async {
+    try {
+      // TODO: add popup title
+      // TODO: limit file size
+      final result = await FilePicker.platform.pickFiles(
+        allowMultiple: true,
+        withData: true, // TODO: do not work on macos
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        for (final file in result.files) {
+          if (file.path != null && file.bytes != null) {
+            final filename = file.name;
+            final mimeType = _getMimeType(file.path!);
+
+            attachments.add(
+              ComposeAttachment(
+                filename: filename,
+                data: file.bytes!,
+                mimeType: mimeType,
+              ),
+            );
+          }
+        }
+      }
+    } catch (e) {
+      if (Get.context != null) {
+        ToastHelper.error(Get.context!, 'Failed to pick files: $e');
+      }
+    }
+  }
+
+  /// Remove attachment at the specified index
+  void removeAttachment(int index) {
+    if (index >= 0 && index < attachments.length) {
+      attachments.removeAt(index);
+    }
+  }
+
+  /// Get MIME type based on file extension
+  String _getMimeType(String filePath) {
+    return lookupMimeType(filePath) ?? 'application/octet-stream';
   }
 
   Future<Recipient?> _resolveRecipient(String input) async {
@@ -234,11 +326,23 @@ class ComposeController extends GetxController {
       }).toList();
 
       builder.subject = subject;
+
+      // Add body parts
       builder.addTextPlain(plainText);
       if (htmlBody.isNotEmpty) {
         builder.addTextHtml(
           htmlBody,
           transferEncoding: TransferEncoding.base64,
+        );
+      }
+
+      // Add attachments if present
+      for (final attachment in attachments) {
+        final mediaType = MediaType.fromText(attachment.mimeType);
+        builder.addBinary(
+          attachment.data,
+          mediaType,
+          filename: attachment.filename,
         );
       }
 
@@ -380,5 +484,118 @@ class ComposeController extends GetxController {
 
   void selectFrom(FromOption option) {
     selectedFrom.value = option;
+  }
+
+  void initFromEmail(Email email, String mode) {
+    final myPubkey = Get.find<NostrMailService>().getPublicKey();
+    final isSentByMe = email.senderPubkey == myPubkey;
+    final signature = Get.find<SettingsController>().currentSignature;
+    final signatureBlock = signature.isEmpty ? '' : '\n\n$signature';
+
+    // Get sender display for quotes
+    final senderDisplay = email.sender?.encode() ?? '';
+
+    if (mode == 'reply') {
+      // Set recipient
+      final replyTo = isSentByMe
+          ? email.mime.to?.firstOrNull?.encode() ?? ''
+          : senderDisplay;
+      addRecipient(replyTo);
+
+      // Set subject (avoid Re: Re: Re:)
+      final subject = email.subject ?? '';
+      subjectController.text = subject.startsWith('Re:')
+          ? subject
+          : 'Re: $subject';
+
+      // Set body with quoted original message
+      final dateFormat = DateFormat('EEE, MMM d, yyyy \'at\' h:mm a');
+      final quotedBody = email.body
+          .split('\n')
+          .map((line) => '> $line')
+          .join('\n');
+      final bodyText =
+          '$signatureBlock\n\nOn ${dateFormat.format(email.date)}, $senderDisplay wrote:\n$quotedBody';
+      setQuillContent(bodyText);
+    } else if (mode == 'forward') {
+      // Set subject (avoid Fwd: Fwd: Fwd:)
+      final subject = email.subject ?? '';
+      subjectController.text = subject.startsWith('Fwd:')
+          ? subject
+          : 'Fwd: $subject';
+
+      // Set body with forwarded message
+      final dateFormat = DateFormat('EEE, MMM d, yyyy \'at\' h:mm a');
+      final bodyText =
+          '$signatureBlock\n\n---------- Forwarded message ----------\n'
+          'From: $senderDisplay\n'
+          'Date: ${dateFormat.format(email.date)}\n'
+          'Subject: ${email.subject}\n\n'
+          '${email.body}';
+      setQuillContent(bodyText);
+    }
+  }
+
+  void setQuillContent(String text) {
+    final doc = Document()..insert(0, text);
+    quillController.document = doc;
+    quillController.updateSelection(
+      const TextSelection.collapsed(offset: 0),
+      ChangeSource.local,
+    );
+  }
+
+  @override
+  void dispose() {
+    toController.dispose();
+    subjectController.dispose();
+    quillController.dispose();
+    editorFocusNode.dispose();
+    editorScrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> handleToSubmit(String value) async {
+    final input = value.trim();
+    if (input.isNotEmpty) {
+      final added = await addRecipient(input);
+      if (added) {
+        toController.clear();
+      } else {
+        ToastHelper.error(Get.context!, 'Invalid recipient format');
+      }
+    }
+  }
+
+  Future<void> firstSend() async {
+    // Try to add current input as recipient if not empty
+    if (toController.text.trim().isNotEmpty) {
+      await handleToSubmit(toController.text);
+      // If still not empty, it was invalid and toast was already shown
+      if (toController.text.trim().isNotEmpty) return;
+    }
+
+    if (recipients.isEmpty) {
+      ToastHelper.error(Get.context!, 'Add at least one recipient');
+      return;
+    }
+
+    final hasLegacyRecipient = recipients.any((r) => r.isLegacy);
+    if (hasLegacyRecipient && selectedFrom.value == null) {
+      ToastHelper.error(Get.context!, 'Select a From address for legacy email');
+      return;
+    }
+
+    final success = await send(
+      from: selectedFrom.value?.address,
+      subject: subjectController.text,
+      document: quillController.document,
+    );
+
+    if (success) {
+      Get.back();
+    } else {
+      ToastHelper.error(Get.context!, 'Failed to send email');
+    }
   }
 }
