@@ -140,9 +140,9 @@ class ComposeController extends GetxController {
   /// Pick files and add them as attachments
   Future<void> pickAttachments() async {
     try {
-      // TODO: add popup title
       // TODO: limit file size
       final result = await FilePicker.platform.pickFiles(
+        dialogTitle: 'Select Attachments',
         allowMultiple: true,
         withData: true, // TODO: do not work on macos
       );
