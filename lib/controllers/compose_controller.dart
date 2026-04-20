@@ -40,7 +40,13 @@ class ComposeController extends GetxController {
   final fromOptions = <FromOption>[].obs;
   final attachments = <ComposeAttachment>[].obs;
 
+  final showExpandedFields = false.obs;
+  final ccRecipients = <Recipient>[].obs;
+  final bccRecipients = <Recipient>[].obs;
+
   late final TextEditingController toController;
+  late final TextEditingController ccController;
+  late final TextEditingController bccController;
   late final TextEditingController subjectController;
   late final QuillController quillController;
   final FocusNode editorFocusNode = FocusNode();
@@ -55,6 +61,8 @@ class ComposeController extends GetxController {
     final signature = Get.find<SettingsController>().currentSignature;
 
     toController = TextEditingController();
+    ccController = TextEditingController();
+    bccController = TextEditingController();
     subjectController = TextEditingController();
 
     // Initialize Quill controller with signature
@@ -80,12 +88,19 @@ class ComposeController extends GetxController {
     }
   }
 
-  Future<bool> addRecipient(String input) async {
+  Future<bool> addRecipient(String input) =>
+      _addRecipientToList(input, recipients);
+  Future<bool> addCcRecipient(String input) =>
+      _addRecipientToList(input, ccRecipients);
+  Future<bool> addBccRecipient(String input) =>
+      _addRecipientToList(input, bccRecipients);
+
+  Future<bool> _addRecipientToList(String input, RxList<Recipient> list) async {
     final trimmed = input.trim();
     if (trimmed.isEmpty) return false;
 
     // Check if already added (by input)
-    if (recipients.any((r) => r.input == trimmed)) return false;
+    if (list.any((r) => r.input == trimmed)) return false;
 
     // Resolve recipient first to get pubkey
     final resolved = await _resolveRecipient(trimmed);
@@ -95,26 +110,40 @@ class ComposeController extends GetxController {
 
     // Check if already added (by pubkey for nostr recipients)
     if (resolved.type == RecipientType.nostr && resolved.pubkey != null) {
-      if (recipients.any((r) => r.pubkey == resolved.pubkey)) return false;
+      if (list.any((r) => r.pubkey == resolved.pubkey)) return false;
     }
 
     // Add recipient
-    recipients.add(resolved);
+    list.add(resolved);
     return true;
   }
 
-  void removeRecipient(int index) {
-    if (index >= 0 && index < recipients.length) {
-      recipients.removeAt(index);
+  void removeRecipient(int index) =>
+      _removeRecipientFromList(index, recipients);
+  void removeCcRecipient(int index) =>
+      _removeRecipientFromList(index, ccRecipients);
+  void removeBccRecipient(int index) =>
+      _removeRecipientFromList(index, bccRecipients);
+
+  void _removeRecipientFromList(int index, RxList<Recipient> list) {
+    if (index >= 0 && index < list.length) {
+      list.removeAt(index);
     }
   }
 
-  void addRecipientFromContact(Contact contact) {
+  void addRecipientFromContact(Contact contact) =>
+      _addContactToList(contact, recipients);
+  void addCcRecipientFromContact(Contact contact) =>
+      _addContactToList(contact, ccRecipients);
+  void addBccRecipientFromContact(Contact contact) =>
+      _addContactToList(contact, bccRecipients);
+
+  void _addContactToList(Contact contact, RxList<Recipient> list) {
     // Check if already added (by pubkey or email)
     if (contact.pubkey != null && contact.pubkey!.isNotEmpty) {
-      if (recipients.any((r) => r.pubkey == contact.pubkey)) return;
+      if (list.any((r) => r.pubkey == contact.pubkey)) return;
     } else if (contact.mailAddress?.email.isNotEmpty == true) {
-      if (recipients.any(
+      if (list.any(
         (r) =>
             r.input.toLowerCase() == contact.mailAddress!.email.toLowerCase(),
       )) {
@@ -122,13 +151,17 @@ class ComposeController extends GetxController {
       }
     }
 
-    recipients.add(contact.toRecipient());
+    list.add(contact.toRecipient());
   }
 
+  Set<String> get recipientIds => _getIdsFromList(recipients);
+  Set<String> get ccRecipientIds => _getIdsFromList(ccRecipients);
+  Set<String> get bccRecipientIds => _getIdsFromList(bccRecipients);
+
   /// Get all recipient identifiers for exclusion in autocomplete
-  Set<String> get recipientIds {
+  Set<String> _getIdsFromList(RxList<Recipient> list) {
     final ids = <String>{};
-    for (final r in recipients) {
+    for (final r in list) {
       if (r.pubkey != null) {
         ids.add(r.pubkey!);
       }
@@ -324,6 +357,26 @@ class ComposeController extends GetxController {
         }
         return MailAddress(r.displayName, r.input);
       }).toList();
+
+      if (ccRecipients.isNotEmpty) {
+        builder.cc = ccRecipients.map((r) {
+          if (r.isNostr && r.pubkey != null) {
+            final npub = Nip19.encodePubKey(r.pubkey!);
+            return MailAddress(r.displayName, '$npub@nostr');
+          }
+          return MailAddress(r.displayName, r.input);
+        }).toList();
+      }
+
+      if (bccRecipients.isNotEmpty) {
+        builder.bcc = bccRecipients.map((r) {
+          if (r.isNostr && r.pubkey != null) {
+            final npub = Nip19.encodePubKey(r.pubkey!);
+            return MailAddress(r.displayName, '$npub@nostr');
+          }
+          return MailAddress(r.displayName, r.input);
+        }).toList();
+      }
 
       builder.subject = subject;
 
@@ -548,6 +601,8 @@ class ComposeController extends GetxController {
   @override
   void dispose() {
     toController.dispose();
+    ccController.dispose();
+    bccController.dispose();
     subjectController.dispose();
     quillController.dispose();
     editorFocusNode.dispose();
@@ -555,12 +610,27 @@ class ComposeController extends GetxController {
     super.dispose();
   }
 
-  Future<void> handleToSubmit(String value) async {
+  void toggleExpandedFields() {
+    showExpandedFields.value = !showExpandedFields.value;
+  }
+
+  Future<void> handleToSubmit(String value) =>
+      _handleSubmit(value, addRecipient, toController);
+  Future<void> handleCcSubmit(String value) =>
+      _handleSubmit(value, addCcRecipient, ccController);
+  Future<void> handleBccSubmit(String value) =>
+      _handleSubmit(value, addBccRecipient, bccController);
+
+  Future<void> _handleSubmit(
+    String value,
+    Future<bool> Function(String) addFunc,
+    TextEditingController controller,
+  ) async {
     final input = value.trim();
     if (input.isNotEmpty) {
-      final added = await addRecipient(input);
+      final added = await addFunc(input);
       if (added) {
-        toController.clear();
+        controller.clear();
       } else {
         ToastHelper.error(Get.context!, 'Invalid recipient format');
       }
@@ -573,6 +643,14 @@ class ComposeController extends GetxController {
       await handleToSubmit(toController.text);
       // If still not empty, it was invalid and toast was already shown
       if (toController.text.trim().isNotEmpty) return;
+    }
+    if (ccController.text.trim().isNotEmpty) {
+      await handleCcSubmit(ccController.text);
+      if (ccController.text.trim().isNotEmpty) return;
+    }
+    if (bccController.text.trim().isNotEmpty) {
+      await handleBccSubmit(bccController.text);
+      if (bccController.text.trim().isNotEmpty) return;
     }
 
     if (recipients.isEmpty) {
