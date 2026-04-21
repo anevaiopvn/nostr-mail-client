@@ -38,8 +38,8 @@ void main() async {
     });
   }
 
-  // Initialize system theme
-  await SystemTheme.accentColor.load();
+  // Initialize system theme (not web)
+  if (!kIsWeb) await SystemTheme.accentColor.load();
 
   // Initialize storage service
   final storageService = StorageService();
