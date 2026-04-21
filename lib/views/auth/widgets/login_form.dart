@@ -96,7 +96,7 @@ class LoginForm extends GetView<AuthController> {
                       "sign_event:1985",
                     ],
                     appName: "Nmail",
-                    appUrl: "https://nogringo.github.io/nostr-mail-client",
+                    appUrl: "https://app.nostrmail.org",
                     appImageUrl:
                         "https://raw.githubusercontent.com/nogringo/nostr-mail-client/refs/heads/main/icons/web/icon-512-maskable.png",
                   ),

@@ -26,7 +26,7 @@ It looks and feels like the email you already know, but with a major difference:
 
 ### Try it now
 
-*   **Web App:** [https://nogringo.github.io/nostr-mail-client](https://nogringo.github.io/nostr-mail-client)
+*   **Web App:** [https://app.nostrmail.org](https://app.nostrmail.org)
 *   **Android (ZapStore):** [ZapStore.dev](https://zapstore.dev/apps/app.nostrmail.client)
 *   **Latest Releases:** [Download for Android & Desktop](https://github.com/nogringo/nostr-mail-client/releases/latest)
 
