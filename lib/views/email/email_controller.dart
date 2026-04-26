@@ -81,7 +81,7 @@ class EmailController extends GetxController {
   }
 
   Future<void> loadEmail() async {
-    final emailId = Get.arguments as String?;
+    final emailId = Get.parameters['id'];
     if (emailId == null) {
       Get.back();
       return;

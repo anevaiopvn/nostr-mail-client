@@ -226,7 +226,7 @@ class InboxView extends GetView<InboxController> {
                   key: ValueKey(email.id),
                   email: email,
                   onTap: () =>
-                      Get.toNamed(AppRoutes.email, arguments: email.id),
+                      Get.toNamed(AppRoutes.email.replaceAll(':id', email.id)),
                   isSelected: controller.isSelected(email.id),
                   onToggleSelect: () => controller.toggleSelection(email.id),
                   onReply: () => _replyTo(email),

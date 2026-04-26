@@ -20,7 +20,7 @@ class AppRoutes {
   // This will allow DesktopShell to remain fixed while only its content (body) changes.
   static const login = '/login';
   static const inbox = '/inbox';
-  static const email = '/email';
+  static const email = '/email/:id';
   static const compose = '/compose';
   static const profile = '/profile';
   static const settings = '/settings';

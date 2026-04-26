@@ -21,9 +21,7 @@ class RecipientsListView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (to.isNotEmpty) ...[
-          _buildRecipientSection(context, 'To', to),
-        ],
+        if (to.isNotEmpty) ...[_buildRecipientSection(context, 'To', to)],
         if (cc.isNotEmpty) ...[
           const SizedBox(height: 8),
           _buildRecipientSection(context, 'Cc', cc),
@@ -36,7 +34,11 @@ class RecipientsListView extends StatelessWidget {
     );
   }
 
-  Widget _buildRecipientSection(BuildContext context, String label, List<MailAddress> recipients) {
+  Widget _buildRecipientSection(
+    BuildContext context,
+    String label,
+    List<MailAddress> recipients,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,7 +61,9 @@ class RecipientsListView extends StatelessWidget {
           child: Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: recipients.map((recipient) => _buildRecipientChip(context, recipient)).toList(),
+            children: recipients
+                .map((recipient) => _buildRecipientChip(context, recipient))
+                .toList(),
           ),
         ),
       ],
@@ -114,9 +118,6 @@ class RecipientsListView extends StatelessWidget {
       return EmailAvatar(mailAddress: recipient, radius: 12);
     }
 
-    return NostrAvatar(
-      pubkey: pubkey,
-      radius: 12,
-    );
+    return NostrAvatar(pubkey: pubkey, radius: 12);
   }
 }

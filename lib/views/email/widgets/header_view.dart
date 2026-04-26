@@ -23,9 +23,7 @@ class HeaderView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          (email.subject?.isEmpty ?? true)
-              ? '(No subject)'
-              : email.subject!,
+          (email.subject?.isEmpty ?? true) ? '(No subject)' : email.subject!,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
         ),
         const SizedBox(height: 16),
@@ -54,7 +52,8 @@ class HeaderView extends StatelessWidget {
                       const SizedBox(width: 12),
                       IconButton(
                         onPressed: () {
-                          controller.showRecipients = !controller.showRecipients;
+                          controller.showRecipients =
+                              !controller.showRecipients;
                           controller.update();
                         },
                         icon: Row(
@@ -74,7 +73,10 @@ class HeaderView extends StatelessWidget {
                           ],
                         ),
                         tooltip: 'Show recipients',
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         constraints: const BoxConstraints(),
                         style: IconButton.styleFrom(
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
