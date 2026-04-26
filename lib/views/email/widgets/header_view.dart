@@ -3,20 +3,29 @@ import 'package:nostr_mail_client/utils/format_date_time.dart';
 import 'package:nostr_mail_client/views/email/email_controller.dart';
 import 'package:nostr_mail_client/views/email/widgets/sender_avatar_view.dart';
 
-import 'recipient_row_view.dart';
+import 'recipients_list_view.dart';
 
 class HeaderView extends StatelessWidget {
   const HeaderView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = EmailController.to;
+    final email = controller.email;
+    if (email == null) return const SizedBox.shrink();
+
+    final to = email.mime.to ?? [];
+    final cc = email.mime.cc ?? [];
+    final bcc = email.mime.bcc ?? [];
+    final recipientCount = to.length + cc.length + bcc.length;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          (EmailController.to.email!.subject?.isEmpty ?? true)
+          (email.subject?.isEmpty ?? true)
               ? '(No subject)'
-              : EmailController.to.email!.subject!,
+              : email.subject!,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
         ),
         const SizedBox(height: 16),
@@ -29,24 +38,59 @@ class HeaderView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    EmailController.to.senderDisplayName,
+                    controller.senderDisplayName,
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
                     ),
                   ),
                   const SizedBox(height: 2),
-                  Text(
-                    formatDateTime(EmailController.to.email!.date),
-                    style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                  Row(
+                    children: [
+                      Text(
+                        formatDateTime(email.date),
+                        style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                      ),
+                      const SizedBox(width: 12),
+                      IconButton(
+                        onPressed: () {
+                          controller.showRecipients = !controller.showRecipients;
+                          controller.update();
+                        },
+                        icon: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              controller.showRecipients
+                                  ? Icons.expand_less
+                                  : Icons.expand_more,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '$recipientCount',
+                              style: const TextStyle(fontSize: 13),
+                            ),
+                          ],
+                        ),
+                        tooltip: 'Show recipients',
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        constraints: const BoxConstraints(),
+                        style: IconButton.styleFrom(
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
-        RecipientRowView(),
+        if (controller.showRecipients) ...[
+          const SizedBox(height: 12),
+          const RecipientsListView(),
+        ],
       ],
     );
   }

@@ -30,6 +30,7 @@ class EmailController extends GetxController {
   Metadata? recipientBridgeMetadata; // Bridge for recipient
   bool isLoading = true;
   bool showRawContent = false;
+  bool showRecipients = false;
   late bool showImages;
 
   EmailController() {

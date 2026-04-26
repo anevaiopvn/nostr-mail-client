@@ -40,13 +40,6 @@ class EmailView extends StatelessWidget {
 
         Widget content = Scaffold(
           appBar: AppBar(
-            title: Text(
-              (controller.email!.subject?.isEmpty ?? true)
-                  ? '(No subject)'
-                  : controller.email!.subject!,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
             actions: [
               Obx(() {
                 if (!Get.find<SettingsController>().showRawEmail.value) {
