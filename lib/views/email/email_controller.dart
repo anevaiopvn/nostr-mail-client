@@ -17,6 +17,8 @@ import 'package:nostr_mail_client/utils/toast_helper.dart';
 import 'package:nostr_mail_client/views/email/widgets/nip59_events_dialog.dart';
 import 'package:path/path.dart' as p;
 import 'package:pdfrx/pdfrx.dart';
+import 'package:nostr_mail_client/services/android_file_saver.dart';
+import 'package:nostr_mail_client/utils/platform_helper.dart';
 
 class EmailController extends GetxController {
   static EmailController get to => Get.find();
@@ -244,12 +246,21 @@ class EmailController extends GetxController {
 
       final bytes = utf8.encode(email!.rawContent);
 
-      final result = await FileSaver.instance.saveFile(
-        name: fileName,
-        bytes: Uint8List.fromList(bytes),
-        fileExtension: 'eml',
-        mimeType: MimeType.other,
-      );
+      String result;
+      if (PlatformHelper.isAndroid) {
+        result = await AndroidFileSaver.saveToDownloads(
+          fileName: '$fileName.eml',
+          bytes: Uint8List.fromList(bytes),
+          mimeType: 'message/rfc822',
+        );
+      } else {
+        result = await FileSaver.instance.saveFile(
+          name: fileName,
+          bytes: Uint8List.fromList(bytes),
+          fileExtension: 'eml',
+          mimeType: MimeType.other,
+        );
+      }
 
       ToastHelper.success(Get.context!, 'Email saved: $result');
     } catch (e) {
@@ -282,12 +293,21 @@ class EmailController extends GetxController {
       // Clean filename (remove path if any)
       final cleanName = p.basename(attachmentDetails.filename);
 
-      final result = await FileSaver.instance.saveFile(
-        name: cleanName,
-        bytes: fileData,
-        fileExtension: extension,
-        mimeType: mimeType,
-      );
+      String result;
+      if (PlatformHelper.isAndroid) {
+        result = await AndroidFileSaver.saveToDownloads(
+          fileName: cleanName,
+          bytes: fileData,
+          mimeType: _getMimeTypeString(mimeType, extension),
+        );
+      } else {
+        result = await FileSaver.instance.saveFile(
+          name: cleanName,
+          bytes: fileData,
+          fileExtension: extension,
+          mimeType: mimeType,
+        );
+      }
 
       ToastHelper.success(Get.context!, 'File saved: $result');
     } catch (e) {
@@ -324,12 +344,20 @@ class EmailController extends GetxController {
         // Clean filename (remove path if any)
         final cleanName = p.basename(attachment.filename);
 
-        await FileSaver.instance.saveFile(
-          name: cleanName,
-          bytes: fileData,
-          fileExtension: extension,
-          mimeType: mimeType,
-        );
+        if (PlatformHelper.isAndroid) {
+          await AndroidFileSaver.saveToDownloads(
+            fileName: cleanName,
+            bytes: fileData,
+            mimeType: _getMimeTypeString(mimeType, extension),
+          );
+        } else {
+          await FileSaver.instance.saveFile(
+            name: cleanName,
+            bytes: fileData,
+            fileExtension: extension,
+            mimeType: mimeType,
+          );
+        }
         successCount++;
       } catch (e) {
         failureCount++;
@@ -439,6 +467,31 @@ class EmailController extends GetxController {
       );
     } else {
       ToastHelper.error(Get.context!, 'Failed to load PDF');
+    }
+  }
+
+  String _getMimeTypeString(MimeType mimeType, String extension) {
+    switch (mimeType) {
+      case MimeType.pdf:
+        return 'application/pdf';
+      case MimeType.jpeg:
+        return 'image/jpeg';
+      case MimeType.png:
+        return 'image/png';
+      case MimeType.gif:
+        return 'image/gif';
+      case MimeType.webp:
+        return 'image/webp';
+      case MimeType.text:
+        return 'text/plain';
+      case MimeType.xml:
+        return 'text/xml';
+      case MimeType.json:
+        return 'application/json';
+      case MimeType.zip:
+        return 'application/zip';
+      default:
+        return 'application/octet-stream';
     }
   }
 }
