@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -95,6 +96,14 @@ class SettingsView extends StatelessWidget {
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => Get.toNamed(AppRoutes.nostrTechnicalSettings),
               ),
+              if (kDebugMode)
+                ListTile(
+                  leading: const Icon(Icons.bug_report_outlined),
+                  title: const Text('Debug Tools'),
+                  subtitle: const Text('Testing and development features'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => Get.toNamed(AppRoutes.debugTools),
+                ),
               const SizedBox(height: 24),
               _buildSectionHeader(context, 'Account'),
               Builder(

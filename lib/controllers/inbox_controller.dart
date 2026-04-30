@@ -16,7 +16,9 @@ class InboxController extends GetxController with WidgetsBindingObserver {
   final searchQuery = ''.obs;
   final isSearchMode = false.obs;
   final isSyncing = false.obs;
+  final isDeletingOldEmails = false.obs;
   final currentFolder = MailFolder.inbox.obs;
+  final oldEmailsCount = 0.obs;
   final selectedIds = <String>{}.obs;
   final Rx<DateTime?> _backgroundTime = Rx<DateTime?>(null);
 
@@ -133,6 +135,7 @@ class InboxController extends GetxController with WidgetsBindingObserver {
     if (isSearching) {
       final loaded = await client.search(searchQuery.value);
       emails.assignAll(loaded);
+      oldEmailsCount.value = 0;
       return;
     }
 
@@ -143,6 +146,13 @@ class InboxController extends GetxController with WidgetsBindingObserver {
       MailFolder.archive => await client.getArchivedEmails(),
     };
     emails.assignAll(loaded);
+
+    // Update old emails count if in trash folder
+    if (currentFolder.value == MailFolder.trash) {
+      oldEmailsCount.value = await getOldEmailsCount();
+    } else {
+      oldEmailsCount.value = 0;
+    }
   }
 
   void setFolder(MailFolder folder) {
@@ -217,5 +227,39 @@ class InboxController extends GetxController with WidgetsBindingObserver {
   Future<void> restoreFromArchive(String id) async {
     await _nostrMailService.client.restoreFromArchive(id);
     await _loadEmails();
+  }
+
+  /// Get count of emails in trash older than 30 days
+  Future<int> getOldEmailsCount() async {
+    if (currentFolder.value != MailFolder.trash) return 0;
+
+    final client = _nostrMailService.client;
+    final thirtyDaysAgo = const Duration(days: 30);
+    final oldEmails = await client.getTrashedEmailsOlderThan(thirtyDaysAgo);
+    return oldEmails.length;
+  }
+
+  /// Delete all emails in trash older than 30 days
+  Future<void> deleteOldEmails() async {
+    if (currentFolder.value != MailFolder.trash) return;
+
+    isDeletingOldEmails.value = true;
+    try {
+      final client = _nostrMailService.client;
+      final thirtyDaysAgo = const Duration(days: 30);
+      final oldEmails = await client.getTrashedEmailsOlderThan(thirtyDaysAgo);
+      final oldEmailIds = oldEmails.map((email) => email.id).toList();
+
+      if (oldEmailIds.isEmpty) return;
+
+      // Batch delete all old emails
+      await Future.wait(oldEmailIds.map((id) => client.delete(id)));
+
+      // Update old emails count
+      oldEmailsCount.value = await getOldEmailsCount();
+      await _loadEmails();
+    } finally {
+      isDeletingOldEmails.value = false;
+    }
   }
 }

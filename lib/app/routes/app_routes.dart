@@ -9,6 +9,7 @@ import '../../views/email/email_view.dart';
 import '../../views/inbox/inbox_view.dart';
 import '../../views/onboarding/onboarding_view.dart';
 import '../../views/profile/profile_view.dart';
+import '../../views/settings/debug_tools_view.dart';
 import '../../views/settings/hosting_settings_view.dart';
 import '../../views/settings/settings_view.dart';
 import 'middlewares/auth_middleware.dart';
@@ -26,6 +27,7 @@ class AppRoutes {
   static const settings = '/settings';
   static const onboarding = '/onboarding';
   static const nostrTechnicalSettings = '/nostr-technical-settings';
+  static const debugTools = '/debug-tools';
 
   static final routes = [
     GetPage(
@@ -71,6 +73,11 @@ class AppRoutes {
     GetPage(
       name: nostrTechnicalSettings,
       page: () => const HostingSettingsView(),
+      middlewares: [OnboardingMiddleware(), AuthMiddleware()],
+    ),
+    GetPage(
+      name: debugTools,
+      page: () => const DebugToolsView(),
       middlewares: [OnboardingMiddleware(), AuthMiddleware()],
     ),
   ];

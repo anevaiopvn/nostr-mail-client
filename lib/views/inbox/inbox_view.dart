@@ -6,12 +6,14 @@ import 'package:nostr_mail/nostr_mail.dart';
 import '../../app/routes/app_routes.dart';
 import '../../controllers/auth_controller.dart';
 import '../../controllers/inbox_controller.dart';
+import '../../utils/toast_helper.dart';
 import '../../utils/metadata_extensions.dart';
 import '../../utils/responsive_helper.dart';
 import '../../widgets/nostr_avatar.dart';
 import '../shared/desktop_shell.dart';
 import 'widgets/app_drawer.dart';
 import 'widgets/email_tile.dart';
+import 'widgets/old_emails_banner.dart';
 import 'widgets/search_field.dart';
 
 class InboxView extends GetView<InboxController> {
@@ -214,31 +216,40 @@ class InboxView extends GetView<InboxController> {
         );
       }
 
-      return RefreshIndicator(
-        onRefresh: controller.sync,
-        child: GetBuilder<InboxController>(
-          builder: (controller) => ListView.builder(
-            itemCount: controller.emails.length,
-            itemBuilder: (context, index) {
-              final email = controller.emails[index];
-              return Obx(
-                () => EmailTile(
-                  key: ValueKey(email.id),
-                  email: email,
-                  onTap: () =>
-                      Get.toNamed(AppRoutes.email.replaceAll(':id', email.id)),
-                  isSelected: controller.isSelected(email.id),
-                  onToggleSelect: () => controller.toggleSelection(email.id),
-                  onReply: () => _replyTo(email),
-                  onForward: () => _forward(email),
-                  onDelete: () => _deleteEmail(context, email),
-                  onArchive: () => _archiveEmail(context, email),
-                  onRestore: () => _restoreEmail(context, email),
+      return Column(
+        children: [
+          OldEmailsBanner(onDelete: () => _confirmDeleteOldEmails(context)),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: controller.sync,
+              child: GetBuilder<InboxController>(
+                builder: (controller) => ListView.builder(
+                  itemCount: controller.emails.length,
+                  itemBuilder: (context, index) {
+                    final email = controller.emails[index];
+                    return Obx(
+                      () => EmailTile(
+                        key: ValueKey(email.id),
+                        email: email,
+                        onTap: () => Get.toNamed(
+                          AppRoutes.email.replaceAll(':id', email.id),
+                        ),
+                        isSelected: controller.isSelected(email.id),
+                        onToggleSelect: () =>
+                            controller.toggleSelection(email.id),
+                        onReply: () => _replyTo(email),
+                        onForward: () => _forward(email),
+                        onDelete: () => _deleteEmail(context, email),
+                        onArchive: () => _archiveEmail(context, email),
+                        onRestore: () => _restoreEmail(context, email),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
+              ),
+            ),
           ),
-        ),
+        ],
       );
     });
   }
@@ -474,5 +485,39 @@ class InboxView extends GetView<InboxController> {
     } else {
       controller.restoreFromTrash(email.id);
     }
+  }
+
+  void _confirmDeleteOldEmails(BuildContext context) {
+    final oldCount = controller.oldEmailsCount.value;
+
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Delete old emails'),
+        content: Text(
+          'This will permanently delete $oldCount email${oldCount == 1 ? '' : 's'} older than 30 days.\n\nThis action cannot be undone.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () async {
+              Get.back(); // Close confirmation dialog
+
+              try {
+                await controller.deleteOldEmails();
+              } catch (e) {
+                if (context.mounted) {
+                  ToastHelper.error(
+                    context,
+                    'Delete failed',
+                    description: 'Failed to delete old emails: ${e.toString()}',
+                  );
+                }
+              }
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
   }
 }
