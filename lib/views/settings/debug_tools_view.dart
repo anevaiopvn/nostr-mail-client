@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../../controllers/debug_tools_controller.dart';
 import '../../utils/responsive_helper.dart';
 import '../shared/desktop_shell.dart';
 
@@ -8,6 +10,7 @@ class DebugToolsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(DebugToolsController());
     final isWide = ResponsiveHelper.isNotMobile(context);
 
     Widget content = Scaffold(
@@ -23,16 +26,24 @@ class DebugToolsView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Debug button pressed'),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                    },
-                    child: const Text('Test Button'),
+                  const Text(
+                    'Email Testing',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: () => controller.createOldTrashedEmail(context),
+                    icon: const Icon(Icons.delete_outline),
+                    label: const Text('Create Old Trashed Email'),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 48),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Creates a test email in trash that is 31 days old. '
+                    'Use this to test the "Delete old emails" feature.',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
                   ),
                 ],
               ),
