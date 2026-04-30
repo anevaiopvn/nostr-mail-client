@@ -4,10 +4,7 @@ import 'package:get/get.dart';
 import '../../../controllers/inbox_controller.dart';
 
 class OldEmailsBanner extends StatelessWidget {
-  const OldEmailsBanner({
-    super.key,
-    required this.onDelete,
-  });
+  const OldEmailsBanner({super.key, required this.onDelete});
 
   final VoidCallback onDelete;
 
@@ -38,10 +35,7 @@ class OldEmailsBanner extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(
-              Icons.info_outline,
-              color: colorScheme.error,
-            ),
+            Icon(Icons.info_outline, color: colorScheme.error),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -60,32 +54,36 @@ class OldEmailsBanner extends StatelessWidget {
                     'These emails will be permanently deleted after 30 days. You can delete them now to save space.',
                     style: TextStyle(
                       fontSize: 12,
-                      color: colorScheme.onErrorContainer.withValues(alpha: 0.8),
+                      color: colorScheme.onErrorContainer.withValues(
+                        alpha: 0.8,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
             const SizedBox(width: 12),
-            Obx(() => ElevatedButton(
-              onPressed: controller.isDeletingOldEmails.value
-                  ? null
-                  : onDelete,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: colorScheme.error,
-                foregroundColor: colorScheme.onError,
+            Obx(
+              () => ElevatedButton(
+                onPressed: controller.isDeletingOldEmails.value
+                    ? null
+                    : onDelete,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colorScheme.error,
+                  foregroundColor: colorScheme.onError,
+                ),
+                child: controller.isDeletingOldEmails.value
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text('Delete now'),
               ),
-              child: controller.isDeletingOldEmails.value
-                  ? const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : const Text('Delete now'),
-            )),
+            ),
           ],
         ),
       );

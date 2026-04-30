@@ -218,9 +218,7 @@ class InboxView extends GetView<InboxController> {
 
       return Column(
         children: [
-          OldEmailsBanner(
-            onDelete: () => _confirmDeleteOldEmails(context),
-          ),
+          OldEmailsBanner(onDelete: () => _confirmDeleteOldEmails(context)),
           Expanded(
             child: RefreshIndicator(
               onRefresh: controller.sync,
@@ -233,10 +231,12 @@ class InboxView extends GetView<InboxController> {
                       () => EmailTile(
                         key: ValueKey(email.id),
                         email: email,
-                        onTap: () =>
-                            Get.toNamed(AppRoutes.email.replaceAll(':id', email.id)),
+                        onTap: () => Get.toNamed(
+                          AppRoutes.email.replaceAll(':id', email.id),
+                        ),
                         isSelected: controller.isSelected(email.id),
-                        onToggleSelect: () => controller.toggleSelection(email.id),
+                        onToggleSelect: () =>
+                            controller.toggleSelection(email.id),
                         onReply: () => _replyTo(email),
                         onForward: () => _forward(email),
                         onDelete: () => _deleteEmail(context, email),
@@ -490,7 +490,6 @@ class InboxView extends GetView<InboxController> {
   void _confirmDeleteOldEmails(BuildContext context) {
     final oldCount = controller.oldEmailsCount.value;
 
-
     Get.dialog(
       AlertDialog(
         title: const Text('Delete old emails'),
@@ -498,10 +497,7 @@ class InboxView extends GetView<InboxController> {
           'This will permanently delete $oldCount email${oldCount == 1 ? '' : 's'} older than 30 days.\n\nThis action cannot be undone.',
         ),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Cancel'),
-          ),
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
           TextButton(
             onPressed: () async {
               Get.back(); // Close confirmation dialog
@@ -528,7 +524,8 @@ class InboxView extends GetView<InboxController> {
                   ToastHelper.success(
                     context,
                     'Emails deleted',
-                    description: 'Successfully deleted $oldCount old email${oldCount == 1 ? '' : 's'}.',
+                    description:
+                        'Successfully deleted $oldCount old email${oldCount == 1 ? '' : 's'}.',
                   );
                 }
               } catch (e) {

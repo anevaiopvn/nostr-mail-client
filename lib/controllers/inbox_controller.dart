@@ -253,9 +253,7 @@ class InboxController extends GetxController with WidgetsBindingObserver {
       if (oldEmailIds.isEmpty) return;
 
       // Batch delete all old emails
-      await Future.wait(
-        oldEmailIds.map((id) => client.delete(id)),
-      );
+      await Future.wait(oldEmailIds.map((id) => client.delete(id)));
 
       // Update old emails count
       oldEmailsCount.value = await getOldEmailsCount();
