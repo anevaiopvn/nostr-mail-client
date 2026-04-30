@@ -31,12 +31,10 @@ class DebugToolsController extends GetxController {
       final builder = MessageBuilder.prepareMultipartAlternativeMessage();
       builder.from = [MailAddress('Debug Test', 'debug@nostr.com')];
       builder.to = [
-        MailAddress(
-          'Myself',
-          '${Nip19.encodePubKey(myPubkey)}@nostr',
-        ),
+        MailAddress('Myself', '${Nip19.encodePubKey(myPubkey)}@nostr'),
       ];
-      builder.subject = 'Test Old Email - ${DateTime.now().millisecondsSinceEpoch}';
+      builder.subject =
+          'Test Old Email - ${DateTime.now().millisecondsSinceEpoch}';
       builder.addTextPlain(
         'This is a test email that is 31 days old for testing the delete old emails feature.',
       );
@@ -49,8 +47,7 @@ class DebugToolsController extends GetxController {
 
       final sentEmails = await client.getSentEmails();
       final testEmail = sentEmails.lastWhere(
-        (email) =>
-            email.subject?.contains('Test Old Email') ?? false,
+        (email) => email.subject?.contains('Test Old Email') ?? false,
         orElse: () => throw Exception('Could not find test email'),
       );
 
@@ -63,12 +60,14 @@ class DebugToolsController extends GetxController {
 
       if (labelRecord != null) {
         final thirtyOneDaysAgoTimestamp =
-            DateTime.now().subtract(const Duration(days: 31)).millisecondsSinceEpoch ~/ 1000;
+            DateTime.now()
+                .subtract(const Duration(days: 31))
+                .millisecondsSinceEpoch ~/
+            1000;
 
-        await labelsStore.record(labelKey).update(
-          db,
-          {'timestamp': thirtyOneDaysAgoTimestamp},
-        );
+        await labelsStore.record(labelKey).update(db, {
+          'timestamp': thirtyOneDaysAgoTimestamp,
+        });
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -83,7 +82,9 @@ class DebugToolsController extends GetxController {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Email created and trashed, but could not update timestamp'),
+              content: Text(
+                'Email created and trashed, but could not update timestamp',
+              ),
               backgroundColor: Colors.orange,
               duration: Duration(seconds: 3),
             ),

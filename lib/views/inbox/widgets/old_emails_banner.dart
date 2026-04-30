@@ -8,6 +8,44 @@ class OldEmailsBanner extends StatelessWidget {
 
   final VoidCallback onDelete;
 
+  Widget _buildActionButton(
+    VoidCallback? onPressed,
+    ColorScheme colorScheme,
+    bool isDesktop,
+  ) {
+    final controller = Get.find<InboxController>();
+    final buttonColor = colorScheme.onSurfaceVariant;
+
+    if (isDesktop) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: FilledButton(
+          onPressed: onPressed,
+          child: controller.isDeletingOldEmails.value
+              ? SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Text('Delete now'),
+        ),
+      );
+    }
+
+    return IconButton(
+      onPressed: onPressed,
+      icon: controller.isDeletingOldEmails.value
+          ? const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : Icon(Icons.delete_outline, color: buttonColor),
+      tooltip: 'Delete old emails',
+      style: IconButton.styleFrom(foregroundColor: buttonColor),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<InboxController>();
@@ -21,70 +59,38 @@ class OldEmailsBanner extends StatelessWidget {
         return const SizedBox.shrink();
       }
 
+      final buttonEnabled = !controller.isDeletingOldEmails.value;
+
       return Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        margin: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: colorScheme.errorContainer,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: colorScheme.error.withValues(alpha: 0.3),
-            width: 1,
-          ),
+          color: colorScheme.primaryContainer,
         ),
-        child: Row(
-          children: [
-            Icon(Icons.info_outline, color: colorScheme.error),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '$oldCount email${oldCount == 1 ? '' : 's'} are older than 30 days',
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isWideBanner = constraints.maxWidth > 400;
+
+            return Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '$oldCount old email${oldCount == 1 ? '' : 's'} to delete',
                     style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: colorScheme.onErrorContainer,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: colorScheme.onPrimaryContainer,
                     ),
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    'These emails will be permanently deleted after 30 days. You can delete them now to save space.',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: colorScheme.onErrorContainer.withValues(
-                        alpha: 0.8,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 12),
-            Obx(
-              () => ElevatedButton(
-                onPressed: controller.isDeletingOldEmails.value
-                    ? null
-                    : onDelete,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: colorScheme.error,
-                  foregroundColor: colorScheme.onError,
                 ),
-                child: controller.isDeletingOldEmails.value
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : const Text('Delete now'),
-              ),
-            ),
-          ],
+                _buildActionButton(
+                  buttonEnabled ? onDelete : null,
+                  colorScheme,
+                  isWideBanner,
+                ),
+              ],
+            );
+          },
         ),
       );
     });

@@ -502,35 +502,9 @@ class InboxView extends GetView<InboxController> {
             onPressed: () async {
               Get.back(); // Close confirmation dialog
 
-              // Show loading dialog
-              Get.dialog(
-                const AlertDialog(
-                  content: Row(
-                    children: [
-                      CircularProgressIndicator(),
-                      SizedBox(width: 16),
-                      Text('Deleting...'),
-                    ],
-                  ),
-                ),
-                barrierDismissible: false,
-              );
-
               try {
                 await controller.deleteOldEmails();
-                Get.back(); // Close loading dialog
-
-                if (context.mounted) {
-                  ToastHelper.success(
-                    context,
-                    'Emails deleted',
-                    description:
-                        'Successfully deleted $oldCount old email${oldCount == 1 ? '' : 's'}.',
-                  );
-                }
               } catch (e) {
-                Get.back(); // Close loading dialog
-
                 if (context.mounted) {
                   ToastHelper.error(
                     context,
