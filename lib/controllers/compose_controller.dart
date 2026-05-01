@@ -115,6 +115,12 @@ class ComposeController extends GetxController {
 
     // Add recipient
     list.add(resolved);
+
+    // Auto-select bridge if this is a legacy recipient
+    if (resolved.isLegacy) {
+      await _autoSelectBridgeForLegacy();
+    }
+
     return true;
   }
 
@@ -127,7 +133,31 @@ class ComposeController extends GetxController {
 
   void _removeRecipientFromList(int index, RxList<Recipient> list) {
     if (index >= 0 && index < list.length) {
-      list.removeAt(index);
+      final removed = list.removeAt(index);
+
+      // Re-evaluate: if no more legacy recipients, revert to npub@nostr
+      if (removed.isLegacy) {
+        final hasLegacyRecipients =
+            recipients.any((r) => r.isLegacy) ||
+            ccRecipients.any((r) => r.isLegacy) ||
+            bccRecipients.any((r) => r.isLegacy);
+
+        if (!hasLegacyRecipients) {
+          // Revert to npub@nostr if we switched to bridge due to legacy recipients
+          // Only if current selection is a bridge
+          final currentFrom = selectedFrom.value;
+          if (currentFrom != null &&
+              (currentFrom.source == FromSource.npubBridge ||
+                  currentFrom.source == FromSource.nip05Bridge)) {
+            final nostrOption = fromOptions.firstWhereOrNull(
+              (o) => o.source == FromSource.npubNostr,
+            );
+            if (nostrOption != null) {
+              selectedFrom.value = nostrOption;
+            }
+          }
+        }
+      }
     }
   }
 
@@ -517,6 +547,34 @@ class ComposeController extends GetxController {
     selectedFrom.value = options.first;
   }
 
+  /// Automatically select a bridge From address when legacy recipients are present
+  Future<void> _autoSelectBridgeForLegacy() async {
+    // Check if we have legacy recipients
+    final hasLegacyRecipients =
+        recipients.any((r) => r.isLegacy) ||
+        ccRecipients.any((r) => r.isLegacy) ||
+        bccRecipients.any((r) => r.isLegacy);
+
+    if (!hasLegacyRecipients) return;
+
+    // If current selection is already a bridge, keep it
+    final currentFrom = selectedFrom.value;
+    if (currentFrom != null && currentFrom.source != FromSource.npubNostr) {
+      return; // Already using a bridge
+    }
+
+    // Find first bridge option (npubBridge or nip05Bridge)
+    final bridgeOption = fromOptions.firstWhereOrNull(
+      (o) =>
+          o.source == FromSource.npubBridge ||
+          o.source == FromSource.nip05Bridge,
+    );
+
+    if (bridgeOption != null) {
+      selectedFrom.value = bridgeOption;
+    }
+  }
+
   /// Check if a domain is a bridge by looking up _smtp@domain
   Future<bool> _isDomainBridge(String domain) async {
     final url = Uri.https(domain, '/.well-known/nostr.json', {'name': '_smtp'});
@@ -658,10 +716,9 @@ class ComposeController extends GetxController {
       return;
     }
 
-    final hasLegacyRecipient = recipients.any((r) => r.isLegacy);
-    if (hasLegacyRecipient && selectedFrom.value == null) {
-      ToastHelper.error(Get.context!, 'Select a From address for legacy email');
-      return;
+    // Ensure we have a From address selected
+    if (selectedFrom.value == null && fromOptions.isNotEmpty) {
+      selectedFrom.value = fromOptions.first;
     }
 
     final success = await send(
