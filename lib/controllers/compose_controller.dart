@@ -17,6 +17,7 @@ import '../models/compose_attachment.dart';
 import '../models/contact.dart';
 import '../models/from_option.dart';
 import '../models/recipient.dart';
+import '../models/send_mode.dart';
 import '../services/contacts_service.dart';
 import '../services/nostr_mail_service.dart';
 import '../utils/metadata_extensions.dart';
@@ -39,6 +40,7 @@ class ComposeController extends GetxController {
   final Rxn<FromOption> selectedFrom = Rxn<FromOption>();
   final fromOptions = <FromOption>[].obs;
   final attachments = <ComposeAttachment>[].obs;
+  final sendMode = SendMode.normal.obs;
 
   final showExpandedFields = false.obs;
   final ccRecipients = <Recipient>[].obs;
@@ -351,6 +353,7 @@ class ComposeController extends GetxController {
     String? from,
     required String subject,
     required Document document,
+    SendMode mode = SendMode.normal,
   }) async {
     if (recipients.isEmpty) return false;
 
@@ -430,7 +433,11 @@ class ComposeController extends GetxController {
       }
 
       final message = builder.buildMimeMessage();
-      await _nostrMailService.client.sendMime(message);
+      await _nostrMailService.client.sendMime(
+        message,
+        signRumor: mode != SendMode.normal,
+        isPublic: mode == SendMode.public,
+      );
 
       return true;
     } catch (e) {
@@ -725,6 +732,7 @@ class ComposeController extends GetxController {
       from: selectedFrom.value?.address,
       subject: subjectController.text,
       document: quillController.document,
+      mode: sendMode.value,
     );
 
     if (success) {

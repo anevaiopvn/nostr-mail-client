@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:nostr_mail_client/controllers/compose_controller.dart';
+import 'package:nostr_mail_client/views/compose/widgets/send_button_menu.dart';
 
 class BottomToolbarView extends StatelessWidget {
   const BottomToolbarView({super.key});
@@ -12,33 +12,7 @@ class BottomToolbarView extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
-          Obx(
-            () => FilledButton(
-              onPressed: controller.isSending.value
-                  ? null
-                  : controller.firstSend,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Visibility(
-                    visible: !controller.isSending.value,
-                    maintainSize: true,
-                    maintainAnimation: true,
-                    maintainState: true,
-                    child: Text('Send'),
-                  ),
-                  Visibility(
-                    visible: controller.isSending.value,
-                    child: const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          const SendButtonMenu(),
           const SizedBox(width: 8),
           IconButton(
             onPressed: controller.pickAttachments,
