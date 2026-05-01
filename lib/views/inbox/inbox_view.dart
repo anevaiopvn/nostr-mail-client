@@ -15,6 +15,7 @@ import 'widgets/app_drawer.dart';
 import 'widgets/email_tile.dart';
 import 'widgets/old_emails_banner.dart';
 import 'widgets/search_field.dart';
+import 'widgets/selection_actions_bar.dart';
 
 class InboxView extends GetView<InboxController> {
   const InboxView({super.key});
@@ -133,29 +134,7 @@ class InboxView extends GetView<InboxController> {
           }),
           Obx(() {
             if (controller.hasSelection) {
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: Icon(
-                      controller.allSelected
-                          ? Icons.deselect
-                          : Icons.select_all,
-                    ),
-                    tooltip: controller.allSelected
-                        ? 'Deselect all'
-                        : 'Select all',
-                    onPressed: controller.allSelected
-                        ? controller.clearSelection
-                        : controller.selectAll,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.delete_outline),
-                    tooltip: 'Delete',
-                    onPressed: controller.deleteSelected,
-                  ),
-                ],
-              );
+              return const SelectionActionsBar();
             }
             return Row(
               mainAxisSize: MainAxisSize.min,
@@ -286,7 +265,7 @@ class InboxView extends GetView<InboxController> {
             title: Builder(
               builder: (context) {
                 if (controller.hasSelection) {
-                  return Text('${controller.selectedIds.length} selected');
+                  return Text('${controller.selectedIds.length}');
                 }
                 if (controller.isSearchMode.value) {
                   return SearchField();
@@ -322,29 +301,7 @@ class InboxView extends GetView<InboxController> {
               if (controller.isSearchMode.value)
                 const SizedBox.shrink()
               else if (controller.hasSelection)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        controller.allSelected
-                            ? Icons.deselect
-                            : Icons.select_all,
-                      ),
-                      tooltip: controller.allSelected
-                          ? 'Deselect all'
-                          : 'Select all',
-                      onPressed: controller.allSelected
-                          ? controller.clearSelection
-                          : controller.selectAll,
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete_outline),
-                      tooltip: 'Delete',
-                      onPressed: controller.deleteSelected,
-                    ),
-                  ],
-                )
+                const SelectionActionsBar()
               else
                 Row(
                   mainAxisSize: MainAxisSize.min,

@@ -453,12 +453,26 @@ class _EmailTileState extends State<EmailTile> {
 
   Widget _buildDefaultTile(BuildContext context) {
     final attachments = getAttachmentDetails(widget.email.mime);
+    final controller = Get.find<InboxController>();
+    final isSelectionMode = controller.hasSelection;
 
     return Column(
       children: [
         ListTile(
-          onTap: widget.onTap,
-          leading: _buildAvatar(context),
+          onTap: () {
+            if (isSelectionMode) {
+              // In selection mode, toggle selection instead of opening email
+              widget.onToggleSelect?.call();
+            } else {
+              // Normal mode, open email
+              widget.onTap();
+            }
+          },
+          onLongPress: () {
+            // Long press to enter selection mode
+            widget.onToggleSelect?.call();
+          },
+          leading: _buildAvatarWithSelection(context),
           title: Text(
             (widget.email.subject?.isEmpty ?? true)
                 ? '(No subject)'
@@ -550,5 +564,15 @@ class _EmailTileState extends State<EmailTile> {
       metadata: _contactMetadata,
       radius: radius,
     );
+  }
+
+  Widget _buildAvatarWithSelection(BuildContext context) {
+    final mainAvatar = _buildAvatar(context);
+
+    if (!widget.isSelected) {
+      return mainAvatar;
+    }
+
+    return CircleAvatar(child: Icon(Icons.check));
   }
 }

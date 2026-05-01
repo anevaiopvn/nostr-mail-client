@@ -64,9 +64,7 @@ class OldEmailsBanner extends StatelessWidget {
       return Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          color: colorScheme.primaryContainer,
-        ),
+        decoration: BoxDecoration(color: colorScheme.primaryContainer),
         child: LayoutBuilder(
           builder: (context, constraints) {
             final isWideBanner = constraints.maxWidth > 400;

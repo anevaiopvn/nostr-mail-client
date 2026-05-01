@@ -84,6 +84,30 @@ class InboxController extends GetxController with WidgetsBindingObserver {
     await _loadEmails();
   }
 
+  Future<void> archiveSelected() async {
+    final ids = selectedIds.toList();
+    await Future.wait(
+      ids.map((id) => _nostrMailService.client.moveToArchive(id)),
+    );
+    selectedIds.clear();
+    await _loadEmails();
+  }
+
+  Future<void> restoreSelected() async {
+    final ids = selectedIds.toList();
+    if (currentFolder.value == MailFolder.trash) {
+      await Future.wait(
+        ids.map((id) => _nostrMailService.client.restoreFromTrash(id)),
+      );
+    } else {
+      await Future.wait(
+        ids.map((id) => _nostrMailService.client.restoreFromArchive(id)),
+      );
+    }
+    selectedIds.clear();
+    await _loadEmails();
+  }
+
   @override
   void onInit() {
     super.onInit();
