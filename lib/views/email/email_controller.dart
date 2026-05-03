@@ -269,6 +269,25 @@ class EmailController extends GetxController {
     }
   }
 
+  Future<void> repostEmail() async {
+    if (email == null) return;
+
+    try {
+      final nostrMailService = Get.find<NostrMailService>();
+      final rumor = await nostrMailService.client.getRumor(email!.id);
+
+      if (rumor == null) {
+        ToastHelper.error(Get.context!, 'Failed to get email event for repost');
+        return;
+      }
+
+      await nostrMailService.client.repost(rumor);
+      ToastHelper.success(Get.context!, 'Email reposted successfully');
+    } catch (e) {
+      ToastHelper.error(Get.context!, 'Failed to repost email: $e');
+    }
+  }
+
   Future<void> downloadAttachment({
     required AttachmentDetails attachmentDetails,
   }) async {

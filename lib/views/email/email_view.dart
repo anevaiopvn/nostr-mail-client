@@ -105,6 +105,11 @@ class EmailView extends StatelessWidget {
                     child: const Text('NIP-59 Events'),
                   ),
                   MenuItemButton(
+                    leadingIcon: const Icon(Icons.repeat, size: 20),
+                    onPressed: controller.repostEmail,
+                    child: const Text('Repost'),
+                  ),
+                  MenuItemButton(
                     leadingIcon: const Icon(Icons.download, size: 20),
                     onPressed: controller.downloadEmail,
                     child: const Text('Download email'),
