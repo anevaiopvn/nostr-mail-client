@@ -6,6 +6,7 @@ import 'package:nostr_mail/nostr_mail.dart';
 import 'package:nostr_mail_client/utils/format_date.dart';
 import 'package:nostr_mail_client/utils/get_attachements.dart';
 import 'package:nostr_mail_client/views/inbox/widgets/attachments_chips_view.dart';
+import 'package:nostr_mail_client/views/inbox/widgets/unread_indicator.dart';
 
 import '../../../controllers/auth_controller.dart';
 import '../../../controllers/inbox_controller.dart';
@@ -80,6 +81,16 @@ class _EmailTileState extends State<EmailTile> {
 
   /// Check if this email was relayed through a bridge
   bool get _hasBridge => widget.email.isBridged;
+
+  /// Check if this email is unread (only applies to inbox folder)
+  bool get isUnread {
+    final controller = Get.find<InboxController>();
+    // Only show unread indicators for inbox folder
+    if (controller.currentFolder.value != MailFolder.inbox) {
+      return false;
+    }
+    return !controller.isEmailRead(widget.email.id);
+  }
 
   Future<void> _loadMetadata() async {
     try {
@@ -224,6 +235,29 @@ class _EmailTileState extends State<EmailTile> {
               },
               child: const Text('Unarchive'),
             ),
+          if (currentFolder == MailFolder.inbox) ...[
+            const Divider(height: 1),
+            if (isUnread)
+              MenuItemButton(
+                leadingIcon: const Icon(Icons.mark_email_read),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  final inboxController = Get.find<InboxController>();
+                  inboxController.markAsRead(widget.email.id);
+                },
+                child: const Text('Mark as read'),
+              )
+            else
+              MenuItemButton(
+                leadingIcon: const Icon(Icons.mark_email_unread),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  final inboxController = Get.find<InboxController>();
+                  inboxController.markAsUnread(widget.email.id);
+                },
+                child: const Text('Mark as unread'),
+              ),
+          ],
           MenuItemButton(
             leadingIcon: const Icon(Icons.delete_outline),
             onPressed: () {
@@ -327,6 +361,29 @@ class _EmailTileState extends State<EmailTile> {
                       widget.onRestore?.call();
                     },
                   ),
+                if (currentFolder == MailFolder.inbox) ...[
+                  const Divider(height: 1),
+                  if (isUnread)
+                    ListTile(
+                      leading: const Icon(Icons.mark_email_read),
+                      title: const Text('Mark as read'),
+                      onTap: () {
+                        Navigator.pop(context);
+                        final inboxController = Get.find<InboxController>();
+                        inboxController.markAsRead(widget.email.id);
+                      },
+                    )
+                  else
+                    ListTile(
+                      leading: const Icon(Icons.mark_email_unread),
+                      title: const Text('Mark as unread'),
+                      onTap: () {
+                        Navigator.pop(context);
+                        final inboxController = Get.find<InboxController>();
+                        inboxController.markAsUnread(widget.email.id);
+                      },
+                    ),
+                ],
                 ListTile(
                   leading: const Icon(Icons.delete_outline),
                   title: const Text('Move to trash'),
@@ -364,155 +421,178 @@ class _EmailTileState extends State<EmailTile> {
   }
 
   Widget _buildCompactTile(BuildContext context, ColorScheme colorScheme) {
-    final subject = (widget.email.subject?.isEmpty ?? true)
-        ? '(No subject)'
-        : widget.email.subject!;
-    final attachments = getAttachmentDetails(widget.email.mime);
+    return Obx(() {
+      final isUnread = this.isUnread;
+      final subject = (widget.email.subject?.isEmpty ?? true)
+          ? '(No subject)'
+          : widget.email.subject!;
+      final attachments = getAttachmentDetails(widget.email.mime);
 
-    return InkWell(
-      onTap: widget.onTap,
-      child: Container(
-        color: widget.isSelected
-            ? colorScheme.primaryContainer.withValues(alpha: 0.3)
-            : null,
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 40,
-              child: Checkbox(
-                value: widget.isSelected,
-                onChanged: widget.onToggleSelect != null
-                    ? (_) => widget.onToggleSelect!()
-                    : null,
-              ),
-            ),
-            SizedBox(
-              width: 160,
-              child: Row(
-                children: [
-                  _buildAvatar(context, compact: true),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      _displayName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Flexible(
-                        flex: 2,
-                        child: Text(
-                          subject,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text('—', style: TextStyle(color: Colors.grey[400])),
-                      const SizedBox(width: 8),
-                      Flexible(
-                        flex: 3,
-                        child: Text(
-                          widget.email.body,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: Colors.grey[500]),
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (attachments.isNotEmpty) ...[
-                    AttachmentsChipsView(attachments: attachments),
-                  ],
-                ],
-              ),
-            ),
-            const SizedBox(width: 16),
-            Text(
-              formatDate(widget.email.date),
-              style: TextStyle(color: Colors.grey[500], fontSize: 12),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDefaultTile(BuildContext context) {
-    final attachments = getAttachmentDetails(widget.email.mime);
-    final controller = Get.find<InboxController>();
-    final isSelectionMode = controller.hasSelection;
-
-    return Column(
-      children: [
-        ListTile(
-          onTap: () {
-            if (isSelectionMode) {
-              // In selection mode, toggle selection instead of opening email
-              widget.onToggleSelect?.call();
-            } else {
-              // Normal mode, open email
-              widget.onTap();
-            }
-          },
-          onLongPress: () {
-            // Long press to enter selection mode
-            widget.onToggleSelect?.call();
-          },
-          leading: _buildAvatarWithSelection(context),
-          title: Text(
-            (widget.email.subject?.isEmpty ?? true)
-                ? '(No subject)'
-                : widget.email.subject!,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      return InkWell(
+        onTap: widget.onTap,
+        child: Container(
+          color: widget.isSelected
+              ? colorScheme.primaryContainer.withValues(alpha: 0.3)
+              : null,
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          child: Row(
             children: [
-              Text(
-                _displayName,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: Colors.grey[600], fontSize: 12),
+              SizedBox(
+                width: 40,
+                child: Checkbox(
+                  value: widget.isSelected,
+                  onChanged: widget.onToggleSelect != null
+                      ? (_) => widget.onToggleSelect!()
+                      : null,
+                ),
               ),
-              const SizedBox(height: 2),
+              SizedBox(
+                width: 160,
+                child: Row(
+                  children: [
+                    _buildAvatar(context, compact: true),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        _displayName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        if (isUnread) ...[
+                          UnreadIndicator(),
+                          const SizedBox(width: 8),
+                        ],
+                        Flexible(
+                          flex: 2,
+                          child: Text(
+                            subject,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontWeight: isUnread
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text('—', style: TextStyle(color: Colors.grey[400])),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          flex: 3,
+                          child: Text(
+                            widget.email.body,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(color: Colors.grey[500]),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (attachments.isNotEmpty) ...[
+                      AttachmentsChipsView(attachments: attachments),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16),
               Text(
-                widget.email.body,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: Colors.grey[500], fontSize: 13),
+                formatDate(widget.email.date),
+                style: TextStyle(color: Colors.grey[500], fontSize: 12),
               ),
             ],
           ),
-          trailing: Text(
-            formatDate(widget.email.date),
-            style: TextStyle(color: Colors.grey[500], fontSize: 11),
-          ),
-          isThreeLine: true,
         ),
-        if (attachments.isNotEmpty) ...[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: AttachmentsChipsView(attachments: attachments),
+      );
+    });
+  }
+
+  Widget _buildDefaultTile(BuildContext context) {
+    return Obx(() {
+      final isUnread = this.isUnread;
+      final attachments = getAttachmentDetails(widget.email.mime);
+      final controller = Get.find<InboxController>();
+      final isSelectionMode = controller.hasSelection;
+
+      return Column(
+        children: [
+          ListTile(
+            onTap: () {
+              if (isSelectionMode) {
+                // In selection mode, toggle selection instead of opening email
+                widget.onToggleSelect?.call();
+              } else {
+                // Normal mode, open email
+                widget.onTap();
+              }
+            },
+            onLongPress: () {
+              // Long press to enter selection mode
+              widget.onToggleSelect?.call();
+            },
+            leading: _buildAvatarWithSelection(context),
+            title: Row(
+              children: [
+                if (isUnread) ...[UnreadIndicator(), const SizedBox(width: 8)],
+                Expanded(
+                  child: Text(
+                    (widget.email.subject?.isEmpty ?? true)
+                        ? '(No subject)'
+                        : widget.email.subject!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontWeight: isUnread ? FontWeight.w700 : FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _displayName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  widget.email.body,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: Colors.grey[500], fontSize: 13),
+                ),
+              ],
+            ),
+            trailing: Text(
+              formatDate(widget.email.date),
+              style: TextStyle(color: Colors.grey[500], fontSize: 11),
+            ),
+            isThreeLine: true,
           ),
+          if (attachments.isNotEmpty) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: AttachmentsChipsView(attachments: attachments),
+            ),
+          ],
         ],
-      ],
-    );
+      );
+    });
   }
 
   Widget _buildAvatar(BuildContext context, {bool compact = false}) {

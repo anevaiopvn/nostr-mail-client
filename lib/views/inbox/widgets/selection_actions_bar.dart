@@ -10,13 +10,34 @@ class SelectionActionsBar extends StatelessWidget {
 
   /// Determines available actions based on current folder
   List<_ActionItem> _getActions(InboxController controller) {
-    return [
+    final actions = <_ActionItem>[
       _ActionItem(
         icon: const Icon(Icons.select_all),
         label: 'Select all',
         onPressed: controller.selectAll,
         isPrimary: true,
       ),
+    ];
+
+    // Add mark as read/unread actions only for inbox folder
+    if (controller.currentFolder.value == MailFolder.inbox) {
+      actions.addAll([
+        _ActionItem(
+          icon: const Icon(Icons.mark_email_read),
+          label: 'Mark as read',
+          onPressed: controller.markSelectedAsRead,
+          isPrimary: true,
+        ),
+        _ActionItem(
+          icon: const Icon(Icons.mark_email_unread),
+          label: 'Mark as unread',
+          onPressed: controller.markSelectedAsUnread,
+          isPrimary: true,
+        ),
+      ]);
+    }
+
+    actions.addAll([
       _ActionItem(
         icon: Icon(
           controller.currentFolder.value == MailFolder.trash ||
@@ -42,7 +63,9 @@ class SelectionActionsBar extends StatelessWidget {
         onPressed: controller.deleteSelected,
         isPrimary: true,
       ),
-    ];
+    ]);
+
+    return actions;
   }
 
   @override

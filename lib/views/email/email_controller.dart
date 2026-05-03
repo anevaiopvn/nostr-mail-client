@@ -98,6 +98,15 @@ class EmailController extends GetxController {
     email = loaded;
     isLoading = false;
     update();
+
+    // Auto-mark as read for inbox emails only (non-blocking)
+    if (loaded != null) {
+      final inboxController = Get.find<InboxController>();
+      if (inboxController.currentFolder.value == MailFolder.inbox) {
+        // Non-blocking: mark as read without awaiting
+        inboxController.markAsRead(loaded.id);
+      }
+    }
   }
 
   Future<void> loadSenderMetadata(Email loadedEmail) async {

@@ -178,4 +178,22 @@ class NostrMailService extends GetxService {
         })
         .toList();
   }
+
+  // Email read/unread status methods using NIP-32 labels
+
+  /// Check if an email is marked as read
+  Future<bool> isEmailRead(String emailId) => client.isRead(emailId);
+
+  /// Mark an email as read by adding 'state:read' label
+  Future<void> markEmailAsRead(String emailId) => client.markAsRead(emailId);
+
+  /// Mark an email as unread by removing 'state:read' label
+  Future<void> markEmailAsUnread(String emailId) =>
+      client.markAsUnread(emailId);
+
+  /// Get all email IDs that are marked as read
+  Future<Set<String>> getReadEmailIds() async {
+    final list = await client.getReadEmailIds();
+    return list.toSet();
+  }
 }

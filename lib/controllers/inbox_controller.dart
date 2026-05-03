@@ -21,10 +21,41 @@ class InboxController extends GetxController with WidgetsBindingObserver {
   final oldEmailsCount = 0.obs;
   final selectedIds = <String>{}.obs;
   final Rx<DateTime?> _backgroundTime = Rx<DateTime?>(null);
+  final RxSet<String> readEmailIds = <String>{}.obs;
 
   StreamSubscription? _watchSubscription;
 
   bool get isSearching => searchQuery.value.isNotEmpty;
+  int get unreadCount => emails.length - readEmailIds.length;
+
+  // Read/unread status management
+  bool isEmailRead(String emailId) => readEmailIds.contains(emailId);
+
+  Future<void> markAsRead(String emailId) async {
+    await _nostrMailService.markEmailAsRead(emailId);
+    readEmailIds.add(emailId);
+  }
+
+  Future<void> markAsUnread(String emailId) async {
+    await _nostrMailService.markEmailAsUnread(emailId);
+    readEmailIds.remove(emailId);
+  }
+
+  Future<void> markAllAsRead() async {
+    await Future.wait(emails.map((e) => markAsRead(e.id)));
+  }
+
+  Future<void> markAllAsUnread() async {
+    await Future.wait(emails.map((e) => markAsUnread(e.id)));
+  }
+
+  Future<void> markSelectedAsRead() async {
+    await Future.wait(selectedIds.map((id) => markAsRead(id)));
+  }
+
+  Future<void> markSelectedAsUnread() async {
+    await Future.wait(selectedIds.map((id) => markAsUnread(id)));
+  }
 
   void setSearchQuery(String query) {
     if (searchQuery.value == query) return;
@@ -171,6 +202,13 @@ class InboxController extends GetxController with WidgetsBindingObserver {
     };
     emails.assignAll(loaded);
 
+    // Load read email IDs only for inbox folder
+    if (currentFolder.value == MailFolder.inbox) {
+      readEmailIds.assignAll(await _nostrMailService.getReadEmailIds());
+    } else {
+      readEmailIds.clear();
+    }
+
     // Update old emails count if in trash folder
     if (currentFolder.value == MailFolder.trash) {
       oldEmailsCount.value = await getOldEmailsCount();
@@ -196,6 +234,10 @@ class InboxController extends GetxController with WidgetsBindingObserver {
         // Silent error handling for stream
       },
     );
+    // Note: Cross-device sync for read status is handled through the existing email watch.
+    // When labels change on other devices, they should trigger email events which reload
+    // both the email list and read email IDs. If this doesn't work as expected,
+    // consider adding a manual refresh button or periodic sync.
   }
 
   Future<void> sync() async {
