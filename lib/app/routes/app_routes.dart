@@ -1,11 +1,13 @@
 import 'package:get/get.dart';
 
 import '../../controllers/compose_controller.dart';
+import '../../controllers/create_identity_controller.dart';
 import '../../controllers/inbox_controller.dart';
 import '../../controllers/profile_controller.dart';
 import '../../views/auth/login_view.dart';
 import '../../views/compose/compose_view.dart';
 import '../../views/email/email_view.dart';
+import '../../views/identity/create_identity_view.dart';
 import '../../views/inbox/inbox_view.dart';
 import '../../views/onboarding/onboarding_view.dart';
 import '../../views/profile/profile_view.dart';
@@ -28,6 +30,7 @@ class AppRoutes {
   static const onboarding = '/onboarding';
   static const nostrTechnicalSettings = '/nostr-technical-settings';
   static const debugTools = '/debug-tools';
+  static const createIdentity = '/identity/create';
 
   static final routes = [
     GetPage(
@@ -78,6 +81,14 @@ class AppRoutes {
     GetPage(
       name: debugTools,
       page: () => const DebugToolsView(),
+      middlewares: [OnboardingMiddleware(), AuthMiddleware()],
+    ),
+    GetPage(
+      name: createIdentity,
+      page: () => const CreateIdentityView(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => CreateIdentityController());
+      }),
       middlewares: [OnboardingMiddleware(), AuthMiddleware()],
     ),
   ];

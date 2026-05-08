@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 
+import '../../../app/routes/app_routes.dart';
 import '../../../controllers/auth_controller.dart';
 import '../../../controllers/compose_controller.dart';
 import '../../../models/from_option.dart';
@@ -52,9 +53,20 @@ class FromSelectorSheet extends StatelessWidget {
             child: Obx(
               () => ListView.builder(
                 shrinkWrap: true,
-                itemCount: controller.fromOptions.length,
+                itemCount: controller.fromOptions.length + 1,
                 itemBuilder: (context, index) {
-                  final option = controller.fromOptions[index];
+                  // Create new identity option at top
+                  if (index == 0) {
+                    return _CreateNewIdentityTile(
+                      onTap: () {
+                        Get.back();
+                        Get.toNamed(AppRoutes.createIdentity);
+                      },
+                    );
+                  }
+
+                  // Regular from options (shifted by 1)
+                  final option = controller.fromOptions[index - 1];
                   final isSelected =
                       controller.selectedFrom.value?.address == option.address;
                   return _FromOptionTile(
@@ -71,6 +83,46 @@ class FromSelectorSheet extends StatelessWidget {
           ),
           const SizedBox(height: 16),
         ],
+      ),
+    );
+  }
+}
+
+class _CreateNewIdentityTile extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _CreateNewIdentityTile({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: colorScheme.outline, width: 1),
+              ),
+              child: Icon(Icons.add, size: 16, color: colorScheme.primary),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Create new identity',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 15,
+                color: colorScheme.primary,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

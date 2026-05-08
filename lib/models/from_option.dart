@@ -4,6 +4,7 @@ enum FromSource {
   npubNostr, // npub@nostr (always available)
   npubBridge, // npub@uid.ovh (default bridge)
   nip05Bridge, // nip05@domain (if domain is a bridge)
+  customIdentity, // user-created custom identity
 }
 
 class FromOption {

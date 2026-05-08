@@ -493,8 +493,21 @@ class ComposeController extends GetxController {
       ),
     );
 
-    // 2. Add npub@<bridge> for each configured bridge
+    // 2. Add user-created identities
     final settings = await _nostrMailService.client.getPrivateSettings();
+    final identities = settings?.identities ?? [];
+
+    for (final identity in identities) {
+      options.add(
+        FromOption(
+          mailAddress: identity,
+          picture: metadata?.picture,
+          source: FromSource.customIdentity,
+        ),
+      );
+    }
+
+    // 3. Add npub@<bridge> for each configured bridge
     List<String> bridges = settings?.bridges ?? [];
 
     // Fallback to default bridge if none configured
