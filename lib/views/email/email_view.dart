@@ -3,13 +3,14 @@ import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 import 'package:nostr_mail_client/views/email/email_controller.dart';
 
-import '../../app/routes/app_routes.dart';
 import '../../controllers/inbox_controller.dart';
 import '../../controllers/settings_controller.dart';
 import '../../utils/responsive_helper.dart';
 import '../shared/desktop_shell.dart';
+import 'widgets/desktop_actions_bar.dart';
 import 'widgets/email_body_view.dart';
 import 'widgets/header_view.dart';
+import 'widgets/mobile_actions_bar.dart';
 
 class EmailView extends StatelessWidget {
   const EmailView({super.key});
@@ -40,6 +41,7 @@ class EmailView extends StatelessWidget {
 
         Widget content = Scaffold(
           appBar: AppBar(
+            actionsPadding: .only(right: 8),
             actions: [
               Obx(() {
                 if (!Get.find<SettingsController>().showRawEmail.value) {
@@ -71,66 +73,9 @@ class EmailView extends StatelessWidget {
                 }
                 return const SizedBox.shrink();
               }),
-              MenuAnchor(
-                alignmentOffset: const Offset(-110, 4),
-                style: MenuStyle(
-                  shape: WidgetStatePropertyAll(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      side: BorderSide(
-                        width: 2,
-                        color: Theme.of(context).colorScheme.outlineVariant,
-                      ),
-                    ),
-                  ),
-                ),
-                builder: (context, controller, child) {
-                  return IconButton(
-                    icon: const Icon(Icons.more_vert),
-                    onPressed: () {
-                      if (controller.isOpen) {
-                        controller.close();
-                      } else {
-                        controller.open();
-                      }
-                    },
-                  );
-                },
-                menuChildren: [
-                  MenuItemButton(
-                    leadingIcon: const Icon(Icons.info_outline, size: 20),
-                    onPressed: controller.email != null
-                        ? controller.showNip59Events
-                        : null,
-                    child: const Text('NIP-59 Events'),
-                  ),
-                  MenuItemButton(
-                    leadingIcon: const Icon(Icons.repeat, size: 20),
-                    onPressed: controller.repostEmail,
-                    child: const Text('Repost'),
-                  ),
-                  MenuItemButton(
-                    leadingIcon: const Icon(Icons.download, size: 20),
-                    onPressed: controller.downloadEmail,
-                    child: const Text('Download email'),
-                  ),
-                  MenuItemButton(
-                    leadingIcon: const Icon(
-                      Icons.delete_outline,
-                      size: 20,
-                      color: Colors.red,
-                    ),
-                    onPressed: controller.deleteEmail,
-                    child: const Text(
-                      'Delete',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(width: 8),
             ],
           ),
+          bottomNavigationBar: !isWide ? const MobileActionsBar() : null,
           body: SafeArea(
             top: false,
             child: SingleChildScrollView(
@@ -164,22 +109,27 @@ class EmailView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           HeaderView(),
-                          const Divider(height: 32),
+                          // Desktop: actions bar between header and body
+                          if (isWide)
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 16),
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .outlineVariant
+                                        .withValues(alpha: 0.5),
+                                  ),
+                                ),
+                              ),
+                              child: const DesktopActionsBar(),
+                            ),
                           EmailBodyView(email: controller.email!),
                         ],
                       ),
               ),
-            ),
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () => Get.toNamed(
-              AppRoutes.compose,
-              arguments: {'email': controller.email, 'mode': 'reply'},
-            ),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            child: Icon(
-              Icons.reply,
-              color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
         );

@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 import 'package:nostr_mail/nostr_mail.dart';
+import 'package:nostr_mail_client/app/routes/app_routes.dart';
 import 'package:nostr_mail_client/controllers/inbox_controller.dart';
+import 'package:nostr_mail_client/models/compose_mode.dart';
 import 'package:nostr_mail_client/controllers/settings_controller.dart';
 import 'package:nostr_mail_client/services/nostr_mail_service.dart';
 import 'package:nostr_mail_client/utils/get_attachements.dart';
@@ -78,6 +80,40 @@ class EmailController extends GetxController {
       }
     }
     return to;
+  }
+
+  /// Check if Reply All should be shown (multiple recipients or cc/bcc)
+  bool get shouldShowReplyAll {
+    if (email == null) return false;
+
+    final to = email!.mime.to ?? [];
+    final cc = email!.mime.cc ?? [];
+    final bcc = email!.mime.bcc ?? [];
+
+    // Show Reply All if:
+    // - More than 1 "to" recipient
+    // - OR there are cc recipients
+    // - OR there are bcc recipients
+    return to.length > 1 || cc.isNotEmpty || bcc.isNotEmpty;
+  }
+
+  /// Check if current email is read
+  bool get isEmailRead {
+    if (email == null) return true;
+    return Get.find<InboxController>().isEmailRead(email!.id);
+  }
+
+  /// Toggle email read/unread status
+  void toggleReadStatus() async {
+    if (email == null) return;
+
+    final inboxController = Get.find<InboxController>();
+    if (isEmailRead) {
+      await inboxController.markAsUnread(email!.id);
+    } else {
+      await inboxController.markAsRead(email!.id);
+    }
+    update();
   }
 
   Future<void> loadEmail() async {
@@ -199,7 +235,6 @@ class EmailController extends GetxController {
       );
       if (confirmed != true) return;
       await inboxController.deleteEmail(email!.id);
-      ToastHelper.success(Get.context!, 'Email deleted permanently');
     } else {
       inboxController.deleteEmail(email!.id);
     }
@@ -227,7 +262,6 @@ class EmailController extends GetxController {
     if (email == null) return;
 
     Get.find<InboxController>().restoreFromTrash(email!.id);
-    ToastHelper.success(Get.context!, 'Email restored');
     Get.back();
   }
 
@@ -295,6 +329,42 @@ class EmailController extends GetxController {
     } catch (e) {
       ToastHelper.error(Get.context!, 'Failed to repost email: $e');
     }
+  }
+
+  void replyEmail() {
+    if (email == null) return;
+    Get.toNamed(
+      AppRoutes.compose,
+      arguments: {'email': email, 'mode': ComposeMode.reply},
+    );
+  }
+
+  void replyAllEmail() {
+    if (email == null) return;
+    Get.toNamed(
+      AppRoutes.compose,
+      arguments: {'email': email, 'mode': ComposeMode.replyAll},
+    );
+  }
+
+  void forwardEmail() {
+    if (email == null) return;
+    Get.toNamed(
+      AppRoutes.compose,
+      arguments: {'email': email, 'mode': ComposeMode.forward},
+    );
+  }
+
+  void archiveEmail() {
+    if (email == null) return;
+    Get.find<InboxController>().moveToArchive(email!.id);
+    Get.back();
+  }
+
+  void unarchiveEmail() {
+    if (email == null) return;
+    Get.find<InboxController>().restoreFromArchive(email!.id);
+    Get.back();
   }
 
   Future<void> downloadAttachment({

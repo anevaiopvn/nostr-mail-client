@@ -14,6 +14,7 @@ import 'package:nostr_mail_client/utils/toast_helper.dart';
 import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
 
 import '../models/compose_attachment.dart';
+import '../models/compose_mode.dart';
 import '../models/contact.dart';
 import '../models/from_option.dart';
 import '../models/recipient.dart';
@@ -87,7 +88,7 @@ class ComposeController extends GetxController {
     // Initialize reply/forward async after onInit completes
     final args = Get.arguments as Map<String, dynamic>?;
     final email = args?['email'] as Email?;
-    final mode = args?['mode'] as String?;
+    final mode = args?['mode'] as ComposeMode?;
 
     if (email != null && mode != null) {
       initFromEmail(email, mode);
@@ -621,7 +622,7 @@ class ComposeController extends GetxController {
     selectedFrom.value = option;
   }
 
-  Future<void> initFromEmail(Email email, String mode) async {
+  Future<void> initFromEmail(Email email, ComposeMode mode) async {
     final myPubkey = _nostrMailService.getPublicKey()!;
     final signature = Get.find<SettingsController>().currentSignature;
     final signatureBlock = signature.isEmpty ? '' : '\n\n$signature';
@@ -640,27 +641,26 @@ class ComposeController extends GetxController {
       } else {
         // Last resort: use npub@nostr
         final npub = Nip19.encodePubKey(myPubkey);
-        fromAddress = MailAddress(
-          null,
-          '$npub@nostr',
-        );
+        fromAddress = MailAddress(null, '$npub@nostr');
       }
     }
 
-    MessageBuilder builder;
-    if (mode == 'reply') {
-      builder = MessageBuilder.prepareReplyToMessage(
-        email.mime,
-        fromAddress,
-        replyAll: false,
-        quoteOriginalText: false,
-      );
-    } else {
-      builder = MessageBuilder.prepareForwardMessage(
-        email.mime,
-        from: fromAddress,
-        quoteMessage: false,
-      );
+    final MessageBuilder builder;
+    switch (mode) {
+      case ComposeMode.reply:
+      case ComposeMode.replyAll:
+        builder = MessageBuilder.prepareReplyToMessage(
+          email.mime,
+          fromAddress,
+          replyAll: mode == ComposeMode.replyAll,
+          quoteOriginalText: false,
+        );
+      case ComposeMode.forward:
+        builder = MessageBuilder.prepareForwardMessage(
+          email.mime,
+          from: fromAddress,
+          quoteMessage: false,
+        );
     }
 
     // Extract and add recipients from builder
@@ -682,22 +682,24 @@ class ComposeController extends GetxController {
     final senderDisplay = email.sender?.encode() ?? '';
     final dateFormat = DateFormat('EEE, MMM d, yyyy \'at\' h:mm a');
 
-    if (mode == 'reply') {
-      final quotedBody = email.body
-          .split('\n')
-          .map((line) => '> $line')
-          .join('\n');
-      final bodyText =
-          '$signatureBlock\n\nOn ${dateFormat.format(email.date)}, $senderDisplay wrote:\n$quotedBody';
-      setQuillContent(bodyText);
-    } else {
-      final bodyText =
-          '$signatureBlock\n\n---------- Forwarded message ----------\n'
-          'From: $senderDisplay\n'
-          'Date: ${dateFormat.format(email.date)}\n'
-          'Subject: ${email.subject}\n\n'
-          '${email.body}';
-      setQuillContent(bodyText);
+    switch (mode) {
+      case ComposeMode.reply:
+      case ComposeMode.replyAll:
+        final quotedBody = email.body
+            .split('\n')
+            .map((line) => '> $line')
+            .join('\n');
+        final bodyText =
+            '$signatureBlock\n\nOn ${dateFormat.format(email.date)}, $senderDisplay wrote:\n$quotedBody';
+        setQuillContent(bodyText);
+      case ComposeMode.forward:
+        final bodyText =
+            '$signatureBlock\n\n---------- Forwarded message ----------\n'
+            'From: $senderDisplay\n'
+            'Date: ${dateFormat.format(email.date)}\n'
+            'Subject: ${email.subject}\n\n'
+            '${email.body}';
+        setQuillContent(bodyText);
     }
   }
 
