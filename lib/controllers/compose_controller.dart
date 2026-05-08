@@ -59,7 +59,6 @@ class ComposeController extends GetxController {
     super.onInit();
     _contactsService.loadContacts();
 
-    final args = Get.arguments as Map<String, dynamic>?;
     final signature = Get.find<SettingsController>().currentSignature;
 
     toController = TextEditingController();
@@ -80,8 +79,13 @@ class ComposeController extends GetxController {
 
     // Load from options
     loadFromOptions();
+  }
 
-    // Handle reply/forward mode
+  @override
+  void onReady() {
+    super.onReady();
+    // Initialize reply/forward async after onInit completes
+    final args = Get.arguments as Map<String, dynamic>?;
     final email = args?['email'] as Email?;
     final mode = args?['mode'] as String?;
 
@@ -617,30 +621,68 @@ class ComposeController extends GetxController {
     selectedFrom.value = option;
   }
 
-  void initFromEmail(Email email, String mode) {
-    final myPubkey = Get.find<NostrMailService>().getPublicKey();
-    final isSentByMe = email.senderPubkey == myPubkey;
+  Future<void> initFromEmail(Email email, String mode) async {
+    final myPubkey = _nostrMailService.getPublicKey()!;
     final signature = Get.find<SettingsController>().currentSignature;
     final signatureBlock = signature.isEmpty ? '' : '\n\n$signature';
 
-    // Get sender display for quotes
+    // Get user's MailAddress from selectedFrom or fallback
+    MailAddress fromAddress;
+    if (selectedFrom.value != null) {
+      fromAddress = selectedFrom.value!.mailAddress;
+    } else {
+      // Fallback: try to get from email.mime.to (sent by me) or use default
+      final myAddress = email.senderPubkey == myPubkey
+          ? email.mime.to?.firstOrNull
+          : null;
+      if (myAddress != null) {
+        fromAddress = myAddress;
+      } else {
+        // Last resort: use npub@nostr
+        final npub = Nip19.encodePubKey(myPubkey);
+        fromAddress = MailAddress(
+          null,
+          '$npub@nostr',
+        );
+      }
+    }
+
+    MessageBuilder builder;
+    if (mode == 'reply') {
+      builder = MessageBuilder.prepareReplyToMessage(
+        email.mime,
+        fromAddress,
+        replyAll: false,
+        quoteOriginalText: false,
+      );
+    } else {
+      builder = MessageBuilder.prepareForwardMessage(
+        email.mime,
+        from: fromAddress,
+        quoteMessage: false,
+      );
+    }
+
+    // Extract and add recipients from builder
+    if (builder.to != null) {
+      for (final address in builder.to!) {
+        await addRecipient(address.email);
+      }
+    }
+    if (builder.cc != null) {
+      for (final address in builder.cc!) {
+        await addCcRecipient(address.email);
+      }
+    }
+
+    // Set subject from builder
+    subjectController.text = builder.subject ?? '';
+
+    // Build body with quote (manually for Quill)
     final senderDisplay = email.sender?.encode() ?? '';
+    final dateFormat = DateFormat('EEE, MMM d, yyyy \'at\' h:mm a');
 
     if (mode == 'reply') {
-      // Set recipient
-      final replyTo = isSentByMe
-          ? email.mime.to?.firstOrNull?.encode() ?? ''
-          : senderDisplay;
-      addRecipient(replyTo);
-
-      // Set subject (avoid Re: Re: Re:)
-      final subject = email.subject ?? '';
-      subjectController.text = subject.startsWith('Re:')
-          ? subject
-          : 'Re: $subject';
-
-      // Set body with quoted original message
-      final dateFormat = DateFormat('EEE, MMM d, yyyy \'at\' h:mm a');
       final quotedBody = email.body
           .split('\n')
           .map((line) => '> $line')
@@ -648,15 +690,7 @@ class ComposeController extends GetxController {
       final bodyText =
           '$signatureBlock\n\nOn ${dateFormat.format(email.date)}, $senderDisplay wrote:\n$quotedBody';
       setQuillContent(bodyText);
-    } else if (mode == 'forward') {
-      // Set subject (avoid Fwd: Fwd: Fwd:)
-      final subject = email.subject ?? '';
-      subjectController.text = subject.startsWith('Fwd:')
-          ? subject
-          : 'Fwd: $subject';
-
-      // Set body with forwarded message
-      final dateFormat = DateFormat('EEE, MMM d, yyyy \'at\' h:mm a');
+    } else {
       final bodyText =
           '$signatureBlock\n\n---------- Forwarded message ----------\n'
           'From: $senderDisplay\n'
