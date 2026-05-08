@@ -14,6 +14,7 @@ import 'package:nostr_mail_client/utils/toast_helper.dart';
 import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
 
 import '../models/compose_attachment.dart';
+import '../models/compose_mode.dart';
 import '../models/contact.dart';
 import '../models/from_option.dart';
 import '../models/recipient.dart';
@@ -59,7 +60,6 @@ class ComposeController extends GetxController {
     super.onInit();
     _contactsService.loadContacts();
 
-    final args = Get.arguments as Map<String, dynamic>?;
     final signature = Get.find<SettingsController>().currentSignature;
 
     toController = TextEditingController();
@@ -80,10 +80,15 @@ class ComposeController extends GetxController {
 
     // Load from options
     loadFromOptions();
+  }
 
-    // Handle reply/forward mode
+  @override
+  void onReady() {
+    super.onReady();
+    // Initialize reply/forward async after onInit completes
+    final args = Get.arguments as Map<String, dynamic>?;
     final email = args?['email'] as Email?;
-    final mode = args?['mode'] as String?;
+    final mode = args?['mode'] as ComposeMode?;
 
     if (email != null && mode != null) {
       initFromEmail(email, mode);
@@ -617,53 +622,84 @@ class ComposeController extends GetxController {
     selectedFrom.value = option;
   }
 
-  void initFromEmail(Email email, String mode) {
-    final myPubkey = Get.find<NostrMailService>().getPublicKey();
-    final isSentByMe = email.senderPubkey == myPubkey;
+  Future<void> initFromEmail(Email email, ComposeMode mode) async {
+    final myPubkey = _nostrMailService.getPublicKey()!;
     final signature = Get.find<SettingsController>().currentSignature;
     final signatureBlock = signature.isEmpty ? '' : '\n\n$signature';
 
-    // Get sender display for quotes
+    // Get user's MailAddress from selectedFrom or fallback
+    MailAddress fromAddress;
+    if (selectedFrom.value != null) {
+      fromAddress = selectedFrom.value!.mailAddress;
+    } else {
+      // Fallback: try to get from email.mime.to (sent by me) or use default
+      final myAddress = email.senderPubkey == myPubkey
+          ? email.mime.to?.firstOrNull
+          : null;
+      if (myAddress != null) {
+        fromAddress = myAddress;
+      } else {
+        // Last resort: use npub@nostr
+        final npub = Nip19.encodePubKey(myPubkey);
+        fromAddress = MailAddress(null, '$npub@nostr');
+      }
+    }
+
+    final MessageBuilder builder;
+    switch (mode) {
+      case ComposeMode.reply:
+      case ComposeMode.replyAll:
+        builder = MessageBuilder.prepareReplyToMessage(
+          email.mime,
+          fromAddress,
+          replyAll: mode == ComposeMode.replyAll,
+          quoteOriginalText: false,
+        );
+      case ComposeMode.forward:
+        builder = MessageBuilder.prepareForwardMessage(
+          email.mime,
+          from: fromAddress,
+          quoteMessage: false,
+        );
+    }
+
+    // Extract and add recipients from builder
+    if (builder.to != null) {
+      for (final address in builder.to!) {
+        await addRecipient(address.email);
+      }
+    }
+    if (builder.cc != null) {
+      for (final address in builder.cc!) {
+        await addCcRecipient(address.email);
+      }
+    }
+
+    // Set subject from builder
+    subjectController.text = builder.subject ?? '';
+
+    // Build body with quote (manually for Quill)
     final senderDisplay = email.sender?.encode() ?? '';
+    final dateFormat = DateFormat('EEE, MMM d, yyyy \'at\' h:mm a');
 
-    if (mode == 'reply') {
-      // Set recipient
-      final replyTo = isSentByMe
-          ? email.mime.to?.firstOrNull?.encode() ?? ''
-          : senderDisplay;
-      addRecipient(replyTo);
-
-      // Set subject (avoid Re: Re: Re:)
-      final subject = email.subject ?? '';
-      subjectController.text = subject.startsWith('Re:')
-          ? subject
-          : 'Re: $subject';
-
-      // Set body with quoted original message
-      final dateFormat = DateFormat('EEE, MMM d, yyyy \'at\' h:mm a');
-      final quotedBody = email.body
-          .split('\n')
-          .map((line) => '> $line')
-          .join('\n');
-      final bodyText =
-          '$signatureBlock\n\nOn ${dateFormat.format(email.date)}, $senderDisplay wrote:\n$quotedBody';
-      setQuillContent(bodyText);
-    } else if (mode == 'forward') {
-      // Set subject (avoid Fwd: Fwd: Fwd:)
-      final subject = email.subject ?? '';
-      subjectController.text = subject.startsWith('Fwd:')
-          ? subject
-          : 'Fwd: $subject';
-
-      // Set body with forwarded message
-      final dateFormat = DateFormat('EEE, MMM d, yyyy \'at\' h:mm a');
-      final bodyText =
-          '$signatureBlock\n\n---------- Forwarded message ----------\n'
-          'From: $senderDisplay\n'
-          'Date: ${dateFormat.format(email.date)}\n'
-          'Subject: ${email.subject}\n\n'
-          '${email.body}';
-      setQuillContent(bodyText);
+    switch (mode) {
+      case ComposeMode.reply:
+      case ComposeMode.replyAll:
+        final quotedBody = email.body
+            .split('\n')
+            .map((line) => '> $line')
+            .join('\n');
+        final bodyText =
+            '$signatureBlock\n\nOn ${dateFormat.format(email.date)}, $senderDisplay wrote:\n$quotedBody';
+        setQuillContent(bodyText);
+      case ComposeMode.forward:
+        final bodyText =
+            '$signatureBlock\n\n---------- Forwarded message ----------\n'
+            'From: $senderDisplay\n'
+            'Date: ${dateFormat.format(email.date)}\n'
+            'Subject: ${email.subject}\n\n'
+            '${email.body}';
+        setQuillContent(bodyText);
     }
   }
 

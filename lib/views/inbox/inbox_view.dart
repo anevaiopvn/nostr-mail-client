@@ -6,6 +6,7 @@ import 'package:nostr_mail/nostr_mail.dart';
 import '../../app/routes/app_routes.dart';
 import '../../controllers/auth_controller.dart';
 import '../../controllers/inbox_controller.dart';
+import '../../models/compose_mode.dart';
 import '../../utils/toast_helper.dart';
 import '../../utils/metadata_extensions.dart';
 import '../../utils/responsive_helper.dart';
@@ -417,14 +418,14 @@ class InboxView extends GetView<InboxController> {
   void _replyTo(Email email) {
     Get.toNamed(
       AppRoutes.compose,
-      arguments: {'email': email, 'mode': 'reply'},
+      arguments: {'email': email, 'mode': ComposeMode.reply},
     );
   }
 
   void _forward(Email email) {
     Get.toNamed(
       AppRoutes.compose,
-      arguments: {'email': email, 'mode': 'forward'},
+      arguments: {'email': email, 'mode': ComposeMode.forward},
     );
   }
 
