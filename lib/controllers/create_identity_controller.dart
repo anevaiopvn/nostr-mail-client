@@ -154,11 +154,6 @@ class CreateIdentityController extends GetxController {
         identities: updatedIdentities,
       );
 
-      final context = Get.context;
-      if (context != null) {
-        ToastHelper.success(Get.context!, 'Identity created successfully');
-      }
-
       Get.back();
     } catch (e) {
       final context = Get.context;
