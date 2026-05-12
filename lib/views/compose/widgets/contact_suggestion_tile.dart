@@ -2,6 +2,7 @@ import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:flutter/material.dart';
 import 'package:ndk/ndk.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../../../models/contact.dart';
 import '../../../widgets/email_avatar.dart';
 import '../../../widgets/nostr_avatar.dart';
@@ -90,6 +91,7 @@ class ContactSuggestionTile extends StatelessWidget {
   }
 
   Widget _buildSourceIndicator(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
 
     final IconData icon;
@@ -98,16 +100,16 @@ class ContactSuggestionTile extends StatelessWidget {
     switch (contact.source) {
       case ContactSource.emailHistory:
         icon = Icons.history;
-        tooltip = 'Email history';
+        tooltip = l.contactSourceEmailHistory;
       case ContactSource.nostrFollow:
         icon = Icons.person;
-        tooltip = 'Following';
+        tooltip = l.contactSourceFollowing;
       case ContactSource.cachedProfile:
         icon = Icons.cached;
-        tooltip = 'Cached profile';
+        tooltip = l.contactSourceCachedProfile;
       case ContactSource.nip05Lookup:
         icon = Icons.verified;
-        tooltip = 'NIP-05 verified';
+        tooltip = l.contactSourceNip05Verified;
     }
 
     return Tooltip(

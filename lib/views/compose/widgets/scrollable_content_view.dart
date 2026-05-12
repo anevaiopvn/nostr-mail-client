@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:get/get.dart';
 import 'package:nostr_mail_client/controllers/compose_controller.dart';
+import 'package:nostr_mail_client/l10n/generated/app_localizations.dart';
 import 'package:nostr_mail_client/utils/responsive_helper.dart';
 import 'package:nostr_mail_client/views/compose/widgets/from_selector_view.dart';
 import 'package:nostr_mail_client/views/compose/widgets/recipient_chip.dart';
@@ -15,6 +16,7 @@ class ScrollableContentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final controller = ComposeController.to;
     final isWide = ResponsiveHelper.isNotMobile(context);
 
@@ -47,8 +49,8 @@ class ScrollableContentView extends StatelessWidget {
                       child: RecipientAutocomplete(
                         textController: controller.toController,
                         hintText: controller.recipients.isEmpty
-                            ? 'To'
-                            : 'Add more',
+                            ? l.composeTo
+                            : l.composeAddMore,
                         excludeIds: controller.recipientIds,
                         onContactSelected: controller.addRecipientFromContact,
                         onManualInput: controller.addRecipient,
@@ -64,8 +66,8 @@ class ScrollableContentView extends StatelessWidget {
                     ),
                     onPressed: controller.toggleExpandedFields,
                     tooltip: controller.showExpandedFields.value
-                        ? 'Hide CC/BCC/From'
-                        : 'Show CC/BCC/From',
+                        ? l.composeHideExpanded
+                        : l.composeShowExpanded,
                   ),
                   const SizedBox(width: 8),
                 ],
@@ -90,7 +92,7 @@ class ScrollableContentView extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: RecipientAutocomplete(
                     textController: controller.ccController,
-                    hintText: 'Cc',
+                    hintText: l.composeCc,
                     excludeIds: controller.ccRecipientIds,
                     onContactSelected: controller.addCcRecipientFromContact,
                     onManualInput: controller.addCcRecipient,
@@ -116,7 +118,7 @@ class ScrollableContentView extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: RecipientAutocomplete(
                     textController: controller.bccController,
-                    hintText: 'Bcc',
+                    hintText: l.composeBcc,
                     excludeIds: controller.bccRecipientIds,
                     onContactSelected: controller.addBccRecipientFromContact,
                     onManualInput: controller.addBccRecipient,
@@ -135,7 +137,7 @@ class ScrollableContentView extends StatelessWidget {
           child: TextField(
             controller: controller.subjectController,
             decoration: InputDecoration(
-              hintText: 'Subject',
+              hintText: l.composeSubject,
               hintStyle: TextStyle(color: Colors.grey[400]),
               border: InputBorder.none,
               suffixIcon: isWide
@@ -143,7 +145,7 @@ class ScrollableContentView extends StatelessWidget {
                   : IconButton(
                       onPressed: controller.pickAttachments,
                       icon: const Icon(Icons.attach_file),
-                      tooltip: 'Attach file',
+                      tooltip: l.composeAttachFile,
                     ),
             ),
             textCapitalization: TextCapitalization.sentences,
@@ -161,7 +163,7 @@ class ScrollableContentView extends StatelessWidget {
               focusNode: controller.editorFocusNode,
               scrollController: controller.editorScrollController,
               config: QuillEditorConfig(
-                placeholder: 'Compose email',
+                placeholder: l.composePlaceholder,
                 padding: const EdgeInsets.symmetric(vertical: 8),
               ),
             ),

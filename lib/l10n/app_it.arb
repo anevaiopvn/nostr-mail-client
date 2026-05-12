@@ -1,0 +1,450 @@
+{
+  "@@locale": "it",
+
+  "actionCancel": "Annulla",
+  "actionSave": "Salva",
+  "actionDelete": "Elimina",
+  "actionAdd": "Aggiungi",
+  "actionClose": "Chiudi",
+  "actionContinue": "Continua",
+  "actionBack": "Indietro",
+  "actionConfirm": "Conferma",
+  "actionOk": "OK",
+  "actionCopy": "Copia",
+  "actionOpen": "Apri",
+  "actionUpload": "Carica",
+  "actionReset": "Reimposta",
+  "actionUndo": "Annulla",
+  "actionRemove": "Rimuovi",
+  "actionDiscard": "Scarta",
+
+  "stateLoading": "Caricamento",
+  "stateLoadingEllipsis": "Caricamento...",
+  "stateResetting": "Reimpostazione...",
+  "stateValidating": "Validazione...",
+  "stateDownloading": "Download...",
+  "stateUploading": "Upload...",
+
+  "settingsTitle": "Impostazioni",
+  "settingsAppearance": "Aspetto",
+  "settingsDynamicTheme": "Tema dinamico",
+  "settingsDynamicThemeSubtitle": "Genera colori dall'immagine di sfondo",
+  "settingsAdvancedOptions": "Opzioni avanzate",
+  "settingsShowEmailSource": "Mostra codice sorgente dell'email",
+  "settingsShowEmailSourceSubtitle": "Aggiunge un pulsante per visualizzare l'email grezza",
+  "settingsAlwaysLoadImages": "Carica sempre le immagini",
+  "settingsAlwaysLoadImagesSubtitle": "Le immagini sono bloccate per impostazione predefinita per la privacy",
+  "settingsIdentities": "Identità",
+  "settingsManageIdentities": "Gestisci identità",
+  "settingsManageIdentitiesSubtitle": "Aggiungi, rimuovi o riordina gli indirizzi",
+  "settingsCompose": "Composizione",
+  "settingsEmailSignature": "Firma email",
+  "settingsEmailSignatureEmpty": "Nessuna firma configurata",
+  "settingsEmailSignatureHint": "Inserisci la tua firma...",
+  "settingsSynchronization": "Sincronizzazione",
+  "settingsHosting": "Hosting",
+  "settingsHostingSubtitle": "Relay, server Blossom, connettività",
+  "settingsDebugTools": "Strumenti di debug",
+  "settingsDebugToolsSubtitle": "Funzionalità di test e sviluppo",
+  "settingsAccount": "Account",
+  "settingsCopySyncCode": "Copia codice di sincronizzazione",
+  "settingsCopySyncCodeSubtitle": "Usa questo codice per sincronizzare il tuo account su altri dispositivi",
+  "settingsSyncCodeCopied": "Codice di sincronizzazione copiato",
+  "settingsLogOut": "Esci",
+  "settingsResetApplication": "Reimposta applicazione",
+  "settingsResetApplicationSubtitle": "Elimina tutti i dati locali",
+  "settingsResetConfirmMessage": "Verranno eliminati tutti i dati locali, comprese le impostazioni e le immagini di sfondo, e verrai disconnesso.\n\nQuesta azione non può essere annullata.",
+
+  "settingsTheme": "Tema",
+  "settingsThemeAuto": "Auto",
+  "settingsThemeLight": "Chiaro",
+  "settingsThemeDark": "Scuro",
+
+  "settingsBackgroundDefaultLabel": "Colore tema predefinito",
+  "settingsBackgroundSelectLabel": "Seleziona immagine di sfondo",
+  "settingsBackgroundDeleteLabel": "Elimina immagine di sfondo",
+  "settingsBackgroundRemoveLabel": "Rimuovi immagine di sfondo",
+  "settingsBackgroundAddLabel": "Aggiungi immagine di sfondo",
+  "settingsBackgroundDeleteTitle": "Elimina sfondo",
+  "settingsBackgroundDeleteMessage": "Rimuovere questa immagine dagli sfondi salvati?",
+  "settingsBackgroundImageDeleted": "Immagine eliminata",
+  "settingsBackgroundDeleteFailed": "Impossibile eliminare l'immagine",
+  "settingsBackgroundDialogTitle": "Sfondo",
+  "settingsBackgroundSelectFile": "Seleziona file",
+  "settingsBackgroundPasteUrl": "Incolla URL",
+  "settingsBackgroundUrlTitle": "URL dello sfondo",
+  "settingsBackgroundUrlHint": "https://esempio.it/immagine.jpg",
+  "settingsBackgroundSet": "Sfondo impostato",
+  "settingsBackgroundImageSet": "Immagine impostata",
+  "settingsBackgroundCopyFailed": "Impossibile copiare l'immagine",
+  "settingsBackgroundUrlError": "Immagine non accessibile (errore CORS o di rete)",
+  "settingsBackgroundDownloaded": "Immagine scaricata",
+  "settingsBackgroundDownloadFailed": "Impossibile scaricare l'immagine",
+  "settingsBackgroundUploadTitle": "Carica immagine",
+  "settingsBackgroundUploadWarning": "Questa immagine sarà caricata sui server Blossom. Gli operatori dei server e chiunque abbia il link potrà visualizzarla.",
+
+  "hostingRecommended": "Consigliati:",
+  "hostingWillBeAddedAs": "Sarà aggiunto come: {url}",
+  "@hostingWillBeAddedAs": {
+    "placeholders": {
+      "url": { "type": "String" }
+    }
+  },
+
+  "relayAddTitle": "Aggiungi relay",
+  "relayUrlLabel": "URL del relay",
+  "relayUrlHint": "wss://relay.esempio.it",
+  "relayInvalidUrl": "URL del relay non valida",
+  "relayDirection": "Direzione",
+  "relayReadWrite": "Lettura e scrittura",
+  "relayRead": "Lettura",
+  "relayWrite": "Scrittura",
+  "relayMarkerReadWrite": "lettura/scrittura",
+  "relayMarkerRead": "lettura",
+  "relayMarkerWrite": "scrittura",
+  "relayInboxOutboxTitle": "Relay di entrata e uscita",
+  "relayAddTooltip": "Aggiungi relay",
+  "relayRemoveTooltip": "Rimuovi relay",
+  "relayInboxOutboxEmpty": "Nessun relay di entrata/uscita configurato",
+  "relayEmptyHint": "Tocca + per aggiungere un relay",
+
+  "dmRelayAddTitle": "Aggiungi relay DM",
+  "dmRelaySectionTitle": "Relay DM",
+  "dmRelayEmpty": "Nessun relay DM configurato",
+
+  "bridgeAddTitle": "Aggiungi bridge",
+  "bridgeDomainLabel": "Dominio del bridge",
+  "bridgeDomainHint": "bridge.esempio.it",
+  "bridgeInvalidDomain": "Dominio non valido",
+  "bridgeSectionTitle": "Bridge",
+  "bridgeAddTooltip": "Aggiungi bridge",
+  "bridgeEmpty": "Nessun bridge configurato",
+  "bridgeEmptyHint": "Tocca + per aggiungere un bridge",
+  "bridgeDefault": "Bridge predefinito",
+
+  "blossomAddTitle": "Aggiungi server Blossom",
+  "blossomServerUrlLabel": "URL del server",
+  "blossomServerUrlHint": "https://blossom.esempio.it",
+  "blossomInvalidUrl": "URL del server non valida",
+  "blossomSectionTitle": "Hosting file",
+  "blossomAddTooltip": "Aggiungi server",
+  "blossomRemoveTooltip": "Rimuovi server",
+  "blossomEmpty": "Nessun server Blossom configurato",
+  "blossomEmptyHint": "Tocca + per aggiungere un server",
+
+  "connectivitySectionTitle": "Connessione in tempo reale",
+  "connectivityRelayConnectivity": "Connettività dei relay",
+
+  "syncStatusSectionTitle": "Stato sincronizzazione",
+  "syncStatusEmpty": "Nessun dato di sincronizzazione disponibile",
+  "syncStatusEmptyHint": "Sincronizza le tue email per vedere lo stato dei relay",
+  "syncStatusResync": "Risincronizza",
+  "syncStatusBeginningOfTime": "Inizio dei tempi",
+
+  "identitiesTitle": "Identità",
+  "identitiesEmptyTitle": "Nessuna identità ancora",
+  "identitiesEmptyMessage": "Creane una per inviare email da un indirizzo personalizzato.",
+  "identitiesCreate": "Crea identità",
+  "identitiesDiscardTitle": "Scartare le modifiche?",
+  "identitiesDiscardMessage": "Hai modifiche non salvate. Uscendo ora andranno perse.",
+  "identitiesKeepEditing": "Continua a modificare",
+
+  "debugToolsEmailTesting": "Test email",
+  "debugToolsCreateOldTrashed": "Crea email vecchia nel cestino",
+  "debugToolsCreateOldTrashedDescription": "Crea un'email di test nel cestino vecchia di 31 giorni. Usala per testare la funzione \"Elimina email vecchie\".",
+
+  "folderInbox": "Posta in arrivo",
+  "folderSent": "Inviate",
+  "folderTrash": "Cestino",
+  "folderArchive": "Archivio",
+  "inboxEmptyInbox": "Nessuna email",
+  "inboxEmptySent": "Nessuna email inviata",
+  "inboxEmptyTrash": "Il cestino è vuoto",
+  "inboxEmptyArchive": "L'archivio è vuoto",
+  "inboxSyncFromRelays": "Sincronizza dai relay",
+  "inboxSearch": "Cerca",
+  "inboxSync": "Sincronizza",
+  "inboxMenu": "Menu",
+  "inboxClearSelection": "Deseleziona",
+  "inboxSelectedCount": "{count} selezionate",
+  "@inboxSelectedCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "inboxProfile": "Profilo",
+  "inboxCopyNpub": "Copia npub",
+  "inboxLogout": "Esci",
+  "inboxAccount": "Account",
+  "inboxCompose": "Componi",
+  "inboxNpubCopied": "npub copiato",
+  "inboxUnknown": "Sconosciuto",
+  "inboxEditProfile": "Modifica profilo",
+  "inboxSettings": "Impostazioni",
+  "inboxDeleteOldEmailsTitle": "Elimina email vecchie",
+  "inboxDeleteOldEmailsMessage": "Verranno eliminate definitivamente {count, plural, one{# email} other{# email}} più vecchie di 30 giorni.\n\nQuesta azione non può essere annullata.",
+  "@inboxDeleteOldEmailsMessage": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "inboxDeleteFailed": "Eliminazione non riuscita",
+  "inboxDeleteFailedDescription": "Impossibile eliminare le email vecchie: {error}",
+  "@inboxDeleteFailedDescription": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "inboxOldEmailsCount": "{count, plural, one{# email vecchia da eliminare} other{# email vecchie da eliminare}}",
+  "@inboxOldEmailsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "inboxDeleteNow": "Elimina ora",
+  "inboxDeleteOldEmailsTooltip": "Elimina email vecchie",
+  "inboxSearchHint": "Cerca in tutte le email...",
+  "inboxCloseSearch": "Chiudi ricerca",
+  "inboxSelectAll": "Seleziona tutto",
+  "inboxMoreActions": "Altre azioni",
+
+  "emailReply": "Rispondi",
+  "emailForward": "Inoltra",
+  "emailArchive": "Archivia",
+  "emailUnarchive": "Sposta dall'archivio",
+  "emailMarkAsRead": "Segna come letta",
+  "emailMarkAsUnread": "Segna come non letta",
+  "emailMoveToTrash": "Sposta nel cestino",
+  "emailRestore": "Ripristina",
+  "emailDeletePermanently": "Elimina definitivamente",
+  "emailNoSubject": "(Nessun oggetto)",
+
+  "emailNotFound": "Email non trovata",
+  "emailShowFormatted": "Mostra formattata",
+  "emailShowRaw": "Mostra sorgente",
+  "emailSenderNpub": "npub del mittente: {npub}",
+  "@emailSenderNpub": {
+    "placeholders": {
+      "npub": { "type": "String" }
+    }
+  },
+  "emailDeletePermanentlyTitle": "Eliminare definitivamente?",
+  "emailDeletePermanentlyMessage": "Questa azione non può essere annullata.",
+  "emailDefaultFilename": "email",
+  "emailSaved": "Email salvata: {path}",
+  "@emailSaved": {
+    "placeholders": {
+      "path": { "type": "String" }
+    }
+  },
+  "emailSaveFailed": "Impossibile salvare l'email: {error}",
+  "@emailSaveFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "emailRepostFailedEvent": "Impossibile recuperare l'evento per il repost",
+  "emailRepostSuccess": "Email ripubblicata con successo",
+  "emailRepostFailed": "Impossibile ripubblicare l'email: {error}",
+  "@emailRepostFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "emailAttachmentLoadFailed": "Impossibile caricare l'allegato",
+  "emailFileSaved": "File salvato: {path}",
+  "@emailFileSaved": {
+    "placeholders": {
+      "path": { "type": "String" }
+    }
+  },
+  "emailFileSaveFailed": "Impossibile salvare il file: {error}",
+  "@emailFileSaveFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "emailDownloadedAllSuccess": "{count, plural, one{Scaricato # file con successo} other{Scaricati # file con successo}}",
+  "@emailDownloadedAllSuccess": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "emailDownloadedAllFailed": "{count, plural, one{Impossibile scaricare # file} other{Impossibile scaricare # file}}",
+  "@emailDownloadedAllFailed": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "emailDownloadedMixed": "Scaricati {success} file, {failed} non riusciti",
+  "@emailDownloadedMixed": {
+    "placeholders": {
+      "success": { "type": "int" },
+      "failed": { "type": "int" }
+    }
+  },
+  "emailDownload": "Scarica",
+  "emailImageLoadFailed": "Impossibile caricare l'immagine",
+  "emailPdfLoadFailed": "Impossibile caricare il PDF",
+  "emailActionReply": "Rispondi",
+  "emailActionReplyAll": "Rispondi a tutti",
+  "emailActionForward": "Inoltra",
+  "emailActionArchive": "Archivia",
+  "emailActionUnarchive": "Sposta dall'archivio",
+  "emailActionMarkRead": "Segna letta",
+  "emailActionMarkUnread": "Segna non letta",
+  "emailActionNip59": "Eventi NIP-59",
+  "emailActionRepost": "Repost",
+  "emailActionDownload": "Scarica email",
+  "emailMoreActions": "Altre azioni",
+  "emailMoreOptions": "Altre opzioni",
+  "emailShowRecipients": "Mostra destinatari",
+  "emailImagesHidden": "Immagini nascoste per privacy",
+  "emailLoadImages": "Carica immagini",
+  "emailRecipientTo": "A",
+  "emailRecipientCc": "Cc",
+  "emailRecipientBcc": "Ccn",
+  "emailAttachmentsTitle": "Allegati",
+  "emailDownloadAll": "Scarica tutto",
+  "emailNip59Dismiss": "Chiudi",
+  "emailNip59Title": "Eventi NIP-59",
+  "emailNip59GiftWrap": "Gift Wrap",
+  "emailNip59Seal": "Seal",
+  "emailNip59Rumor": "Rumor",
+  "emailNip59CopyJson": "Copia JSON",
+  "emailNip59Kind": "Kind {kind}",
+  "@emailNip59Kind": {
+    "placeholders": {
+      "kind": { "type": "int" }
+    }
+  },
+  "emailNip59NotAvailable": "Non disponibile",
+
+  "authHeaderTitle": "Accedi a Nmail",
+  "authSyncCodeLabel": "Codice di sincronizzazione",
+  "authInvalidSyncCode": "Codice di sincronizzazione non valido",
+  "authInvalidSyncCodeDescription": "Controlliamo il tuo codice mentre digiti. Una volta valido, l'accesso avverrà automaticamente.",
+  "authLogIn": "Accedi",
+  "authCreateAccount": "Crea un account",
+  "authMoreOptions": "Altre opzioni",
+  "authRegisterPrompt": "Cosa devono vedere gli altri?",
+  "authDisplayNameLabel": "Nome visualizzato",
+  "authDisplayNameHint": "es. Alice",
+  "authBackToLogin": "Torna all'accesso",
+  "authUnableRetrieveCode": "Impossibile recuperare il codice di sincronizzazione",
+  "authYourSyncCode": "Il tuo codice di sincronizzazione",
+  "authSyncCodeIntro": "Questo codice è la chiave del tuo account. Ti dà il controllo totale e ti permette di:",
+  "authSyncCodeFeatureRestore": "Ripristinare il tuo account su qualsiasi dispositivo",
+  "authSyncCodeFeatureBackup": "Eseguire un backup sicuro della tua identità",
+  "authSyncCodeFeatureLogin": "Accedere ad altre app Nostr",
+  "authSyncCodeWarning": "Non condividere mai questo codice con nessuno. Conservalo in un posto sicuro. Potrai sempre ritrovarlo nelle Impostazioni.",
+  "authCopied": "Copiato!",
+  "authCopySyncCode": "Copia codice di sincronizzazione",
+  "authContinueToInbox": "Vai alla posta in arrivo",
+
+  "composeTitle": "Componi",
+  "composeTo": "A",
+  "composeAddMore": "Aggiungi altri",
+  "composeHideExpanded": "Nascondi Cc/Ccn/Da",
+  "composeShowExpanded": "Mostra Cc/Ccn/Da",
+  "composeCc": "Cc",
+  "composeBcc": "Ccn",
+  "composeSubject": "Oggetto",
+  "composeAttachFile": "Allega file",
+  "composePlaceholder": "Componi email",
+  "composeFrom": "Da",
+  "composeSendAs": "Invia come",
+  "composeCreateNewIdentity": "Crea nuova identità",
+  "composeRemoveAttachment": "Rimuovi allegato",
+  "composeSend": "Invia",
+  "composeMoreSendOptions": "Altre opzioni di invio",
+  "composeChooseSendMode": "Scegli modalità di invio",
+  "composeModePrivateDeniable": "Privato negabile",
+  "composeModePrivateSigned": "Privato firmato",
+  "composeModePublic": "Pubblico",
+  "composeModePrivateDeniableDescription": "Invia come email criptata. Senza firma — negabile se necessario.",
+  "composeModePrivateSignedDescription": "Invia come email criptata. Firmata — dimostra che sei l'autore.",
+  "composeModePublicDescription": "Invia come evento pubblico. Chiunque può leggere. Senza crittografia.",
+  "composeResolvingNip05": "Risoluzione NIP-05...",
+  "contactSourceEmailHistory": "Cronologia email",
+  "contactSourceFollowing": "Seguiti",
+  "contactSourceCachedProfile": "Profilo in cache",
+  "contactSourceNip05Verified": "Verificato NIP-05",
+
+  "profileEditTitle": "Modifica profilo",
+  "profileDisplayNameLabel": "Nome visualizzato",
+  "profileDisplayNameHint": "Il tuo nome completo o pseudonimo",
+  "profileUsernameLabel": "Nome utente",
+  "profileUsernameHint": "identificativo",
+  "profileAboutLabel": "Informazioni",
+  "profileAboutHint": "Una breve biografia su di te",
+  "profileAdvanced": "Avanzate",
+  "profilePictureUrlLabel": "URL dell'immagine",
+  "profilePictureUrlHint": "https://esempio.it/avatar.png",
+  "profileChangePicture": "Cambia foto profilo",
+
+  "onboardingPage1Title": "Benvenuto su Nmail",
+  "onboardingPage1Body": "Scopri un'esperienza email decentralizzata che mette te al comando. Un nuovo modo di comunicare, centrato su di te.",
+  "onboardingPage2Title": "Una rete senza padroni",
+  "onboardingPage2Body": "I tuoi messaggi viaggiano attraverso una rete globale di server indipendenti. Nessuna singola azienda possiede la tua casella di posta.",
+  "onboardingPage3Title": "Libertà di scelta",
+  "onboardingPage3Body": "Non sei mai legato a un singolo provider. Cambia bridge o relay in qualsiasi momento senza perdere la tua identità o i tuoi contatti.",
+  "onboardingPage4Title": "Un'identità per tutto",
+  "onboardingPage4Body": "Usa il tuo account per inviare email, seguire profili o usare altre app. Un'identità permanente che funziona in molte applicazioni diverse.",
+  "onboardingPage5Title": "Costruito per il futuro",
+  "onboardingPage5Body": "Beneficia di un'architettura moderna pensata per la privacy. Nmail ti aiuta a passare in modo fluido a un modo di comunicare più sicuro e resiliente.",
+  "onboardingSkip": "Salta",
+  "onboardingNext": "Avanti",
+  "onboardingDone": "Fine",
+
+  "createIdentityTitle": "Crea identità",
+  "createIdentityAddress": "Indirizzo",
+  "createIdentityCustomUsername": "Nome utente personalizzato",
+  "createIdentityBridge": "Bridge",
+  "createIdentityNoBridges": "Nessun bridge disponibile",
+  "createIdentityBridgeHint": "bridge.com",
+  "createIdentityPreview": "Anteprima",
+  "createIdentityPreviewEmpty": "Inserisci un indirizzo e seleziona un bridge per vedere l'anteprima",
+
+  "leftRailSettings": "Impostazioni",
+
+  "linkOpenTitle": "Aprire il link?",
+  "linkCopied": "Link copiato",
+
+  "debugNotAuthenticated": "Non autenticato",
+  "debugTestEmailCreated": "Email di test creata e spostata nel cestino (31 giorni)",
+  "debugTestEmailPartial": "Email creata e spostata nel cestino, ma impossibile aggiornare il timestamp",
+  "debugError": "Errore: {error}",
+  "@debugError": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "composeSelectAttachments": "Seleziona allegati",
+  "composePickFilesFailed": "Impossibile selezionare i file: {error}",
+  "@composePickFilesFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "composeInvalidRecipient": "Formato destinatario non valido",
+  "composeAddRecipient": "Aggiungi almeno un destinatario",
+  "composeSendFailed": "Impossibile inviare l'email",
+
+  "profileLoadFailed": "Impossibile caricare i dati del profilo",
+  "profileSelectPicture": "Seleziona foto profilo",
+  "profileUploadNoServers": "Nessun server ha risposto",
+  "profileUploadFailed": "Upload non riuscito",
+  "profileUploadError": "Si è verificato un errore durante l'upload",
+  "profileUpdateFailed": "Impossibile aggiornare il profilo",
+  "authEnterUsername": "Inserisci un nome utente",
+  "createIdentityFailed": "Impossibile creare l'identità: {error}",
+  "@createIdentityFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "dateYesterday": "Ieri"
+}

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../controllers/inbox_controller.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../email_controller.dart';
 
 class EmailAction {
@@ -22,7 +23,11 @@ class EmailActions {
   const EmailActions({required this.primary, required this.delete});
 }
 
-EmailActions buildEmailActions(EmailController controller, MailFolder folder) {
+EmailActions buildEmailActions(
+  AppLocalizations l,
+  EmailController controller,
+  MailFolder folder,
+) {
   final isInbox = folder == MailFolder.inbox;
   final isInArchive = folder == MailFolder.archive;
   final isInTrash = folder == MailFolder.trash;
@@ -31,30 +36,30 @@ EmailActions buildEmailActions(EmailController controller, MailFolder folder) {
     primary: [
       EmailAction(
         icon: Icons.reply,
-        label: 'Reply',
+        label: l.emailActionReply,
         onPressed: controller.replyEmail,
       ),
       if (controller.shouldShowReplyAll)
         EmailAction(
           icon: Icons.reply_all,
-          label: 'Reply all',
+          label: l.emailActionReplyAll,
           onPressed: controller.replyAllEmail,
         ),
       EmailAction(
         icon: Icons.forward,
-        label: 'Forward',
+        label: l.emailActionForward,
         onPressed: controller.forwardEmail,
       ),
       if (isInArchive)
         EmailAction(
           icon: Icons.unarchive,
-          label: 'Unarchive',
+          label: l.emailActionUnarchive,
           onPressed: controller.unarchiveEmail,
         )
       else if (!isInTrash)
         EmailAction(
           icon: Icons.archive,
-          label: 'Archive',
+          label: l.emailActionArchive,
           onPressed: controller.archiveEmail,
         ),
       if (isInbox)
@@ -62,28 +67,30 @@ EmailActions buildEmailActions(EmailController controller, MailFolder folder) {
           icon: controller.isEmailRead
               ? Icons.mark_email_unread
               : Icons.mark_email_read,
-          label: controller.isEmailRead ? 'Mark unread' : 'Mark read',
+          label: controller.isEmailRead
+              ? l.emailActionMarkUnread
+              : l.emailActionMarkRead,
           onPressed: controller.toggleReadStatus,
         ),
       EmailAction(
         icon: Icons.info_outline,
-        label: 'NIP-59 Events',
+        label: l.emailActionNip59,
         onPressed: controller.showNip59Events,
       ),
       EmailAction(
         icon: Icons.repeat,
-        label: 'Repost',
+        label: l.emailActionRepost,
         onPressed: controller.repostEmail,
       ),
       EmailAction(
         icon: Icons.download,
-        label: 'Download email',
+        label: l.emailActionDownload,
         onPressed: controller.downloadEmail,
       ),
     ],
     delete: EmailAction(
       icon: Icons.delete_outline,
-      label: 'Delete',
+      label: l.actionDelete,
       onPressed: controller.deleteEmail,
     ),
   );

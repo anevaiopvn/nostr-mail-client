@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../controllers/create_identity_controller.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../../../models/local_part_format.dart';
 
 class LocalPartSection extends StatelessWidget {
@@ -12,16 +13,20 @@ class LocalPartSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Address', style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          l.createIdentityAddress,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         const SizedBox(height: 12),
         _buildLocalPartChips(context),
         const SizedBox(height: 8),
         TextField(
           controller: controller.localPartController,
-          decoration: InputDecoration(hintText: 'Custom username'),
+          decoration: InputDecoration(hintText: l.createIdentityCustomUsername),
           inputFormatters: [
             FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9_.@-]')),
           ],

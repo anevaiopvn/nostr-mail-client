@@ -5,6 +5,7 @@ import 'package:nostr_mail_client/views/email/email_controller.dart';
 
 import '../../controllers/inbox_controller.dart';
 import '../../controllers/settings_controller.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../utils/responsive_helper.dart';
 import '../shared/desktop_shell.dart';
 import 'widgets/desktop_actions_bar.dart';
@@ -21,6 +22,7 @@ class EmailView extends StatelessWidget {
 
     return GetBuilder<EmailController>(
       builder: (controller) {
+        final l = AppLocalizations.of(context);
         final isWide = ResponsiveHelper.isNotMobile(context);
 
         if (controller.isLoading) {
@@ -34,7 +36,7 @@ class EmailView extends StatelessWidget {
         if (controller.email == null) {
           Widget content = Scaffold(
             appBar: AppBar(),
-            body: const Center(child: Text('Email not found')),
+            body: Center(child: Text(l.emailNotFound)),
           );
           return isWide ? DesktopShell(body: content) : content;
         }
@@ -52,8 +54,8 @@ class EmailView extends StatelessWidget {
                     controller.showRawContent ? Icons.article : Icons.code,
                   ),
                   tooltip: controller.showRawContent
-                      ? 'Show formatted'
-                      : 'Show raw',
+                      ? l.emailShowFormatted
+                      : l.emailShowRaw,
                   onPressed: () {
                     controller.showRawContent = !controller.showRawContent;
                     controller.update();
@@ -67,7 +69,7 @@ class EmailView extends StatelessWidget {
                 if (isInTrash) {
                   return IconButton(
                     icon: const Icon(Icons.restore_from_trash_outlined),
-                    tooltip: 'Restore',
+                    tooltip: l.emailRestore,
                     onPressed: controller.restoreEmail,
                   );
                 }
@@ -87,7 +89,11 @@ class EmailView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SelectableText(
-                            'Sender npub: ${Nip19.encodePubKey(controller.email!.senderPubkey)}',
+                            l.emailSenderNpub(
+                              Nip19.encodePubKey(
+                                controller.email!.senderPubkey,
+                              ),
+                            ),
                             style: TextStyle(
                               fontSize: 12,
                               fontFamily: 'monospace',

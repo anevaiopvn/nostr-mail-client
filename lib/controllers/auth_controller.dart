@@ -6,6 +6,7 @@ import 'package:ndk_flutter/ndk_flutter.dart';
 
 import '../app/config/nostr_config.dart';
 import '../app/routes/app_routes.dart';
+import '../l10n/generated/app_localizations.dart';
 import '../services/nostr_mail_service.dart';
 import '../utils/toast_helper.dart';
 import 'package:flutter/material.dart';
@@ -84,7 +85,10 @@ class AuthController extends GetxController {
     final context = Get.context;
 
     if (isEmpty && context != null) {
-      ToastHelper.error(context, 'Please enter a username');
+      ToastHelper.error(
+        context,
+        AppLocalizations.of(context).authEnterUsername,
+      );
       return;
     }
 

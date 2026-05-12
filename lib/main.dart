@@ -15,6 +15,7 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 import 'app/bindings/initial_binding.dart';
 import 'app/config/nostr_config.dart';
 import 'app/routes/app_routes.dart';
+import 'l10n/generated/app_localizations.dart';
 import 'controllers/auth_controller.dart';
 import 'controllers/settings_controller.dart';
 import 'services/ndk_cache_service.dart';
@@ -126,15 +127,15 @@ class MainApp extends StatelessWidget {
             colorScheme: darkScheme,
           ).copyWith(inputDecorationTheme: sharedInputDecorationTheme),
           themeMode: initialThemeMode,
-          locale: const Locale('en'),
           localizationsDelegates: [
+            AppLocalizations.delegate,
             ndk_flutter.AppLocalizations.delegate,
             FlutterQuillLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const [Locale('en')],
+          supportedLocales: AppLocalizations.supportedLocales,
           initialBinding: InitialBinding(),
           getPages: AppRoutes.routes,
           defaultTransition: GetPlatform.isMobile

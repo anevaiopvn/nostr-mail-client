@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../../../services/nostr_mail_service.dart';
 import '../../../utils/relay_utils.dart';
 import '../../../app/config/nostr_config.dart';
@@ -50,6 +51,7 @@ class _DmRelaysSectionState extends State<DmRelaysSection> {
   }
 
   Future<void> _addRelay() async {
+    final l = AppLocalizations.of(context);
     final controller = TextEditingController();
     String? errorText;
     String? preview;
@@ -58,7 +60,7 @@ class _DmRelaysSectionState extends State<DmRelaysSection> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Add DM Relay'),
+          title: Text(l.dmRelayAddTitle),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,8 +68,8 @@ class _DmRelaysSectionState extends State<DmRelaysSection> {
               TextField(
                 controller: controller,
                 decoration: InputDecoration(
-                  hintText: 'wss://relay.example.com',
-                  labelText: 'Relay URL',
+                  hintText: l.relayUrlHint,
+                  labelText: l.relayUrlLabel,
                   errorText: errorText,
                 ),
                 autofocus: true,
@@ -87,7 +89,7 @@ class _DmRelaysSectionState extends State<DmRelaysSection> {
                 onSubmitted: (value) {
                   final url = normalizeRelayUrl(value.trim());
                   if (!isValidRelayUrl(url)) {
-                    setDialogState(() => errorText = 'Invalid relay URL');
+                    setDialogState(() => errorText = l.relayInvalidUrl);
                     return;
                   }
                   Navigator.pop(context, url);
@@ -97,7 +99,7 @@ class _DmRelaysSectionState extends State<DmRelaysSection> {
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
-                    'Will be added as: $preview',
+                    l.hostingWillBeAddedAs(preview!),
                     style: TextStyle(
                       fontSize: 12,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -109,18 +111,18 @@ class _DmRelaysSectionState extends State<DmRelaysSection> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text(l.actionCancel),
             ),
             TextButton(
               onPressed: () {
                 final url = normalizeRelayUrl(controller.text.trim());
                 if (!isValidRelayUrl(url)) {
-                  setDialogState(() => errorText = 'Invalid relay URL');
+                  setDialogState(() => errorText = l.relayInvalidUrl);
                   return;
                 }
                 Navigator.pop(context, url);
               },
-              child: const Text('Add'),
+              child: Text(l.actionAdd),
             ),
           ],
         ),
@@ -165,14 +167,15 @@ class _DmRelaysSectionState extends State<DmRelaysSection> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     if (_isLoading) {
-      return const ListTile(
-        leading: SizedBox(
+      return ListTile(
+        leading: const SizedBox(
           width: 24,
           height: 24,
           child: CircularProgressIndicator(strokeWidth: 2),
         ),
-        title: Text('Loading...'),
+        title: Text(l.stateLoadingEllipsis),
       );
     }
 
@@ -182,7 +185,7 @@ class _DmRelaysSectionState extends State<DmRelaysSection> {
         ListTile(
           dense: true,
           title: Text(
-            'DM Relays',
+            l.dmRelaySectionTitle,
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.w600,
@@ -192,7 +195,7 @@ class _DmRelaysSectionState extends State<DmRelaysSection> {
           trailing: IconButton(
             icon: const Icon(Icons.add, size: 18),
             onPressed: _addRelay,
-            tooltip: 'Add relay',
+            tooltip: l.relayAddTooltip,
           ),
         ),
         RecommendationChips(
@@ -202,10 +205,10 @@ class _DmRelaysSectionState extends State<DmRelaysSection> {
           formatLabel: formatRelayUrl,
         ),
         if (_dmRelays == null || _dmRelays!.isEmpty)
-          const ListTile(
-            leading: Icon(Icons.warning_rounded),
-            title: Text('No DM relays configured'),
-            subtitle: Text('Tap + to add a relay'),
+          ListTile(
+            leading: const Icon(Icons.warning_rounded),
+            title: Text(l.dmRelayEmpty),
+            subtitle: Text(l.relayEmptyHint),
           )
         else
           ..._dmRelays!.map((relay) {
@@ -226,7 +229,7 @@ class _DmRelaysSectionState extends State<DmRelaysSection> {
               trailing: IconButton(
                 icon: Icon(isMarked ? Icons.undo : Icons.close, size: 18),
                 onPressed: () => _toggleRelayDeletion(relay),
-                tooltip: isMarked ? 'Undo' : 'Remove relay',
+                tooltip: isMarked ? l.actionUndo : l.relayRemoveTooltip,
               ),
             );
           }),
@@ -243,7 +246,7 @@ class _DmRelaysSectionState extends State<DmRelaysSection> {
                         height: 16,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Save'),
+                    : Text(l.actionSave),
               ),
             ),
           ),

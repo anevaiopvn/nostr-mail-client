@@ -22,6 +22,8 @@ import 'package:pdfrx/pdfrx.dart';
 import 'package:nostr_mail_client/services/android_file_saver.dart';
 import 'package:nostr_mail_client/utils/platform_helper.dart';
 
+import '../../l10n/generated/app_localizations.dart';
+
 class EmailController extends GetxController {
   static EmailController get to => Get.find();
 
@@ -212,23 +214,24 @@ class EmailController extends GetxController {
   Future<void> deleteEmail() async {
     if (email == null) return;
 
+    final l = AppLocalizations.of(Get.context!);
     final inboxController = Get.find<InboxController>();
     final isInTrash = inboxController.currentFolder.value == MailFolder.trash;
 
     if (isInTrash) {
       final confirmed = await Get.dialog<bool>(
         AlertDialog(
-          title: const Text('Delete permanently?'),
-          content: const Text('This action cannot be undone.'),
+          title: Text(l.emailDeletePermanentlyTitle),
+          content: Text(l.emailDeletePermanentlyMessage),
           actions: [
             TextButton(
               onPressed: () => Get.back(result: false),
-              child: const Text('Cancel'),
+              child: Text(l.actionCancel),
             ),
             TextButton(
               onPressed: () => Get.back(result: true),
               style: TextButton.styleFrom(foregroundColor: Colors.red),
-              child: const Text('Delete'),
+              child: Text(l.actionDelete),
             ),
           ],
         ),
@@ -282,9 +285,10 @@ class EmailController extends GetxController {
   Future<void> downloadEmail() async {
     if (email == null) return;
 
+    final l = AppLocalizations.of(Get.context!);
     try {
       final subject = (email!.subject?.isEmpty ?? true)
-          ? 'email'
+          ? l.emailDefaultFilename
           : email!.subject!;
       final fileName = subject.replaceAll(RegExp(r'[<>:"/\\|?*]'), '_');
 
@@ -306,28 +310,29 @@ class EmailController extends GetxController {
         );
       }
 
-      ToastHelper.success(Get.context!, 'Email saved: $result');
+      ToastHelper.success(Get.context!, l.emailSaved(result));
     } catch (e) {
-      ToastHelper.error(Get.context!, 'Failed to save email: $e');
+      ToastHelper.error(Get.context!, l.emailSaveFailed(e.toString()));
     }
   }
 
   Future<void> repostEmail() async {
     if (email == null) return;
 
+    final l = AppLocalizations.of(Get.context!);
     try {
       final nostrMailService = Get.find<NostrMailService>();
       final rumor = await nostrMailService.client.getRumor(email!.id);
 
       if (rumor == null) {
-        ToastHelper.error(Get.context!, 'Failed to get email event for repost');
+        ToastHelper.error(Get.context!, l.emailRepostFailedEvent);
         return;
       }
 
       await nostrMailService.client.repost(rumor);
-      ToastHelper.success(Get.context!, 'Email reposted successfully');
+      ToastHelper.success(Get.context!, l.emailRepostSuccess);
     } catch (e) {
-      ToastHelper.error(Get.context!, 'Failed to repost email: $e');
+      ToastHelper.error(Get.context!, l.emailRepostFailed(e.toString()));
     }
   }
 
@@ -370,12 +375,13 @@ class EmailController extends GetxController {
   Future<void> downloadAttachment({
     required AttachmentDetails attachmentDetails,
   }) async {
+    final l = AppLocalizations.of(Get.context!);
     final fileData = getAttachmentData(
       mime: email!.mime,
       fetchId: attachmentDetails.fetchId,
     );
     if (fileData == null) {
-      ToastHelper.error(Get.context!, 'Failed to load attachment');
+      ToastHelper.error(Get.context!, l.emailAttachmentLoadFailed);
       return;
     }
 
@@ -408,15 +414,16 @@ class EmailController extends GetxController {
         );
       }
 
-      ToastHelper.success(Get.context!, 'File saved: $result');
+      ToastHelper.success(Get.context!, l.emailFileSaved(result));
     } catch (e) {
-      ToastHelper.error(Get.context!, 'Failed to save file: $e');
+      ToastHelper.error(Get.context!, l.emailFileSaveFailed(e.toString()));
     }
   }
 
   Future<void> downloadAllAttachments(
     List<AttachmentDetails> attachments,
   ) async {
+    final l = AppLocalizations.of(Get.context!);
     int successCount = 0;
     int failureCount = 0;
 
@@ -466,19 +473,20 @@ class EmailController extends GetxController {
     if (failureCount == 0) {
       ToastHelper.success(
         Get.context!,
-        'Downloaded $successCount files successfully',
+        l.emailDownloadedAllSuccess(successCount),
       );
     } else if (successCount == 0) {
-      ToastHelper.error(Get.context!, 'Failed to download $failureCount files');
+      ToastHelper.error(Get.context!, l.emailDownloadedAllFailed(failureCount));
     } else {
       ToastHelper.info(
         Get.context!,
-        'Downloaded $successCount files, $failureCount failed',
+        l.emailDownloadedMixed(successCount, failureCount),
       );
     }
   }
 
   void showImageViewer({required AttachmentDetails attachmentDetails}) {
+    final l = AppLocalizations.of(Get.context!);
     final imageData = getAttachmentData(
       mime: email!.mime,
       fetchId: attachmentDetails.fetchId,
@@ -505,7 +513,7 @@ class EmailController extends GetxController {
                   icon: const Icon(Icons.download, color: Colors.white),
                   onPressed: () =>
                       downloadAttachment(attachmentDetails: attachmentDetails),
-                  tooltip: 'Download',
+                  tooltip: l.emailDownload,
                 ),
               ],
             ),
@@ -521,11 +529,12 @@ class EmailController extends GetxController {
         ),
       );
     } else {
-      ToastHelper.error(Get.context!, 'Failed to load image');
+      ToastHelper.error(Get.context!, l.emailImageLoadFailed);
     }
   }
 
   void showPdfViewer({required AttachmentDetails attachmentDetails}) {
+    final l = AppLocalizations.of(Get.context!);
     final pdfData = getAttachmentData(
       mime: email!.mime,
       fetchId: attachmentDetails.fetchId,
@@ -550,7 +559,7 @@ class EmailController extends GetxController {
                   icon: const Icon(Icons.download),
                   onPressed: () =>
                       downloadAttachment(attachmentDetails: attachmentDetails),
-                  tooltip: 'Download',
+                  tooltip: l.emailDownload,
                 ),
               ],
             ),
@@ -565,7 +574,7 @@ class EmailController extends GetxController {
         ),
       );
     } else {
-      ToastHelper.error(Get.context!, 'Failed to load PDF');
+      ToastHelper.error(Get.context!, l.emailPdfLoadFailed);
     }
   }
 

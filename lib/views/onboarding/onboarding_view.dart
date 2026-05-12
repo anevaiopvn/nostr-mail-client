@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 
 import '../../app/routes/app_routes.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../services/storage_service.dart';
 
 class OnboardingView extends StatelessWidget {
@@ -30,6 +31,7 @@ class OnboardingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -37,9 +39,8 @@ class OnboardingView extends StatelessWidget {
         child: IntroductionScreen(
           pages: [
             PageViewModel(
-              title: "Welcome to Nmail",
-              body:
-                  "Discover a decentralized email experience that puts you in control. A new way to communicate, centered around you.",
+              title: l.onboardingPage1Title,
+              body: l.onboardingPage1Body,
               image: Center(
                 child: Image.asset(
                   'icons/original_transparent_3x.png',
@@ -50,9 +51,8 @@ class OnboardingView extends StatelessWidget {
               decoration: _getPageDecoration(context),
             ),
             PageViewModel(
-              title: "A Network Without Masters",
-              body:
-                  "Your messages flow through a global network of independent servers. No single company owns your inbox.",
+              title: l.onboardingPage2Title,
+              body: l.onboardingPage2Body,
               image: Center(
                 child: Icon(
                   Icons.hub_outlined,
@@ -63,9 +63,8 @@ class OnboardingView extends StatelessWidget {
               decoration: _getPageDecoration(context),
             ),
             PageViewModel(
-              title: "Freedom of Choice",
-              body:
-                  "You are never locked into a single provider. Switch bridges or relays at any time without ever losing your identity or contacts.",
+              title: l.onboardingPage3Title,
+              body: l.onboardingPage3Body,
               image: Center(
                 child: Icon(
                   Icons.swap_horiz_rounded,
@@ -76,9 +75,8 @@ class OnboardingView extends StatelessWidget {
               decoration: _getPageDecoration(context),
             ),
             PageViewModel(
-              title: "One Identity for Everything",
-              body:
-                  "Use your account to send emails, follow profiles, or use other apps. It's one permanent identity that works across many different applications.",
+              title: l.onboardingPage4Title,
+              body: l.onboardingPage4Body,
               image: Center(
                 child: Icon(
                   Icons.apps_rounded,
@@ -89,9 +87,8 @@ class OnboardingView extends StatelessWidget {
               decoration: _getPageDecoration(context),
             ),
             PageViewModel(
-              title: "Built for the Future",
-              body:
-                  "Benefit from a modern architecture designed for privacy. Nmail helps you transition smoothly to a more secure and resilient way of communicating.",
+              title: l.onboardingPage5Title,
+              body: l.onboardingPage5Body,
               image: Center(
                 child: Icon(
                   Icons.auto_awesome_rounded,
@@ -105,15 +102,15 @@ class OnboardingView extends StatelessWidget {
           onDone: _onDone,
           onSkip: _onDone,
           showSkipButton: true,
-          skip: const Text(
-            'Skip',
-            style: TextStyle(fontWeight: FontWeight.w600),
+          skip: Text(
+            l.onboardingSkip,
+            style: const TextStyle(fontWeight: FontWeight.w600),
           ),
           next: const Icon(Icons.arrow_forward),
-          nextSemantic: 'Next',
-          done: const Text(
-            'Done',
-            style: TextStyle(fontWeight: FontWeight.w600),
+          nextSemantic: l.onboardingNext,
+          done: Text(
+            l.onboardingDone,
+            style: const TextStyle(fontWeight: FontWeight.w600),
           ),
           dotsDecorator: DotsDecorator(
             activeSize: const Size(22.0, 10.0),

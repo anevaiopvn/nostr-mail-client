@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nostr_mail_client/controllers/compose_controller.dart';
+import 'package:nostr_mail_client/l10n/generated/app_localizations.dart';
 import 'package:nostr_mail_client/views/compose/widgets/send_button_menu.dart';
 
 class BottomToolbarView extends StatelessWidget {
@@ -7,6 +8,7 @@ class BottomToolbarView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final controller = ComposeController.to;
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -17,7 +19,7 @@ class BottomToolbarView extends StatelessWidget {
           IconButton(
             onPressed: controller.pickAttachments,
             icon: const Icon(Icons.attach_file),
-            tooltip: 'Attach file',
+            tooltip: l.composeAttachFile,
           ),
         ],
       ),

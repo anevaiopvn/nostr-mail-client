@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nostr_mail_client/controllers/compose_controller.dart';
+import 'package:nostr_mail_client/l10n/generated/app_localizations.dart';
 
 import 'from_avatar_view.dart';
 import 'from_selector_sheet.dart';
@@ -10,6 +11,7 @@ class FromSelectorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
 
     return InkWell(
@@ -19,7 +21,7 @@ class FromSelectorView extends StatelessWidget {
         child: Row(
           children: [
             Text(
-              'From',
+              l.composeFrom,
               style: TextStyle(
                 color: colorScheme.onSurfaceVariant,
                 fontSize: 16,
@@ -31,7 +33,7 @@ class FromSelectorView extends StatelessWidget {
                 final selected = ComposeController.to.selectedFrom.value;
                 if (selected == null) {
                   return Text(
-                    'Loading...',
+                    l.stateLoadingEllipsis,
                     style: TextStyle(color: colorScheme.outline),
                   );
                 }

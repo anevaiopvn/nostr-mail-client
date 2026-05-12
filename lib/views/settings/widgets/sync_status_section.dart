@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../../../services/nostr_mail_service.dart';
 import '../../../utils/relay_utils.dart';
 
@@ -47,23 +49,25 @@ class _SyncStatusSectionState extends State<SyncStatusSection> {
     }
   }
 
-  String _formatTimestamp(int? timestamp) {
+  String _formatTimestamp(AppLocalizations l, String locale, int? timestamp) {
     if (timestamp == null) return '-';
-    if (timestamp == 0) return 'Beginning of time';
+    if (timestamp == 0) return l.syncStatusBeginningOfTime;
     final date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
-    return '${date.day}/${date.month}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+    return DateFormat.yMd(locale).add_Hm().format(date);
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context).toString();
     if (_isLoading) {
-      return const ListTile(
-        leading: SizedBox(
+      return ListTile(
+        leading: const SizedBox(
           width: 24,
           height: 24,
           child: CircularProgressIndicator(strokeWidth: 2),
         ),
-        title: Text('Loading...'),
+        title: Text(l.stateLoadingEllipsis),
       );
     }
 
@@ -73,7 +77,7 @@ class _SyncStatusSectionState extends State<SyncStatusSection> {
         ListTile(
           dense: true,
           title: Text(
-            'Sync Status',
+            l.syncStatusSectionTitle,
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.w600,
@@ -82,10 +86,10 @@ class _SyncStatusSectionState extends State<SyncStatusSection> {
           ),
         ),
         if (_syncStatus == null || _syncStatus!.isEmpty)
-          const ListTile(
-            leading: Icon(Icons.sync_disabled),
-            title: Text('No sync data available'),
-            subtitle: Text('Sync your emails to see relay status'),
+          ListTile(
+            leading: const Icon(Icons.sync_disabled),
+            title: Text(l.syncStatusEmpty),
+            subtitle: Text(l.syncStatusEmptyHint),
           )
         else
           ..._syncStatus!.map(
@@ -96,7 +100,7 @@ class _SyncStatusSectionState extends State<SyncStatusSection> {
                 style: const TextStyle(fontSize: 14),
               ),
               subtitle: Text(
-                '${_formatTimestamp(status.oldestTimestamp)} → ${_formatTimestamp(status.newestTimestamp)}',
+                '${_formatTimestamp(l, locale, status.oldestTimestamp)} → ${_formatTimestamp(l, locale, status.newestTimestamp)}',
                 style: const TextStyle(fontSize: 12),
               ),
             ),
@@ -114,7 +118,7 @@ class _SyncStatusSectionState extends State<SyncStatusSection> {
                       height: 16,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Resync'),
+                  : Text(l.syncStatusResync),
             ),
           ),
         ),

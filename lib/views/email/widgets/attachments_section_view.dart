@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nostr_mail/nostr_mail.dart';
+import 'package:nostr_mail_client/l10n/generated/app_localizations.dart';
 import 'package:nostr_mail_client/utils/get_attachements.dart';
 import 'package:nostr_mail_client/views/email/email_controller.dart';
 import 'package:nostr_mail_client/views/email/widgets/attachment_card_view.dart';
@@ -16,6 +17,7 @@ class AttachmentsSectionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final totalSize = attachments.fold<int>(
       0,
       (sum, attachment) => sum + attachment.size,
@@ -28,7 +30,7 @@ class AttachmentsSectionView extends StatelessWidget {
         Row(
           children: [
             Text(
-              'Attachments',
+              l.emailAttachmentsTitle,
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
@@ -47,7 +49,7 @@ class AttachmentsSectionView extends StatelessWidget {
                 onPressed: () =>
                     EmailController.to.downloadAllAttachments(attachments),
                 icon: const Icon(Icons.file_download),
-                label: const Text('Download all'),
+                label: Text(l.emailDownloadAll),
               ),
             ],
           ],

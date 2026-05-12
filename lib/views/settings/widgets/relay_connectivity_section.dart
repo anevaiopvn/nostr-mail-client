@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndk/entities.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../../../services/nostr_mail_service.dart';
 import '../../../utils/relay_utils.dart';
 
@@ -46,6 +47,7 @@ class _RelayConnectivitySectionState extends State<RelayConnectivitySection> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final connected = _connectedCount;
     final total = _connectivityMap.length;
@@ -56,7 +58,7 @@ class _RelayConnectivitySectionState extends State<RelayConnectivitySection> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
-            'Realtime Connection',
+            l.connectivitySectionTitle,
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.w600,
@@ -72,7 +74,7 @@ class _RelayConnectivitySectionState extends State<RelayConnectivitySection> {
             color: colorScheme.onSurfaceVariant,
           ),
           title: Text(
-            'Relay Connectivity',
+            l.connectivityRelayConnectivity,
             style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
           ),
           trailing: Row(

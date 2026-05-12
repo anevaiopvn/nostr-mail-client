@@ -6,26 +6,28 @@ import 'package:toastification/toastification.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../controllers/auth_controller.dart';
 import '../../../controllers/inbox_controller.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../../../utils/metadata_extensions.dart';
 import '../../../widgets/nostr_avatar.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 
-  String _shortNpub() {
+  String _shortNpub(AppLocalizations l) {
     final npub = Get.find<AuthController>().npub;
-    if (npub == null || npub.length < 20) return 'Unknown';
+    if (npub == null || npub.length < 20) return l.inboxUnknown;
     return '${npub.substring(0, 10)}...${npub.substring(npub.length - 6)}';
   }
 
   void _copyNpub(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final npub = Get.find<AuthController>().npub;
     if (npub == null) return;
     Clipboard.setData(ClipboardData(text: npub));
     toastification.show(
       context: context,
       type: ToastificationType.success,
-      title: const Text('npub copied'),
+      title: Text(l.inboxNpubCopied),
       autoCloseDuration: const Duration(seconds: 2),
       alignment: Alignment.bottomRight,
     );
@@ -50,6 +52,7 @@ class AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final controller = Get.isRegistered<InboxController>()
         ? Get.find<InboxController>()
         : Get.put(InboxController());
@@ -87,7 +90,7 @@ class AppDrawer extends StatelessWidget {
                     () => Row(
                       children: [
                         Semantics(
-                          label: 'Edit profile',
+                          label: l.inboxEditProfile,
                           button: true,
                           child: GestureDetector(
                             onTap: () {
@@ -137,7 +140,7 @@ class AppDrawer extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Semantics(
-                                label: 'Copy npub',
+                                label: l.inboxCopyNpub,
                                 button: true,
                                 child: InkWell(
                                   onTap: () => _copyNpub(context),
@@ -147,7 +150,7 @@ class AppDrawer extends StatelessWidget {
                                     children: [
                                       Flexible(
                                         child: Text(
-                                          _shortNpub(),
+                                          _shortNpub(l),
                                           style: TextStyle(
                                             color: Colors.grey[600],
                                             fontSize: 12,
@@ -180,7 +183,7 @@ class AppDrawer extends StatelessWidget {
                         Get.toNamed(AppRoutes.compose);
                       },
                       icon: const Icon(Icons.edit),
-                      label: const Text('Compose'),
+                      label: Text(l.inboxCompose),
                     ),
                   ),
                 ],
@@ -191,25 +194,25 @@ class AppDrawer extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Divider(),
           ),
-          const NavigationDrawerDestination(
-            icon: Icon(Icons.inbox_outlined),
-            selectedIcon: Icon(Icons.inbox),
-            label: Text('Inbox'),
+          NavigationDrawerDestination(
+            icon: const Icon(Icons.inbox_outlined),
+            selectedIcon: const Icon(Icons.inbox),
+            label: Text(l.folderInbox),
           ),
-          const NavigationDrawerDestination(
-            icon: Icon(Icons.send_outlined),
-            selectedIcon: Icon(Icons.send),
-            label: Text('Sent'),
+          NavigationDrawerDestination(
+            icon: const Icon(Icons.send_outlined),
+            selectedIcon: const Icon(Icons.send),
+            label: Text(l.folderSent),
           ),
-          const NavigationDrawerDestination(
-            icon: Icon(Icons.archive_outlined),
-            selectedIcon: Icon(Icons.archive),
-            label: Text('Archive'),
+          NavigationDrawerDestination(
+            icon: const Icon(Icons.archive_outlined),
+            selectedIcon: const Icon(Icons.archive),
+            label: Text(l.folderArchive),
           ),
-          const NavigationDrawerDestination(
-            icon: Icon(Icons.delete_outlined),
-            selectedIcon: Icon(Icons.delete),
-            label: Text('Trash'),
+          NavigationDrawerDestination(
+            icon: const Icon(Icons.delete_outlined),
+            selectedIcon: const Icon(Icons.delete),
+            label: Text(l.folderTrash),
           ),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
@@ -219,7 +222,7 @@ class AppDrawer extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: ListTile(
               leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
+              title: Text(l.inboxSettings),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(28),
               ),
@@ -233,7 +236,10 @@ class AppDrawer extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: ListTile(
               leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text('Logout', style: TextStyle(color: Colors.red)),
+              title: Text(
+                l.inboxLogout,
+                style: const TextStyle(color: Colors.red),
+              ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(28),
               ),

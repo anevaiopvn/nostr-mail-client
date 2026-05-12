@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../../../models/compose_attachment.dart';
 import '../../../utils/get_attachements.dart';
 
@@ -15,6 +16,7 @@ class AttachmentChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final icon = getAttachmentIcon(attachment.filename);
     final size = formatFileSize(attachment.size);
@@ -61,7 +63,7 @@ class AttachmentChip extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Semantics(
-            label: 'Remove attachment',
+            label: l.composeRemoveAttachment,
             button: true,
             child: InkWell(
               onTap: onDelete,

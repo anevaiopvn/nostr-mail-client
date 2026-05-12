@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../controllers/auth_controller.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../../../utils/toast_helper.dart';
 
 class SyncCodeExplanationView extends StatelessWidget {
@@ -11,12 +12,13 @@ class SyncCodeExplanationView extends StatelessWidget {
   SyncCodeExplanationView({super.key});
 
   void _copySyncCode(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final authController = Get.find<AuthController>();
     final nsec = authController.getNsec();
 
     if (nsec == null) {
       if (context.mounted) {
-        ToastHelper.error(context, 'Unable to retrieve sync code');
+        ToastHelper.error(context, l.authUnableRetrieveCode);
       }
       return;
     }
@@ -31,6 +33,7 @@ class SyncCodeExplanationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
@@ -41,7 +44,7 @@ class SyncCodeExplanationView extends StatelessWidget {
         const SizedBox(height: 16),
 
         Text(
-          'Your Sync Code',
+          l.authYourSyncCode,
           style: textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.bold,
             color: colorScheme.primary,
@@ -52,7 +55,7 @@ class SyncCodeExplanationView extends StatelessWidget {
         const SizedBox(height: 24),
 
         Text(
-          'This code is the key to your account. It gives you full control and lets you:',
+          l.authSyncCodeIntro,
           style: textTheme.bodyLarge,
           textAlign: TextAlign.center,
         ),
@@ -62,17 +65,17 @@ class SyncCodeExplanationView extends StatelessWidget {
         _buildFeatureItem(
           context,
           Icons.restore_page,
-          'Restore your account on any device',
+          l.authSyncCodeFeatureRestore,
         ),
         _buildFeatureItem(
           context,
           Icons.backup_rounded,
-          'Back up your identity securely',
+          l.authSyncCodeFeatureBackup,
         ),
         _buildFeatureItem(
           context,
           Icons.login_rounded,
-          'Log in to other Nostr apps',
+          l.authSyncCodeFeatureLogin,
         ),
 
         const SizedBox(height: 32),
@@ -94,10 +97,7 @@ class SyncCodeExplanationView extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: Text(
-                  'Never share this code with anyone. Store it in a safe place. You can always find it later in Settings.',
-                  style: textTheme.bodyMedium,
-                ),
+                child: Text(l.authSyncCodeWarning, style: textTheme.bodyMedium),
               ),
             ],
           ),
@@ -110,7 +110,7 @@ class SyncCodeExplanationView extends StatelessWidget {
             onPressed: () => _copySyncCode(context),
             icon: Icon(_hasCopied.value ? Icons.check : Icons.copy_all_rounded),
             label: Text(
-              _hasCopied.value ? 'Copied!' : 'Copy Sync Code',
+              _hasCopied.value ? l.authCopied : l.authCopySyncCode,
               style: const TextStyle(fontSize: 16),
             ),
             style: FilledButton.styleFrom(
@@ -129,9 +129,9 @@ class SyncCodeExplanationView extends StatelessWidget {
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16),
           ),
-          child: const Text(
-            'Continue to Inbox',
-            style: TextStyle(fontSize: 16),
+          child: Text(
+            l.authContinueToInbox,
+            style: const TextStyle(fontSize: 16),
           ),
         ),
       ],

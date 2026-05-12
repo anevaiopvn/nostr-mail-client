@@ -13,6 +13,7 @@ import 'package:nostr_mail/nostr_mail.dart';
 import 'package:nostr_mail_client/utils/toast_helper.dart';
 import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
 
+import '../l10n/generated/app_localizations.dart';
 import '../models/compose_attachment.dart';
 import '../models/compose_mode.dart';
 import '../models/contact.dart';
@@ -209,10 +210,11 @@ class ComposeController extends GetxController {
 
   /// Pick files and add them as attachments
   Future<void> pickAttachments() async {
+    final l = AppLocalizations.of(Get.context!);
     try {
       // TODO: limit file size
       final result = await FilePicker.platform.pickFiles(
-        dialogTitle: 'Select Attachments',
+        dialogTitle: l.composeSelectAttachments,
         allowMultiple: true,
         withData: true, // TODO: do not work on macos
       );
@@ -235,7 +237,7 @@ class ComposeController extends GetxController {
       }
     } catch (e) {
       if (Get.context != null) {
-        ToastHelper.error(Get.context!, 'Failed to pick files: $e');
+        ToastHelper.error(Get.context!, l.composePickFilesFailed(e.toString()));
       }
     }
   }
@@ -746,7 +748,8 @@ class ComposeController extends GetxController {
       if (added) {
         controller.clear();
       } else {
-        ToastHelper.error(Get.context!, 'Invalid recipient format');
+        final l = AppLocalizations.of(Get.context!);
+        ToastHelper.error(Get.context!, l.composeInvalidRecipient);
       }
     }
   }
@@ -767,8 +770,10 @@ class ComposeController extends GetxController {
       if (bccController.text.trim().isNotEmpty) return;
     }
 
+    final l = AppLocalizations.of(Get.context!);
+
     if (recipients.isEmpty) {
-      ToastHelper.error(Get.context!, 'Add at least one recipient');
+      ToastHelper.error(Get.context!, l.composeAddRecipient);
       return;
     }
 
@@ -787,7 +792,7 @@ class ComposeController extends GetxController {
     if (success) {
       Get.back();
     } else {
-      ToastHelper.error(Get.context!, 'Failed to send email');
+      ToastHelper.error(Get.context!, l.composeSendFailed);
     }
   }
 }

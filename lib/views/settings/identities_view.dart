@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../app/routes/app_routes.dart';
 import '../../controllers/identities_controller.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../utils/responsive_helper.dart';
 import '../shared/desktop_shell.dart';
 import 'widgets/identities_empty_state.dart';
@@ -13,12 +14,13 @@ class IdentitiesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final controller = Get.find<IdentitiesController>();
     final isWide = ResponsiveHelper.isNotMobile(context);
 
     final scaffold = Scaffold(
       appBar: AppBar(
-        title: const Text('Identities'),
+        title: Text(l.identitiesTitle),
         actionsPadding: .only(right: 8),
         actions: [
           Obx(() {
@@ -31,7 +33,7 @@ class IdentitiesView extends StatelessWidget {
                       height: 16,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Save'),
+                  : Text(l.actionSave),
             );
           }),
         ],
@@ -41,7 +43,7 @@ class IdentitiesView extends StatelessWidget {
           await Get.toNamed(AppRoutes.createIdentity);
           await controller.loadData();
         },
-        tooltip: 'Create identity',
+        tooltip: l.identitiesCreate,
         child: const Icon(Icons.add),
       ),
       body: SafeArea(
@@ -65,7 +67,7 @@ class IdentitiesView extends StatelessWidget {
         canPop: !controller.hasChanges,
         onPopInvokedWithResult: (didPop, _) async {
           if (didPop) return;
-          final shouldDiscard = await _confirmDiscard();
+          final shouldDiscard = await _confirmDiscard(context);
           if (shouldDiscard == true) {
             Get.back();
           }
@@ -80,21 +82,20 @@ class IdentitiesView extends StatelessWidget {
     return content;
   }
 
-  Future<bool?> _confirmDiscard() {
+  Future<bool?> _confirmDiscard(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Get.dialog<bool>(
       AlertDialog(
-        title: const Text('Discard changes?'),
-        content: const Text(
-          'You have unsaved changes. Leaving now will discard them.',
-        ),
+        title: Text(l.identitiesDiscardTitle),
+        content: Text(l.identitiesDiscardMessage),
         actions: [
           TextButton(
             onPressed: () => Get.back(result: false),
-            child: const Text('Keep editing'),
+            child: Text(l.identitiesKeepEditing),
           ),
           TextButton(
             onPressed: () => Get.back(result: true),
-            child: const Text('Discard'),
+            child: Text(l.actionDiscard),
           ),
         ],
       ),

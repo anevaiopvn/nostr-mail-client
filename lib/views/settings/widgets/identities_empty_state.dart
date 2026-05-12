@@ -3,12 +3,14 @@ import 'package:get/get.dart';
 
 import '../../../app/routes/app_routes.dart';
 import '../../../controllers/identities_controller.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class IdentitiesEmptyState extends StatelessWidget {
   const IdentitiesEmptyState({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
@@ -25,13 +27,13 @@ class IdentitiesEmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'No identities yet',
+              l.identitiesEmptyTitle,
               style: textTheme.headlineSmall,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
-              'Create one to send emails from a custom address.',
+              l.identitiesEmptyMessage,
               style: textTheme.bodyMedium?.copyWith(
                 color: colorScheme.onSurfaceVariant,
               ),
@@ -40,7 +42,7 @@ class IdentitiesEmptyState extends StatelessWidget {
             const SizedBox(height: 24),
             FilledButton.icon(
               icon: const Icon(Icons.add),
-              label: const Text('Create identity'),
+              label: Text(l.identitiesCreate),
               onPressed: () async {
                 await Get.toNamed(AppRoutes.createIdentity);
                 await Get.find<IdentitiesController>().loadData();

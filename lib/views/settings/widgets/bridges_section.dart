@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../app/config/nostr_config.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../../../services/nostr_mail_service.dart';
 import 'recommendation_chips.dart';
 
@@ -63,6 +64,7 @@ class _BridgesSectionState extends State<BridgesSection> {
   }
 
   Future<void> _addBridge() async {
+    final l = AppLocalizations.of(context);
     final controller = TextEditingController();
     String? errorText;
 
@@ -70,12 +72,12 @@ class _BridgesSectionState extends State<BridgesSection> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Add bridge'),
+          title: Text(l.bridgeAddTitle),
           content: TextField(
             controller: controller,
             decoration: InputDecoration(
-              hintText: 'bridge.example.com',
-              labelText: 'Bridge domain',
+              hintText: l.bridgeDomainHint,
+              labelText: l.bridgeDomainLabel,
               errorText: errorText,
             ),
             autofocus: true,
@@ -92,7 +94,7 @@ class _BridgesSectionState extends State<BridgesSection> {
             onSubmitted: (value) {
               final domain = value.trim().toLowerCase();
               if (domain.isEmpty || !domain.contains('.')) {
-                setDialogState(() => errorText = 'Invalid domain');
+                setDialogState(() => errorText = l.bridgeInvalidDomain);
                 return;
               }
               Navigator.pop(context, domain);
@@ -101,18 +103,18 @@ class _BridgesSectionState extends State<BridgesSection> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text(l.actionCancel),
             ),
             TextButton(
               onPressed: () {
                 final domain = controller.text.trim().toLowerCase();
                 if (domain.isEmpty || !domain.contains('.')) {
-                  setDialogState(() => errorText = 'Invalid domain');
+                  setDialogState(() => errorText = l.bridgeInvalidDomain);
                   return;
                 }
                 Navigator.pop(context, domain);
               },
-              child: const Text('Add'),
+              child: Text(l.actionAdd),
             ),
           ],
         ),
@@ -159,14 +161,15 @@ class _BridgesSectionState extends State<BridgesSection> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     if (_isLoading) {
-      return const ListTile(
-        leading: SizedBox(
+      return ListTile(
+        leading: const SizedBox(
           width: 24,
           height: 24,
           child: CircularProgressIndicator(strokeWidth: 2),
         ),
-        title: Text('Loading...'),
+        title: Text(l.stateLoadingEllipsis),
       );
     }
 
@@ -176,7 +179,7 @@ class _BridgesSectionState extends State<BridgesSection> {
         ListTile(
           dense: true,
           title: Text(
-            'Bridges',
+            l.bridgeSectionTitle,
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.w600,
@@ -186,7 +189,7 @@ class _BridgesSectionState extends State<BridgesSection> {
           trailing: IconButton(
             icon: const Icon(Icons.add, size: 18),
             onPressed: _addBridge,
-            tooltip: 'Add bridge',
+            tooltip: l.bridgeAddTooltip,
           ),
         ),
         RecommendationChips(
@@ -194,13 +197,12 @@ class _BridgesSectionState extends State<BridgesSection> {
           isAlreadyAdded: (r) => _bridges != null && _bridges!.contains(r),
           onAdd: (bridge) => setState(() => _bridges!.add(bridge)),
           formatLabel: (bridge) => bridge,
-          title: 'Recommended:',
         ),
         if (_bridges == null || _bridges!.isEmpty)
-          const ListTile(
-            leading: Icon(Icons.alternate_email),
-            title: Text('No bridges configured'),
-            subtitle: Text('Tap + to add a bridge'),
+          ListTile(
+            leading: const Icon(Icons.alternate_email),
+            title: Text(l.bridgeEmpty),
+            subtitle: Text(l.bridgeEmptyHint),
           )
         else
           ..._bridges!.map((bridge) {
@@ -221,7 +223,7 @@ class _BridgesSectionState extends State<BridgesSection> {
               ),
               subtitle: isDefault
                   ? Text(
-                      'Default bridge',
+                      l.bridgeDefault,
                       style: TextStyle(
                         fontSize: 12,
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -231,7 +233,7 @@ class _BridgesSectionState extends State<BridgesSection> {
               trailing: IconButton(
                 icon: Icon(isMarked ? Icons.undo : Icons.close, size: 18),
                 onPressed: () => _toggleBridgeDeletion(bridge),
-                tooltip: isMarked ? 'Undo' : 'Remove',
+                tooltip: isMarked ? l.actionUndo : l.actionRemove,
               ),
             );
           }),
@@ -248,7 +250,7 @@ class _BridgesSectionState extends State<BridgesSection> {
                         height: 16,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Save'),
+                    : Text(l.actionSave),
               ),
             ),
           ),

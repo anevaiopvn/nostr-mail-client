@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../controllers/inbox_controller.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class SearchField extends GetView<InboxController> {
   const SearchField({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
@@ -20,7 +22,7 @@ class SearchField extends GetView<InboxController> {
         style: const TextStyle(fontSize: 16),
         onChanged: controller.setSearchQuery,
         decoration: InputDecoration(
-          hintText: 'Search all emails...',
+          hintText: l.inboxSearchHint,
           hintStyle: TextStyle(
             color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
             fontSize: 14,
@@ -29,7 +31,7 @@ class SearchField extends GetView<InboxController> {
           suffixIcon: IconButton(
             icon: const Icon(Icons.close, size: 20),
             onPressed: controller.exitSearchMode,
-            tooltip: 'Close search',
+            tooltip: l.inboxCloseSearch,
           ),
           border: InputBorder.none,
         ),

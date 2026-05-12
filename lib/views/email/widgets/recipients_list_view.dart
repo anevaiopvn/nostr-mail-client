@@ -1,5 +1,6 @@
 import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:flutter/material.dart';
+import 'package:nostr_mail_client/l10n/generated/app_localizations.dart';
 import 'package:nostr_mail_client/utils/nostr_utils.dart';
 import 'package:nostr_mail_client/widgets/email_avatar.dart';
 import 'package:nostr_mail_client/widgets/nostr_avatar.dart';
@@ -11,6 +12,7 @@ class RecipientsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final email = EmailController.to.email;
     if (email == null) return const SizedBox.shrink();
 
@@ -21,14 +23,16 @@ class RecipientsListView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (to.isNotEmpty) ...[_buildRecipientSection(context, 'To', to)],
+        if (to.isNotEmpty) ...[
+          _buildRecipientSection(context, l.emailRecipientTo, to),
+        ],
         if (cc.isNotEmpty) ...[
           const SizedBox(height: 8),
-          _buildRecipientSection(context, 'Cc', cc),
+          _buildRecipientSection(context, l.emailRecipientCc, cc),
         ],
         if (bcc.isNotEmpty) ...[
           const SizedBox(height: 8),
-          _buildRecipientSection(context, 'Bcc', bcc),
+          _buildRecipientSection(context, l.emailRecipientBcc, bcc),
         ],
       ],
     );

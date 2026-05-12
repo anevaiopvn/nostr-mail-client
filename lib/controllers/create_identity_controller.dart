@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../controllers/auth_controller.dart';
+import '../l10n/generated/app_localizations.dart';
 import '../models/local_part_format.dart';
 import '../services/nostr_mail_service.dart';
 import '../utils/toast_helper.dart';
@@ -155,9 +156,9 @@ class CreateIdentityController extends GetxController {
 
       Get.back();
     } catch (e) {
-      final context = Get.context;
-      if (context != null) {
-        ToastHelper.error(Get.context!, 'Failed to create identity: $e');
+      if (Get.context != null) {
+        final l = AppLocalizations.of(Get.context!);
+        ToastHelper.error(Get.context!, l.createIdentityFailed(e.toString()));
       }
     } finally {
       isSaving.value = false;

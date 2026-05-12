@@ -6,6 +6,7 @@ import 'package:nostr_mail/nostr_mail.dart';
 import '../../app/routes/app_routes.dart';
 import '../../controllers/auth_controller.dart';
 import '../../controllers/inbox_controller.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../models/compose_mode.dart';
 import '../../utils/toast_helper.dart';
 import '../../utils/metadata_extensions.dart';
@@ -20,6 +21,15 @@ import 'widgets/selection_actions_bar.dart';
 
 class InboxView extends GetView<InboxController> {
   const InboxView({super.key});
+
+  String _folderTitle(AppLocalizations l, MailFolder folder) {
+    return switch (folder) {
+      MailFolder.inbox => l.folderInbox,
+      MailFolder.sent => l.folderSent,
+      MailFolder.trash => l.folderTrash,
+      MailFolder.archive => l.folderArchive,
+    };
+  }
 
   Widget _buildAccountHeader(BuildContext context) {
     final authController = Get.find<AuthController>();
@@ -70,6 +80,7 @@ class InboxView extends GetView<InboxController> {
   }
 
   Widget _buildToolbar(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
@@ -92,12 +103,12 @@ class InboxView extends GetView<InboxController> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.close),
-                    tooltip: 'Clear selection',
+                    tooltip: l.inboxClearSelection,
                     onPressed: controller.clearSelection,
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    '${controller.selectedIds.length} selected',
+                    l.inboxSelectedCount(controller.selectedIds.length),
                     style: const TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 16,
@@ -112,14 +123,8 @@ class InboxView extends GetView<InboxController> {
               return const SizedBox.shrink();
             }
 
-            final title = switch (controller.currentFolder.value) {
-              MailFolder.inbox => 'Inbox',
-              MailFolder.sent => 'Sent',
-              MailFolder.trash => 'Trash',
-              MailFolder.archive => 'Archive',
-            };
             return Text(
-              title,
+              _folderTitle(l, controller.currentFolder.value),
               style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
             );
           }),
@@ -144,7 +149,7 @@ class InboxView extends GetView<InboxController> {
                 if (!controller.isSearchMode.value)
                   IconButton(
                     icon: const Icon(Icons.search),
-                    tooltip: 'Search',
+                    tooltip: l.inboxSearch,
                     onPressed: controller.enterSearchMode,
                   ),
                 IconButton(
@@ -155,7 +160,7 @@ class InboxView extends GetView<InboxController> {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Icon(Icons.sync),
-                  tooltip: 'Sync',
+                  tooltip: l.inboxSync,
                   onPressed: controller.isSyncing.value
                       ? null
                       : controller.sync,
@@ -169,13 +174,14 @@ class InboxView extends GetView<InboxController> {
   }
 
   Widget _buildEmailList(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Obx(() {
       if (controller.emails.isEmpty) {
         final (icon, message) = switch (controller.currentFolder.value) {
-          MailFolder.inbox => (Icons.inbox, 'No emails yet'),
-          MailFolder.sent => (Icons.send, 'No sent emails'),
-          MailFolder.trash => (Icons.delete_outline, 'Trash is empty'),
-          MailFolder.archive => (Icons.archive_outlined, 'Archive is empty'),
+          MailFolder.inbox => (Icons.inbox, l.inboxEmptyInbox),
+          MailFolder.sent => (Icons.send, l.inboxEmptySent),
+          MailFolder.trash => (Icons.delete_outline, l.inboxEmptyTrash),
+          MailFolder.archive => (Icons.archive_outlined, l.inboxEmptyArchive),
         };
         return Center(
           child: Column(
@@ -190,7 +196,7 @@ class InboxView extends GetView<InboxController> {
               const SizedBox(height: 8),
               TextButton(
                 onPressed: controller.sync,
-                child: const Text('Sync from relays'),
+                child: Text(l.inboxSyncFromRelays),
               ),
             ],
           ),
@@ -237,6 +243,7 @@ class InboxView extends GetView<InboxController> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final isWide = ResponsiveHelper.isNotMobile(context);
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -272,13 +279,7 @@ class InboxView extends GetView<InboxController> {
                 if (controller.isSearchMode.value) {
                   return SearchField();
                 }
-                final title = switch (controller.currentFolder.value) {
-                  MailFolder.inbox => 'Inbox',
-                  MailFolder.sent => 'Sent',
-                  MailFolder.trash => 'Trash',
-                  MailFolder.archive => 'Archive',
-                };
-                return Text(title);
+                return Text(_folderTitle(l, controller.currentFolder.value));
               },
             ),
             leading: () {
@@ -288,14 +289,14 @@ class InboxView extends GetView<InboxController> {
               if (controller.hasSelection) {
                 return IconButton(
                   icon: const Icon(Icons.close),
-                  tooltip: 'Clear selection',
+                  tooltip: l.inboxClearSelection,
                   onPressed: controller.clearSelection,
                 );
               }
               return Builder(
                 builder: (context) => IconButton(
                   icon: const Icon(Icons.menu),
-                  tooltip: 'Menu',
+                  tooltip: l.inboxMenu,
                   onPressed: () => Scaffold.of(context).openDrawer(),
                 ),
               );
@@ -312,12 +313,12 @@ class InboxView extends GetView<InboxController> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.search),
-                      tooltip: 'Search',
+                      tooltip: l.inboxSearch,
                       onPressed: () => controller.enterSearchMode(),
                     ),
                     IconButton(
                       icon: const Icon(Icons.settings),
-                      tooltip: 'Settings',
+                      tooltip: l.inboxSettings,
                       onPressed: () => Get.toNamed(AppRoutes.settings),
                     ),
                     const SizedBox(width: 8),
@@ -344,7 +345,7 @@ class InboxView extends GetView<InboxController> {
                           MenuItemButton(
                             leadingIcon: const Icon(Icons.person_outline),
                             onPressed: () => Get.toNamed(AppRoutes.profile),
-                            child: const Text('Profile'),
+                            child: Text(l.inboxProfile),
                           ),
                           MenuItemButton(
                             leadingIcon: const Icon(Icons.copy),
@@ -354,7 +355,7 @@ class InboxView extends GetView<InboxController> {
                                 Clipboard.setData(ClipboardData(text: npub));
                               }
                             },
-                            child: const Text('Copy npub'),
+                            child: Text(l.inboxCopyNpub),
                           ),
                           MenuItemButton(
                             leadingIcon: const Icon(
@@ -365,15 +366,15 @@ class InboxView extends GetView<InboxController> {
                               Get.find<AuthController>().logout();
                               Get.offAllNamed(AppRoutes.login);
                             },
-                            child: const Text(
-                              'Logout',
-                              style: TextStyle(color: Colors.red),
+                            child: Text(
+                              l.inboxLogout,
+                              style: const TextStyle(color: Colors.red),
                             ),
                           ),
                         ],
                         builder: (context, menuController, child) {
                           return Semantics(
-                            label: 'Account',
+                            label: l.inboxAccount,
                             button: true,
                             child: GestureDetector(
                               onTap: () {
@@ -407,7 +408,7 @@ class InboxView extends GetView<InboxController> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => Get.toNamed(AppRoutes.compose),
         backgroundColor: colorScheme.primary,
-        tooltip: 'Compose',
+        tooltip: l.inboxCompose,
         child: Icon(Icons.edit, color: colorScheme.onPrimary),
       ),
       body: Column(
@@ -457,16 +458,15 @@ class InboxView extends GetView<InboxController> {
   }
 
   void _confirmDeleteOldEmails(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final oldCount = controller.oldEmailsCount.value;
 
     Get.dialog(
       AlertDialog(
-        title: const Text('Delete old emails'),
-        content: Text(
-          'This will permanently delete $oldCount email${oldCount == 1 ? '' : 's'} older than 30 days.\n\nThis action cannot be undone.',
-        ),
+        title: Text(l.inboxDeleteOldEmailsTitle),
+        content: Text(l.inboxDeleteOldEmailsMessage(oldCount)),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          TextButton(onPressed: () => Get.back(), child: Text(l.actionCancel)),
           TextButton(
             onPressed: () async {
               Get.back(); // Close confirmation dialog
@@ -477,13 +477,16 @@ class InboxView extends GetView<InboxController> {
                 if (context.mounted) {
                   ToastHelper.error(
                     context,
-                    'Delete failed',
-                    description: 'Failed to delete old emails: ${e.toString()}',
+                    l.inboxDeleteFailed,
+                    description: l.inboxDeleteFailedDescription(e.toString()),
                   );
                 }
               }
             },
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(
+              l.actionDelete,
+              style: const TextStyle(color: Colors.red),
+            ),
           ),
         ],
       ),

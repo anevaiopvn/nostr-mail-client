@@ -2,19 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../controllers/auth_controller.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class RegistrationForm extends GetView<AuthController> {
   const RegistrationForm({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Obx(
       () => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
-            'What should others see?',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          Text(
+            l.authRegisterPrompt,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 16),
           TextField(
@@ -26,10 +28,10 @@ class RegistrationForm extends GetView<AuthController> {
               if (controller.isLoading.value) return;
               controller.register();
             },
-            decoration: const InputDecoration(
-              labelText: 'Display Name',
-              hintText: 'e.g. Alice',
-              prefixIcon: Icon(Icons.alternate_email),
+            decoration: InputDecoration(
+              labelText: l.authDisplayNameLabel,
+              hintText: l.authDisplayNameHint,
+              prefixIcon: const Icon(Icons.alternate_email),
             ),
           ),
           const SizedBox(height: 24),
@@ -38,7 +40,7 @@ class RegistrationForm extends GetView<AuthController> {
                 controller.username.value.isEmpty || controller.isLoading.value
                 ? null
                 : controller.register,
-            child: const Text('Continue'),
+            child: Text(l.actionContinue),
           ),
           const SizedBox(height: 8),
           TextButton(
@@ -48,7 +50,7 @@ class RegistrationForm extends GetView<AuthController> {
                     controller.isRegistering.value = false;
                     controller.usernameController.clear();
                   },
-            child: const Text('Back to login'),
+            child: Text(l.authBackToLogin),
           ),
         ],
       ),

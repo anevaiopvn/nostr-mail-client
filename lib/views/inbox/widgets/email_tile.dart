@@ -10,6 +10,7 @@ import 'package:nostr_mail_client/views/inbox/widgets/unread_indicator.dart';
 
 import '../../../controllers/auth_controller.dart';
 import '../../../controllers/inbox_controller.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../../../utils/nostr_utils.dart';
 import '../../../utils/metadata_extensions.dart';
 import '../../../utils/responsive_helper.dart';
@@ -189,6 +190,7 @@ class _EmailTileState extends State<EmailTile> {
   }
 
   void _showContextMenu(BuildContext context, {Offset? position}) {
+    final l = AppLocalizations.of(context);
     final currentFolder = Get.find<InboxController>().currentFolder.value;
     final isInTrash = currentFolder == MailFolder.trash;
     final isInArchive = currentFolder == MailFolder.archive;
@@ -206,7 +208,7 @@ class _EmailTileState extends State<EmailTile> {
               Navigator.of(context).pop();
               widget.onReply?.call();
             },
-            child: const Text('Reply'),
+            child: Text(l.emailReply),
           ),
           MenuItemButton(
             leadingIcon: const Icon(Icons.forward),
@@ -214,7 +216,7 @@ class _EmailTileState extends State<EmailTile> {
               Navigator.of(context).pop();
               widget.onForward?.call();
             },
-            child: const Text('Forward'),
+            child: Text(l.emailForward),
           ),
           const Divider(height: 1),
           if (!isInArchive)
@@ -224,7 +226,7 @@ class _EmailTileState extends State<EmailTile> {
                 Navigator.of(context).pop();
                 widget.onArchive?.call();
               },
-              child: const Text('Archive'),
+              child: Text(l.emailArchive),
             )
           else
             MenuItemButton(
@@ -233,7 +235,7 @@ class _EmailTileState extends State<EmailTile> {
                 Navigator.of(context).pop();
                 widget.onRestore?.call();
               },
-              child: const Text('Unarchive'),
+              child: Text(l.emailUnarchive),
             ),
           if (currentFolder == MailFolder.inbox) ...[
             const Divider(height: 1),
@@ -245,7 +247,7 @@ class _EmailTileState extends State<EmailTile> {
                   final inboxController = Get.find<InboxController>();
                   inboxController.markAsRead(widget.email.id);
                 },
-                child: const Text('Mark as read'),
+                child: Text(l.emailMarkAsRead),
               )
             else
               MenuItemButton(
@@ -255,7 +257,7 @@ class _EmailTileState extends State<EmailTile> {
                   final inboxController = Get.find<InboxController>();
                   inboxController.markAsUnread(widget.email.id);
                 },
-                child: const Text('Mark as unread'),
+                child: Text(l.emailMarkAsUnread),
               ),
           ],
           MenuItemButton(
@@ -264,7 +266,7 @@ class _EmailTileState extends State<EmailTile> {
               Navigator.of(context).pop();
               widget.onDelete?.call();
             },
-            child: const Text('Move to trash'),
+            child: Text(l.emailMoveToTrash),
           ),
         ] else ...[
           MenuItemButton(
@@ -273,7 +275,7 @@ class _EmailTileState extends State<EmailTile> {
               Navigator.of(context).pop();
               widget.onRestore?.call();
             },
-            child: const Text('Restore'),
+            child: Text(l.emailRestore),
           ),
           MenuItemButton(
             leadingIcon: Icon(Icons.delete_forever, color: colorScheme.error),
@@ -282,7 +284,7 @@ class _EmailTileState extends State<EmailTile> {
               widget.onDelete?.call();
             },
             child: Text(
-              'Delete permanently',
+              l.emailDeletePermanently,
               style: TextStyle(color: colorScheme.error),
             ),
           ),
@@ -328,7 +330,7 @@ class _EmailTileState extends State<EmailTile> {
               if (!isInTrash) ...[
                 ListTile(
                   leading: const Icon(Icons.reply),
-                  title: const Text('Reply'),
+                  title: Text(l.emailReply),
                   onTap: () {
                     Navigator.pop(context);
                     widget.onReply?.call();
@@ -336,7 +338,7 @@ class _EmailTileState extends State<EmailTile> {
                 ),
                 ListTile(
                   leading: const Icon(Icons.forward),
-                  title: const Text('Forward'),
+                  title: Text(l.emailForward),
                   onTap: () {
                     Navigator.pop(context);
                     widget.onForward?.call();
@@ -346,7 +348,7 @@ class _EmailTileState extends State<EmailTile> {
                 if (!isInArchive)
                   ListTile(
                     leading: const Icon(Icons.archive),
-                    title: const Text('Archive'),
+                    title: Text(l.emailArchive),
                     onTap: () {
                       Navigator.pop(context);
                       widget.onArchive?.call();
@@ -355,7 +357,7 @@ class _EmailTileState extends State<EmailTile> {
                 else
                   ListTile(
                     leading: const Icon(Icons.unarchive),
-                    title: const Text('Unarchive'),
+                    title: Text(l.emailUnarchive),
                     onTap: () {
                       Navigator.pop(context);
                       widget.onRestore?.call();
@@ -366,7 +368,7 @@ class _EmailTileState extends State<EmailTile> {
                   if (isUnread)
                     ListTile(
                       leading: const Icon(Icons.mark_email_read),
-                      title: const Text('Mark as read'),
+                      title: Text(l.emailMarkAsRead),
                       onTap: () {
                         Navigator.pop(context);
                         final inboxController = Get.find<InboxController>();
@@ -376,7 +378,7 @@ class _EmailTileState extends State<EmailTile> {
                   else
                     ListTile(
                       leading: const Icon(Icons.mark_email_unread),
-                      title: const Text('Mark as unread'),
+                      title: Text(l.emailMarkAsUnread),
                       onTap: () {
                         Navigator.pop(context);
                         final inboxController = Get.find<InboxController>();
@@ -386,7 +388,7 @@ class _EmailTileState extends State<EmailTile> {
                 ],
                 ListTile(
                   leading: const Icon(Icons.delete_outline),
-                  title: const Text('Move to trash'),
+                  title: Text(l.emailMoveToTrash),
                   onTap: () {
                     Navigator.pop(context);
                     widget.onDelete?.call();
@@ -395,7 +397,7 @@ class _EmailTileState extends State<EmailTile> {
               ] else ...[
                 ListTile(
                   leading: const Icon(Icons.restore_from_trash),
-                  title: const Text('Restore'),
+                  title: Text(l.emailRestore),
                   onTap: () {
                     Navigator.pop(context);
                     widget.onRestore?.call();
@@ -404,7 +406,7 @@ class _EmailTileState extends State<EmailTile> {
                 ListTile(
                   leading: Icon(Icons.delete_forever, color: colorScheme.error),
                   title: Text(
-                    'Delete permanently',
+                    l.emailDeletePermanently,
                     style: TextStyle(color: colorScheme.error),
                   ),
                   onTap: () {
@@ -421,10 +423,11 @@ class _EmailTileState extends State<EmailTile> {
   }
 
   Widget _buildCompactTile(BuildContext context, ColorScheme colorScheme) {
+    final l = AppLocalizations.of(context);
     return Obx(() {
       final isUnread = this.isUnread;
       final subject = (widget.email.subject?.isEmpty ?? true)
-          ? '(No subject)'
+          ? l.emailNoSubject
           : widget.email.subject!;
       final attachments = getAttachmentDetails(widget.email.mime);
 
@@ -509,7 +512,7 @@ class _EmailTileState extends State<EmailTile> {
               ),
               const SizedBox(width: 16),
               Text(
-                formatDate(widget.email.date),
+                formatDate(context, widget.email.date),
                 style: TextStyle(color: Colors.grey[500], fontSize: 12),
               ),
             ],
@@ -520,6 +523,7 @@ class _EmailTileState extends State<EmailTile> {
   }
 
   Widget _buildDefaultTile(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Obx(() {
       final isUnread = this.isUnread;
       final attachments = getAttachmentDetails(widget.email.mime);
@@ -549,7 +553,7 @@ class _EmailTileState extends State<EmailTile> {
                 Expanded(
                   child: Text(
                     (widget.email.subject?.isEmpty ?? true)
-                        ? '(No subject)'
+                        ? l.emailNoSubject
                         : widget.email.subject!,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -579,7 +583,7 @@ class _EmailTileState extends State<EmailTile> {
               ],
             ),
             trailing: Text(
-              formatDate(widget.email.date),
+              formatDate(context, widget.email.date),
               style: TextStyle(color: Colors.grey[500], fontSize: 11),
             ),
             isThreeLine: true,

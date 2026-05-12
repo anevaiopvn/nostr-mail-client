@@ -5,6 +5,7 @@ import 'package:ndk_flutter/ndk_flutter.dart';
 
 import '../../../app/routes/app_routes.dart';
 import '../../../controllers/auth_controller.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../../../utils/toast_helper.dart';
 
 class LoginForm extends GetView<AuthController> {
@@ -12,6 +13,7 @@ class LoginForm extends GetView<AuthController> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Obx(
       () => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -22,7 +24,7 @@ class LoginForm extends GetView<AuthController> {
               controller.onLoggedIn();
               Get.offAllNamed(AppRoutes.inbox);
             },
-            nsecLabelText: "Sync code",
+            nsecLabelText: l.authSyncCodeLabel,
             enableNip07Login: false,
             enablePubkeyLogin: false,
             enableBunkerLogin: false,
@@ -33,19 +35,18 @@ class LoginForm extends GetView<AuthController> {
             onPressed: () {
               ToastHelper.error(
                 context,
-                'Invalid sync code',
-                description:
-                    "We're checking your code as you type. Once valid, you'll be signed in without having to click anything.",
+                l.authInvalidSyncCode,
+                description: l.authInvalidSyncCodeDescription,
               );
             },
             icon: const Icon(Icons.login),
-            label: const Text('Log in'),
+            label: Text(l.authLogIn),
           ),
           const SizedBox(height: 8),
           OutlinedButton.icon(
             onPressed: () => controller.isRegistering.value = true,
             icon: const Icon(Icons.person_add_outlined),
-            label: const Text('Create an account'),
+            label: Text(l.authCreateAccount),
           ),
           const SizedBox(height: 8),
           Align(
@@ -57,7 +58,7 @@ class LoginForm extends GetView<AuthController> {
                 duration: const Duration(milliseconds: 200),
                 child: const Icon(Icons.expand_more),
               ),
-              label: const Text('More options'),
+              label: Text(l.authMoreOptions),
             ),
           ),
           AnimatedOpacity(

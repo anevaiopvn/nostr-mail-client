@@ -8,6 +8,8 @@ import 'package:flutter_highlight/themes/a11y-dark.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
+
 /// Shows a responsive NIP-59 events dialog.
 /// - Mobile (<600px): Bottom sheet with slide-up animation
 /// - Desktop: Centered dialog with fade animation
@@ -17,6 +19,7 @@ Future<void> showNip59EventsDialog({
   required Nip01Event? seal,
   required Nip01Event? rumor,
 }) async {
+  final l = AppLocalizations.of(context);
   final isMobile = MediaQuery.of(context).size.width < 600;
 
   if (isMobile) {
@@ -36,7 +39,7 @@ Future<void> showNip59EventsDialog({
     await showGeneralDialog(
       context: context,
       barrierDismissible: true,
-      barrierLabel: 'Dismiss',
+      barrierLabel: l.emailNip59Dismiss,
       barrierColor: Colors.black54,
       transitionDuration: const Duration(milliseconds: 200),
       pageBuilder: (context, animation, secondaryAnimation) {
@@ -81,6 +84,7 @@ class _Nip59EventsContent extends StatelessWidget {
   }
 
   Widget _buildBottomSheet(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -91,11 +95,15 @@ class _Nip59EventsContent extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                EventCard(event: giftWrap, kind: 1059, label: 'Gift Wrap'),
+                EventCard(
+                  event: giftWrap,
+                  kind: 1059,
+                  label: l.emailNip59GiftWrap,
+                ),
                 const SizedBox(height: 12),
-                EventCard(event: seal, kind: 13, label: 'Seal'),
+                EventCard(event: seal, kind: 13, label: l.emailNip59Seal),
                 const SizedBox(height: 12),
-                EventCard(event: rumor, kind: 1301, label: 'Rumor'),
+                EventCard(event: rumor, kind: 1301, label: l.emailNip59Rumor),
                 const SizedBox(height: 16),
               ],
             ),
@@ -106,6 +114,7 @@ class _Nip59EventsContent extends StatelessWidget {
   }
 
   Widget _buildDesktop(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
@@ -120,11 +129,19 @@ class _Nip59EventsContent extends StatelessWidget {
                 padding: const EdgeInsets.all(24),
                 child: Column(
                   children: [
-                    EventCard(event: giftWrap, kind: 1059, label: 'Gift Wrap'),
+                    EventCard(
+                      event: giftWrap,
+                      kind: 1059,
+                      label: l.emailNip59GiftWrap,
+                    ),
                     const SizedBox(height: 16),
-                    EventCard(event: seal, kind: 13, label: 'Seal'),
+                    EventCard(event: seal, kind: 13, label: l.emailNip59Seal),
                     const SizedBox(height: 16),
-                    EventCard(event: rumor, kind: 1301, label: 'Rumor'),
+                    EventCard(
+                      event: rumor,
+                      kind: 1301,
+                      label: l.emailNip59Rumor,
+                    ),
                   ],
                 ),
               ),
@@ -136,6 +153,7 @@ class _Nip59EventsContent extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 20, 16, 12),
       child: Row(
@@ -143,7 +161,7 @@ class _Nip59EventsContent extends StatelessWidget {
           Icon(Icons.code, color: Theme.of(context).colorScheme.primary),
           const SizedBox(width: 8),
           Text(
-            'NIP-59 Events',
+            l.emailNip59Title,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -169,6 +187,7 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -208,7 +227,7 @@ class EventCard extends StatelessWidget {
                       _copied.value ? Icons.check : Icons.copy,
                       key: ValueKey(_copied.value),
                     ),
-                    label: const Text('Copy JSON'),
+                    label: Text(l.emailNip59CopyJson),
                   ),
                 ),
               ),
@@ -220,6 +239,7 @@ class EventCard extends StatelessWidget {
   }
 
   Widget _buildHeaderRow(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
@@ -228,7 +248,7 @@ class EventCard extends StatelessWidget {
         children: [
           Chip(
             label: Text(
-              'Kind $kind',
+              l.emailNip59Kind(kind),
               style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
             ),
             padding: EdgeInsets.zero,
@@ -245,7 +265,7 @@ class EventCard extends StatelessWidget {
           if (event == null) ...[
             const Spacer(),
             Text(
-              'Not available',
+              l.emailNip59NotAvailable,
               style: TextStyle(
                 fontSize: 12,
                 color: colorScheme.outline,

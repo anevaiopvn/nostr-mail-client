@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../controllers/identities_controller.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import 'identity_email_text.dart';
 
 class IdentityTile extends StatelessWidget {
@@ -13,6 +14,7 @@ class IdentityTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final controller = Get.find<IdentitiesController>();
     return Obx(() {
       final isMarked = controller.markedForDeletion.contains(index);
@@ -45,7 +47,7 @@ class IdentityTile extends StatelessWidget {
             : null,
         trailing: IconButton(
           icon: Icon(isMarked ? Icons.undo : Icons.close, size: 20),
-          tooltip: isMarked ? 'Undo' : 'Remove',
+          tooltip: isMarked ? l.actionUndo : l.actionRemove,
           onPressed: () => controller.toggleDeletion(index),
         ),
       );

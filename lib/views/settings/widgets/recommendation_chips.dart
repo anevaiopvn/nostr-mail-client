@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
+
 class RecommendationChips extends StatelessWidget {
   final List<String> recommendations;
   final bool Function(String) isAlreadyAdded;
   final Function(String) onAdd;
   final String Function(String) formatLabel;
-  final String title;
+  final String? title;
 
   const RecommendationChips({
     super.key,
@@ -13,11 +15,12 @@ class RecommendationChips extends StatelessWidget {
     required this.isAlreadyAdded,
     required this.onAdd,
     required this.formatLabel,
-    this.title = 'Recommended:',
+    this.title,
   });
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final filtered = recommendations.where((r) => !isAlreadyAdded(r)).toList();
 
     if (filtered.isEmpty) return const SizedBox.shrink();
@@ -28,7 +31,7 @@ class RecommendationChips extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            title,
+            title ?? l.hostingRecommended,
             style: TextStyle(
               fontSize: 11,
               color: Theme.of(context).colorScheme.onSurfaceVariant,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:nostr_mail_client/l10n/generated/app_localizations.dart';
 import 'package:nostr_mail_client/utils/confirm_open_link.dart';
 import 'package:nostr_mail_client/utils/html_has_images.dart';
 import 'package:nostr_mail_client/views/email/email_controller.dart';
@@ -11,6 +12,7 @@ class HtmlBodyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final hasImages = htmlHasImages(htmlBody);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,7 +36,7 @@ class HtmlBodyView extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Images are hidden for privacy',
+                    l.emailImagesHidden,
                     style: TextStyle(
                       fontSize: 13,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -46,7 +48,7 @@ class HtmlBodyView extends StatelessWidget {
                     EmailController.to.showImages = true;
                     EmailController.to.update();
                   },
-                  child: const Text('Load images'),
+                  child: Text(l.emailLoadImages),
                 ),
               ],
             ),

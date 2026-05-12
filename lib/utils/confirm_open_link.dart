@@ -3,13 +3,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:nostr_mail_client/l10n/generated/app_localizations.dart';
 import 'package:nostr_mail_client/utils/toast_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Future<void> confirmOpenLink(String url) async {
+  final l = AppLocalizations.of(Get.context!);
   final confirmed = await Get.dialog<bool>(
     AlertDialog(
-      title: const Text('Open link?'),
+      title: Text(l.linkOpenTitle),
       content: SelectableText(
         url,
         style: TextStyle(color: Theme.of(Get.context!).colorScheme.primary),
@@ -17,19 +19,19 @@ Future<void> confirmOpenLink(String url) async {
       actions: [
         TextButton(
           onPressed: () => Get.back(result: false),
-          child: const Text('Cancel'),
+          child: Text(l.actionCancel),
         ),
         TextButton(
           onPressed: () {
             Clipboard.setData(ClipboardData(text: url));
             Get.back(result: false);
-            ToastHelper.success(Get.context!, 'Link copied');
+            ToastHelper.success(Get.context!, l.linkCopied);
           },
-          child: const Text('Copy'),
+          child: Text(l.actionCopy),
         ),
         TextButton(
           onPressed: () => Get.back(result: true),
-          child: const Text('Open'),
+          child: Text(l.actionOpen),
         ),
       ],
     ),

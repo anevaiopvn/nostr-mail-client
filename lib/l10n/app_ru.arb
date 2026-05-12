@@ -1,0 +1,450 @@
+{
+  "@@locale": "ru",
+
+  "actionCancel": "Отмена",
+  "actionSave": "Сохранить",
+  "actionDelete": "Удалить",
+  "actionAdd": "Добавить",
+  "actionClose": "Закрыть",
+  "actionContinue": "Продолжить",
+  "actionBack": "Назад",
+  "actionConfirm": "Подтвердить",
+  "actionOk": "OK",
+  "actionCopy": "Копировать",
+  "actionOpen": "Открыть",
+  "actionUpload": "Загрузить",
+  "actionReset": "Сбросить",
+  "actionUndo": "Отменить",
+  "actionRemove": "Удалить",
+  "actionDiscard": "Отбросить",
+
+  "stateLoading": "Загрузка",
+  "stateLoadingEllipsis": "Загрузка...",
+  "stateResetting": "Сброс...",
+  "stateValidating": "Проверка...",
+  "stateDownloading": "Скачивание...",
+  "stateUploading": "Загрузка...",
+
+  "settingsTitle": "Настройки",
+  "settingsAppearance": "Внешний вид",
+  "settingsDynamicTheme": "Динамическая тема",
+  "settingsDynamicThemeSubtitle": "Создавать цвета из фонового изображения",
+  "settingsAdvancedOptions": "Дополнительные параметры",
+  "settingsShowEmailSource": "Показать исходный код письма",
+  "settingsShowEmailSourceSubtitle": "Добавляет кнопку для просмотра исходного письма",
+  "settingsAlwaysLoadImages": "Всегда загружать изображения",
+  "settingsAlwaysLoadImagesSubtitle": "По умолчанию изображения блокируются для приватности",
+  "settingsIdentities": "Идентичности",
+  "settingsManageIdentities": "Управление идентичностями",
+  "settingsManageIdentitiesSubtitle": "Добавить, удалить или изменить порядок адресов",
+  "settingsCompose": "Написание",
+  "settingsEmailSignature": "Подпись письма",
+  "settingsEmailSignatureEmpty": "Подпись не настроена",
+  "settingsEmailSignatureHint": "Введите вашу подпись...",
+  "settingsSynchronization": "Синхронизация",
+  "settingsHosting": "Хостинг",
+  "settingsHostingSubtitle": "Реле, серверы Blossom, подключение",
+  "settingsDebugTools": "Инструменты отладки",
+  "settingsDebugToolsSubtitle": "Функции тестирования и разработки",
+  "settingsAccount": "Аккаунт",
+  "settingsCopySyncCode": "Скопировать код синхронизации",
+  "settingsCopySyncCodeSubtitle": "Используйте этот код для синхронизации аккаунта на других устройствах",
+  "settingsSyncCodeCopied": "Код синхронизации скопирован",
+  "settingsLogOut": "Выйти",
+  "settingsResetApplication": "Сбросить приложение",
+  "settingsResetApplicationSubtitle": "Удалить все локальные данные",
+  "settingsResetConfirmMessage": "Все локальные данные, включая настройки и фоновые изображения, будут удалены, и вы выйдете из аккаунта.\n\nЭто действие нельзя отменить.",
+
+  "settingsTheme": "Тема",
+  "settingsThemeAuto": "Авто",
+  "settingsThemeLight": "Светлая",
+  "settingsThemeDark": "Тёмная",
+
+  "settingsBackgroundDefaultLabel": "Цвет темы по умолчанию",
+  "settingsBackgroundSelectLabel": "Выбрать фоновое изображение",
+  "settingsBackgroundDeleteLabel": "Удалить фоновое изображение",
+  "settingsBackgroundRemoveLabel": "Убрать фоновое изображение",
+  "settingsBackgroundAddLabel": "Добавить фоновое изображение",
+  "settingsBackgroundDeleteTitle": "Удалить фон",
+  "settingsBackgroundDeleteMessage": "Убрать это изображение из сохранённых фонов?",
+  "settingsBackgroundImageDeleted": "Изображение удалено",
+  "settingsBackgroundDeleteFailed": "Не удалось удалить изображение",
+  "settingsBackgroundDialogTitle": "Фон",
+  "settingsBackgroundSelectFile": "Выбрать файл",
+  "settingsBackgroundPasteUrl": "Вставить URL",
+  "settingsBackgroundUrlTitle": "URL фона",
+  "settingsBackgroundUrlHint": "https://example.com/image.jpg",
+  "settingsBackgroundSet": "Фон установлен",
+  "settingsBackgroundImageSet": "Изображение установлено",
+  "settingsBackgroundCopyFailed": "Не удалось скопировать изображение",
+  "settingsBackgroundUrlError": "Изображение недоступно (ошибка CORS или сети)",
+  "settingsBackgroundDownloaded": "Изображение скачано",
+  "settingsBackgroundDownloadFailed": "Не удалось скачать изображение",
+  "settingsBackgroundUploadTitle": "Загрузить изображение",
+  "settingsBackgroundUploadWarning": "Это изображение будет загружено на серверы Blossom. Операторы серверов и все, у кого есть ссылка, смогут его видеть.",
+
+  "hostingRecommended": "Рекомендуемые:",
+  "hostingWillBeAddedAs": "Будет добавлено как: {url}",
+  "@hostingWillBeAddedAs": {
+    "placeholders": {
+      "url": { "type": "String" }
+    }
+  },
+
+  "relayAddTitle": "Добавить реле",
+  "relayUrlLabel": "URL реле",
+  "relayUrlHint": "wss://relay.example.com",
+  "relayInvalidUrl": "Недействительный URL реле",
+  "relayDirection": "Направление",
+  "relayReadWrite": "Чтение и запись",
+  "relayRead": "Чтение",
+  "relayWrite": "Запись",
+  "relayMarkerReadWrite": "чтение/запись",
+  "relayMarkerRead": "чтение",
+  "relayMarkerWrite": "запись",
+  "relayInboxOutboxTitle": "Реле входящих/исходящих",
+  "relayAddTooltip": "Добавить реле",
+  "relayRemoveTooltip": "Удалить реле",
+  "relayInboxOutboxEmpty": "Реле входящих/исходящих не настроены",
+  "relayEmptyHint": "Нажмите +, чтобы добавить реле",
+
+  "dmRelayAddTitle": "Добавить DM-реле",
+  "dmRelaySectionTitle": "DM-реле",
+  "dmRelayEmpty": "DM-реле не настроены",
+
+  "bridgeAddTitle": "Добавить мост",
+  "bridgeDomainLabel": "Домен моста",
+  "bridgeDomainHint": "bridge.example.com",
+  "bridgeInvalidDomain": "Недействительный домен",
+  "bridgeSectionTitle": "Мосты",
+  "bridgeAddTooltip": "Добавить мост",
+  "bridgeEmpty": "Мосты не настроены",
+  "bridgeEmptyHint": "Нажмите +, чтобы добавить мост",
+  "bridgeDefault": "Мост по умолчанию",
+
+  "blossomAddTitle": "Добавить сервер Blossom",
+  "blossomServerUrlLabel": "URL сервера",
+  "blossomServerUrlHint": "https://blossom.example.com",
+  "blossomInvalidUrl": "Недействительный URL сервера",
+  "blossomSectionTitle": "Хостинг файлов",
+  "blossomAddTooltip": "Добавить сервер",
+  "blossomRemoveTooltip": "Удалить сервер",
+  "blossomEmpty": "Серверы Blossom не настроены",
+  "blossomEmptyHint": "Нажмите +, чтобы добавить сервер",
+
+  "connectivitySectionTitle": "Подключение в реальном времени",
+  "connectivityRelayConnectivity": "Подключение реле",
+
+  "syncStatusSectionTitle": "Статус синхронизации",
+  "syncStatusEmpty": "Нет данных о синхронизации",
+  "syncStatusEmptyHint": "Синхронизируйте письма, чтобы увидеть статус реле",
+  "syncStatusResync": "Пересинхронизировать",
+  "syncStatusBeginningOfTime": "Начало времён",
+
+  "identitiesTitle": "Идентичности",
+  "identitiesEmptyTitle": "Идентичностей пока нет",
+  "identitiesEmptyMessage": "Создайте одну, чтобы отправлять письма с собственного адреса.",
+  "identitiesCreate": "Создать идентичность",
+  "identitiesDiscardTitle": "Отбросить изменения?",
+  "identitiesDiscardMessage": "У вас есть несохранённые изменения. Если выйти сейчас, они будут потеряны.",
+  "identitiesKeepEditing": "Продолжить редактирование",
+
+  "debugToolsEmailTesting": "Тестирование писем",
+  "debugToolsCreateOldTrashed": "Создать старое письмо в корзине",
+  "debugToolsCreateOldTrashedDescription": "Создаёт тестовое письмо в корзине возрастом 31 день. Используйте, чтобы протестировать функцию «Удалить старые письма».",
+
+  "folderInbox": "Входящие",
+  "folderSent": "Отправленные",
+  "folderTrash": "Корзина",
+  "folderArchive": "Архив",
+  "inboxEmptyInbox": "Писем пока нет",
+  "inboxEmptySent": "Нет отправленных писем",
+  "inboxEmptyTrash": "Корзина пуста",
+  "inboxEmptyArchive": "Архив пуст",
+  "inboxSyncFromRelays": "Синхронизировать с реле",
+  "inboxSearch": "Поиск",
+  "inboxSync": "Синхронизация",
+  "inboxMenu": "Меню",
+  "inboxClearSelection": "Снять выделение",
+  "inboxSelectedCount": "Выбрано: {count}",
+  "@inboxSelectedCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "inboxProfile": "Профиль",
+  "inboxCopyNpub": "Скопировать npub",
+  "inboxLogout": "Выйти",
+  "inboxAccount": "Аккаунт",
+  "inboxCompose": "Написать",
+  "inboxNpubCopied": "npub скопирован",
+  "inboxUnknown": "Неизвестно",
+  "inboxEditProfile": "Редактировать профиль",
+  "inboxSettings": "Настройки",
+  "inboxDeleteOldEmailsTitle": "Удалить старые письма",
+  "inboxDeleteOldEmailsMessage": "Это навсегда удалит {count, plural, one{# письмо} few{# письма} many{# писем} other{# письма}} старше 30 дней.\n\nЭто действие нельзя отменить.",
+  "@inboxDeleteOldEmailsMessage": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "inboxDeleteFailed": "Ошибка удаления",
+  "inboxDeleteFailedDescription": "Не удалось удалить старые письма: {error}",
+  "@inboxDeleteFailedDescription": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "inboxOldEmailsCount": "{count, plural, one{# старое письмо к удалению} few{# старых письма к удалению} many{# старых писем к удалению} other{# старых писем к удалению}}",
+  "@inboxOldEmailsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "inboxDeleteNow": "Удалить сейчас",
+  "inboxDeleteOldEmailsTooltip": "Удалить старые письма",
+  "inboxSearchHint": "Поиск по всем письмам...",
+  "inboxCloseSearch": "Закрыть поиск",
+  "inboxSelectAll": "Выделить всё",
+  "inboxMoreActions": "Больше действий",
+
+  "emailReply": "Ответить",
+  "emailForward": "Переслать",
+  "emailArchive": "В архив",
+  "emailUnarchive": "Из архива",
+  "emailMarkAsRead": "Отметить как прочитанное",
+  "emailMarkAsUnread": "Отметить как непрочитанное",
+  "emailMoveToTrash": "В корзину",
+  "emailRestore": "Восстановить",
+  "emailDeletePermanently": "Удалить навсегда",
+  "emailNoSubject": "(Без темы)",
+
+  "emailNotFound": "Письмо не найдено",
+  "emailShowFormatted": "Показать форматированное",
+  "emailShowRaw": "Показать исходный код",
+  "emailSenderNpub": "npub отправителя: {npub}",
+  "@emailSenderNpub": {
+    "placeholders": {
+      "npub": { "type": "String" }
+    }
+  },
+  "emailDeletePermanentlyTitle": "Удалить навсегда?",
+  "emailDeletePermanentlyMessage": "Это действие нельзя отменить.",
+  "emailDefaultFilename": "email",
+  "emailSaved": "Письмо сохранено: {path}",
+  "@emailSaved": {
+    "placeholders": {
+      "path": { "type": "String" }
+    }
+  },
+  "emailSaveFailed": "Не удалось сохранить письмо: {error}",
+  "@emailSaveFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "emailRepostFailedEvent": "Не удалось получить событие для репоста",
+  "emailRepostSuccess": "Письмо успешно репостнуто",
+  "emailRepostFailed": "Не удалось репостнуть письмо: {error}",
+  "@emailRepostFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "emailAttachmentLoadFailed": "Не удалось загрузить вложение",
+  "emailFileSaved": "Файл сохранён: {path}",
+  "@emailFileSaved": {
+    "placeholders": {
+      "path": { "type": "String" }
+    }
+  },
+  "emailFileSaveFailed": "Не удалось сохранить файл: {error}",
+  "@emailFileSaveFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "emailDownloadedAllSuccess": "{count, plural, one{Скачан # файл} few{Скачано # файла} many{Скачано # файлов} other{Скачано # файла}}",
+  "@emailDownloadedAllSuccess": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "emailDownloadedAllFailed": "{count, plural, one{Не удалось скачать # файл} few{Не удалось скачать # файла} many{Не удалось скачать # файлов} other{Не удалось скачать # файла}}",
+  "@emailDownloadedAllFailed": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "emailDownloadedMixed": "Скачано: {success}, с ошибкой: {failed}",
+  "@emailDownloadedMixed": {
+    "placeholders": {
+      "success": { "type": "int" },
+      "failed": { "type": "int" }
+    }
+  },
+  "emailDownload": "Скачать",
+  "emailImageLoadFailed": "Не удалось загрузить изображение",
+  "emailPdfLoadFailed": "Не удалось загрузить PDF",
+  "emailActionReply": "Ответить",
+  "emailActionReplyAll": "Ответить всем",
+  "emailActionForward": "Переслать",
+  "emailActionArchive": "В архив",
+  "emailActionUnarchive": "Из архива",
+  "emailActionMarkRead": "Прочитано",
+  "emailActionMarkUnread": "Непрочитано",
+  "emailActionNip59": "События NIP-59",
+  "emailActionRepost": "Репост",
+  "emailActionDownload": "Скачать письмо",
+  "emailMoreActions": "Больше действий",
+  "emailMoreOptions": "Больше опций",
+  "emailShowRecipients": "Показать получателей",
+  "emailImagesHidden": "Изображения скрыты для приватности",
+  "emailLoadImages": "Загрузить изображения",
+  "emailRecipientTo": "Кому",
+  "emailRecipientCc": "Копия",
+  "emailRecipientBcc": "Скрытая копия",
+  "emailAttachmentsTitle": "Вложения",
+  "emailDownloadAll": "Скачать всё",
+  "emailNip59Dismiss": "Закрыть",
+  "emailNip59Title": "События NIP-59",
+  "emailNip59GiftWrap": "Gift Wrap",
+  "emailNip59Seal": "Seal",
+  "emailNip59Rumor": "Rumor",
+  "emailNip59CopyJson": "Скопировать JSON",
+  "emailNip59Kind": "Kind {kind}",
+  "@emailNip59Kind": {
+    "placeholders": {
+      "kind": { "type": "int" }
+    }
+  },
+  "emailNip59NotAvailable": "Недоступно",
+
+  "authHeaderTitle": "Вход в Nmail",
+  "authSyncCodeLabel": "Код синхронизации",
+  "authInvalidSyncCode": "Недействительный код синхронизации",
+  "authInvalidSyncCodeDescription": "Мы проверяем ваш код по мере ввода. Как только он станет действительным, вы войдёте автоматически.",
+  "authLogIn": "Войти",
+  "authCreateAccount": "Создать аккаунт",
+  "authMoreOptions": "Больше опций",
+  "authRegisterPrompt": "Что увидят другие?",
+  "authDisplayNameLabel": "Отображаемое имя",
+  "authDisplayNameHint": "например, Алиса",
+  "authBackToLogin": "Назад ко входу",
+  "authUnableRetrieveCode": "Не удалось получить код синхронизации",
+  "authYourSyncCode": "Ваш код синхронизации",
+  "authSyncCodeIntro": "Этот код — ключ к вашему аккаунту. Он даёт полный контроль и позволяет:",
+  "authSyncCodeFeatureRestore": "Восстанавливать аккаунт на любом устройстве",
+  "authSyncCodeFeatureBackup": "Безопасно резервировать вашу идентичность",
+  "authSyncCodeFeatureLogin": "Входить в другие приложения Nostr",
+  "authSyncCodeWarning": "Никогда не делитесь этим кодом. Храните его в надёжном месте. Вы всегда сможете найти его в Настройках.",
+  "authCopied": "Скопировано!",
+  "authCopySyncCode": "Скопировать код синхронизации",
+  "authContinueToInbox": "Перейти ко входящим",
+
+  "composeTitle": "Написать",
+  "composeTo": "Кому",
+  "composeAddMore": "Добавить ещё",
+  "composeHideExpanded": "Скрыть Копия/СК/От",
+  "composeShowExpanded": "Показать Копия/СК/От",
+  "composeCc": "Копия",
+  "composeBcc": "Скрытая копия",
+  "composeSubject": "Тема",
+  "composeAttachFile": "Прикрепить файл",
+  "composePlaceholder": "Напишите письмо",
+  "composeFrom": "От",
+  "composeSendAs": "Отправить от",
+  "composeCreateNewIdentity": "Создать новую идентичность",
+  "composeRemoveAttachment": "Удалить вложение",
+  "composeSend": "Отправить",
+  "composeMoreSendOptions": "Больше опций отправки",
+  "composeChooseSendMode": "Выберите режим отправки",
+  "composeModePrivateDeniable": "Приватный отрицаемый",
+  "composeModePrivateSigned": "Приватный подписанный",
+  "composeModePublic": "Публичный",
+  "composeModePrivateDeniableDescription": "Отправить как зашифрованное письмо. Без подписи — отрицаемое при необходимости.",
+  "composeModePrivateSignedDescription": "Отправить как зашифрованное письмо. Подписанное — подтверждает авторство.",
+  "composeModePublicDescription": "Отправить как публичное событие. Каждый может прочитать. Без шифрования.",
+  "composeResolvingNip05": "Разрешение NIP-05...",
+  "contactSourceEmailHistory": "История писем",
+  "contactSourceFollowing": "Подписки",
+  "contactSourceCachedProfile": "Профиль из кеша",
+  "contactSourceNip05Verified": "Подтверждён NIP-05",
+
+  "profileEditTitle": "Редактирование профиля",
+  "profileDisplayNameLabel": "Отображаемое имя",
+  "profileDisplayNameHint": "Ваше полное имя или псевдоним",
+  "profileUsernameLabel": "Имя пользователя",
+  "profileUsernameHint": "идентификатор",
+  "profileAboutLabel": "О себе",
+  "profileAboutHint": "Короткая биография",
+  "profileAdvanced": "Дополнительно",
+  "profilePictureUrlLabel": "URL изображения",
+  "profilePictureUrlHint": "https://example.com/avatar.png",
+  "profileChangePicture": "Изменить фото профиля",
+
+  "onboardingPage1Title": "Добро пожаловать в Nmail",
+  "onboardingPage1Body": "Откройте для себя децентрализованную почту, где контроль в ваших руках. Новый способ общения, сосредоточенный на вас.",
+  "onboardingPage2Title": "Сеть без хозяев",
+  "onboardingPage2Body": "Ваши сообщения проходят через глобальную сеть независимых серверов. Ни одна компания не владеет вашей почтой.",
+  "onboardingPage3Title": "Свобода выбора",
+  "onboardingPage3Body": "Вы никогда не привязаны к одному провайдеру. Меняйте мосты или реле в любой момент, не теряя идентичность или контакты.",
+  "onboardingPage4Title": "Одна идентичность для всего",
+  "onboardingPage4Body": "Используйте свой аккаунт для писем, подписок на профили или других приложений. Постоянная идентичность работает во многих приложениях.",
+  "onboardingPage5Title": "Построено для будущего",
+  "onboardingPage5Body": "Воспользуйтесь современной архитектурой, ориентированной на приватность. Nmail помогает плавно перейти к более безопасному и устойчивому общению.",
+  "onboardingSkip": "Пропустить",
+  "onboardingNext": "Далее",
+  "onboardingDone": "Готово",
+
+  "createIdentityTitle": "Создать идентичность",
+  "createIdentityAddress": "Адрес",
+  "createIdentityCustomUsername": "Собственное имя пользователя",
+  "createIdentityBridge": "Мост",
+  "createIdentityNoBridges": "Мосты недоступны",
+  "createIdentityBridgeHint": "bridge.com",
+  "createIdentityPreview": "Предпросмотр",
+  "createIdentityPreviewEmpty": "Введите адрес и выберите мост, чтобы увидеть предпросмотр",
+
+  "leftRailSettings": "Настройки",
+
+  "linkOpenTitle": "Открыть ссылку?",
+  "linkCopied": "Ссылка скопирована",
+
+  "debugNotAuthenticated": "Не авторизовано",
+  "debugTestEmailCreated": "Тестовое письмо создано и перемещено в корзину (31 день)",
+  "debugTestEmailPartial": "Письмо создано и перемещено в корзину, но не удалось обновить отметку времени",
+  "debugError": "Ошибка: {error}",
+  "@debugError": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "composeSelectAttachments": "Выбрать вложения",
+  "composePickFilesFailed": "Не удалось выбрать файлы: {error}",
+  "@composePickFilesFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "composeInvalidRecipient": "Неверный формат получателя",
+  "composeAddRecipient": "Добавьте хотя бы одного получателя",
+  "composeSendFailed": "Не удалось отправить письмо",
+
+  "profileLoadFailed": "Не удалось загрузить данные профиля",
+  "profileSelectPicture": "Выбрать фото профиля",
+  "profileUploadNoServers": "Серверы не ответили",
+  "profileUploadFailed": "Ошибка загрузки",
+  "profileUploadError": "Во время загрузки произошла ошибка",
+  "profileUpdateFailed": "Не удалось обновить профиль",
+  "authEnterUsername": "Введите имя пользователя",
+  "createIdentityFailed": "Не удалось создать идентичность: {error}",
+  "@createIdentityFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "dateYesterday": "Вчера"
+}

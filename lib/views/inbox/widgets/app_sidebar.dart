@@ -3,12 +3,14 @@ import 'package:get/get.dart';
 
 import '../../../app/routes/app_routes.dart';
 import '../../../controllers/inbox_controller.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class AppSidebar extends StatelessWidget {
   const AppSidebar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final controller = Get.isRegistered<InboxController>()
         ? Get.find<InboxController>()
         : Get.put(InboxController());
@@ -24,7 +26,7 @@ class AppSidebar extends StatelessWidget {
               child: FilledButton.icon(
                 onPressed: () => Get.toNamed(AppRoutes.compose),
                 icon: const Icon(Icons.edit),
-                label: const Text('Compose'),
+                label: Text(l.inboxCompose),
               ),
             ),
           ),
@@ -32,7 +34,7 @@ class AppSidebar extends StatelessWidget {
             () => _NavItem(
               icon: Icons.inbox_outlined,
               selectedIcon: Icons.inbox,
-              label: 'Inbox',
+              label: l.folderInbox,
               selected: controller.currentFolder.value == MailFolder.inbox,
               onTap: () {
                 controller.setFolder(MailFolder.inbox);
@@ -45,7 +47,7 @@ class AppSidebar extends StatelessWidget {
             () => _NavItem(
               icon: Icons.send_outlined,
               selectedIcon: Icons.send,
-              label: 'Sent',
+              label: l.folderSent,
               selected: controller.currentFolder.value == MailFolder.sent,
               onTap: () {
                 controller.setFolder(MailFolder.sent);
@@ -58,7 +60,7 @@ class AppSidebar extends StatelessWidget {
             () => _NavItem(
               icon: Icons.archive_outlined,
               selectedIcon: Icons.archive,
-              label: 'Archive',
+              label: l.folderArchive,
               selected: controller.currentFolder.value == MailFolder.archive,
               onTap: () {
                 controller.setFolder(MailFolder.archive);
@@ -71,7 +73,7 @@ class AppSidebar extends StatelessWidget {
             () => _NavItem(
               icon: Icons.delete_outlined,
               selectedIcon: Icons.delete,
-              label: 'Trash',
+              label: l.folderTrash,
               selected: controller.currentFolder.value == MailFolder.trash,
               onTap: () {
                 controller.setFolder(MailFolder.trash);

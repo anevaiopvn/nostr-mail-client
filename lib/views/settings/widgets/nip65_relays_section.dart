@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:ndk/domain_layer/entities/read_write_marker.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../../../services/nostr_mail_service.dart';
 import '../../../utils/relay_utils.dart';
 import '../../../app/config/nostr_config.dart';
@@ -52,6 +53,7 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
   }
 
   Future<void> _addRelay() async {
+    final l = AppLocalizations.of(context);
     final controller = TextEditingController();
     String? errorText;
     String? preview;
@@ -61,7 +63,7 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Add Relay'),
+          title: Text(l.relayAddTitle),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,8 +71,8 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
               TextField(
                 controller: controller,
                 decoration: InputDecoration(
-                  hintText: 'wss://relay.example.com',
-                  labelText: 'Relay URL',
+                  hintText: l.relayUrlHint,
+                  labelText: l.relayUrlLabel,
                   errorText: errorText,
                 ),
                 autofocus: true,
@@ -90,7 +92,7 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
                 onSubmitted: (value) {
                   final url = normalizeRelayUrl(value.trim());
                   if (!isValidRelayUrl(url)) {
-                    setDialogState(() => errorText = 'Invalid relay URL');
+                    setDialogState(() => errorText = l.relayInvalidUrl);
                     return;
                   }
                   Navigator.pop(context, MapEntry(url, marker));
@@ -100,7 +102,7 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
-                    'Will be added as: $preview',
+                    l.hostingWillBeAddedAs(preview!),
                     style: TextStyle(
                       fontSize: 12,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -109,7 +111,7 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
                 ),
               const SizedBox(height: 16),
               Text(
-                'Direction',
+                l.relayDirection,
                 style: TextStyle(
                   fontSize: 12,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -117,18 +119,18 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
               ),
               const SizedBox(height: 8),
               SegmentedButton<ReadWriteMarker>(
-                segments: const [
+                segments: [
                   ButtonSegment(
                     value: ReadWriteMarker.readWrite,
-                    label: Text('Read & Write'),
+                    label: Text(l.relayReadWrite),
                   ),
                   ButtonSegment(
                     value: ReadWriteMarker.readOnly,
-                    label: Text('Read'),
+                    label: Text(l.relayRead),
                   ),
                   ButtonSegment(
                     value: ReadWriteMarker.writeOnly,
-                    label: Text('Write'),
+                    label: Text(l.relayWrite),
                   ),
                 ],
                 selected: {marker},
@@ -141,18 +143,18 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text(l.actionCancel),
             ),
             TextButton(
               onPressed: () {
                 final url = normalizeRelayUrl(controller.text.trim());
                 if (!isValidRelayUrl(url)) {
-                  setDialogState(() => errorText = 'Invalid relay URL');
+                  setDialogState(() => errorText = l.relayInvalidUrl);
                   return;
                 }
                 Navigator.pop(context, MapEntry(url, marker));
               },
-              child: const Text('Add'),
+              child: Text(l.actionAdd),
             ),
           ],
         ),
@@ -208,24 +210,25 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
     }
   }
 
-  String _markerLabel(ReadWriteMarker marker) {
+  String _markerLabel(AppLocalizations l, ReadWriteMarker marker) {
     return switch (marker) {
-      ReadWriteMarker.readWrite => 'read/write',
-      ReadWriteMarker.readOnly => 'read',
-      ReadWriteMarker.writeOnly => 'write',
+      ReadWriteMarker.readWrite => l.relayMarkerReadWrite,
+      ReadWriteMarker.readOnly => l.relayMarkerRead,
+      ReadWriteMarker.writeOnly => l.relayMarkerWrite,
     };
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     if (_isLoading) {
-      return const ListTile(
-        leading: SizedBox(
+      return ListTile(
+        leading: const SizedBox(
           width: 24,
           height: 24,
           child: CircularProgressIndicator(strokeWidth: 2),
         ),
-        title: Text('Loading...'),
+        title: Text(l.stateLoadingEllipsis),
       );
     }
 
@@ -235,7 +238,7 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
         ListTile(
           dense: true,
           title: Text(
-            'Inbox Outbox Relays',
+            l.relayInboxOutboxTitle,
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.w600,
@@ -245,7 +248,7 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
           trailing: IconButton(
             icon: const Icon(Icons.add, size: 18),
             onPressed: _addRelay,
-            tooltip: 'Add relay',
+            tooltip: l.relayAddTooltip,
           ),
         ),
         RecommendationChips(
@@ -256,10 +259,10 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
           formatLabel: formatRelayUrl,
         ),
         if (_relays == null || _relays!.isEmpty)
-          const ListTile(
-            leading: Icon(Icons.warning_rounded),
-            title: Text('No Inbox/Outbox relays configured'),
-            subtitle: Text('Tap + to add a relay'),
+          ListTile(
+            leading: const Icon(Icons.warning_rounded),
+            title: Text(l.relayInboxOutboxEmpty),
+            subtitle: Text(l.relayEmptyHint),
           )
         else
           ..._relays!.entries.map((entry) {
@@ -282,7 +285,7 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
               subtitle: GestureDetector(
                 onTap: isMarked ? null : () => _cycleMarker(relay),
                 child: Text(
-                  _markerLabel(marker),
+                  _markerLabel(l, marker),
                   style: TextStyle(
                     fontSize: 12,
                     color: isMarked
@@ -294,7 +297,7 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
               trailing: IconButton(
                 icon: Icon(isMarked ? Icons.undo : Icons.close, size: 18),
                 onPressed: () => _toggleRelayDeletion(relay),
-                tooltip: isMarked ? 'Undo' : 'Remove relay',
+                tooltip: isMarked ? l.actionUndo : l.relayRemoveTooltip,
               ),
             );
           }),
@@ -311,7 +314,7 @@ class _Nip65RelaysSectionState extends State<Nip65RelaysSection> {
                         height: 16,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Save'),
+                    : Text(l.actionSave),
               ),
             ),
           ),

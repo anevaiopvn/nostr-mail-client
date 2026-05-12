@@ -5,6 +5,7 @@ import 'package:ndk/ndk.dart';
 import '../../../app/routes/app_routes.dart';
 import '../../../controllers/auth_controller.dart';
 import '../../../controllers/compose_controller.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../../../models/from_option.dart';
 import '../../../widgets/nostr_avatar.dart';
 
@@ -23,6 +24,7 @@ class FromSelectorSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final controller = Get.find<ComposeController>();
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -41,7 +43,7 @@ class FromSelectorSheet extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Send as',
+            l.composeSendAs,
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -95,6 +97,7 @@ class _CreateNewIdentityTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
 
     return InkWell(
@@ -114,7 +117,7 @@ class _CreateNewIdentityTile extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Text(
-              'Create new identity',
+              l.composeCreateNewIdentity,
               style: TextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: 15,

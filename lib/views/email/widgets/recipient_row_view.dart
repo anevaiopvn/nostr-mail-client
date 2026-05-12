@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nostr_mail_client/l10n/generated/app_localizations.dart';
 import 'package:nostr_mail_client/views/email/email_controller.dart';
 
 import 'recipient_avatar_view.dart';
@@ -8,13 +9,14 @@ class RecipientRowView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(
           width: 40,
           child: Text(
-            'To',
+            l.emailRecipientTo,
             style: TextStyle(
               color: Colors.grey[600],
               fontWeight: FontWeight.w500,

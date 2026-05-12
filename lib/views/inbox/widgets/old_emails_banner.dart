@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../controllers/inbox_controller.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class OldEmailsBanner extends StatelessWidget {
   const OldEmailsBanner({super.key, required this.onDelete});
@@ -9,10 +10,12 @@ class OldEmailsBanner extends StatelessWidget {
   final VoidCallback onDelete;
 
   Widget _buildActionButton(
+    BuildContext context,
     VoidCallback? onPressed,
     ColorScheme colorScheme,
     bool isDesktop,
   ) {
+    final l = AppLocalizations.of(context);
     final controller = Get.find<InboxController>();
     final buttonColor = colorScheme.onSurfaceVariant;
 
@@ -27,7 +30,7 @@ class OldEmailsBanner extends StatelessWidget {
                   height: 16,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : const Text('Delete now'),
+              : Text(l.inboxDeleteNow),
         ),
       );
     }
@@ -41,13 +44,14 @@ class OldEmailsBanner extends StatelessWidget {
               child: CircularProgressIndicator(strokeWidth: 2),
             )
           : Icon(Icons.delete_outline, color: buttonColor),
-      tooltip: 'Delete old emails',
+      tooltip: l.inboxDeleteOldEmailsTooltip,
       style: IconButton.styleFrom(foregroundColor: buttonColor),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final controller = Get.find<InboxController>();
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -73,7 +77,7 @@ class OldEmailsBanner extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    '$oldCount old email${oldCount == 1 ? '' : 's'} to delete',
+                    l.inboxOldEmailsCount(oldCount),
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -82,6 +86,7 @@ class OldEmailsBanner extends StatelessWidget {
                   ),
                 ),
                 _buildActionButton(
+                  context,
                   buttonEnabled ? onDelete : null,
                   colorScheme,
                   isWideBanner,

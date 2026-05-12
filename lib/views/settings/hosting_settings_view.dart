@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/generated/app_localizations.dart';
 import '../../utils/responsive_helper.dart';
 import '../shared/desktop_shell.dart';
 import 'widgets/bridges_section.dart';
@@ -14,10 +15,11 @@ class HostingSettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final isWide = ResponsiveHelper.isNotMobile(context);
 
     Widget content = Scaffold(
-      appBar: AppBar(title: const Text('Hosting')),
+      appBar: AppBar(title: Text(l.settingsHosting)),
       body: SafeArea(
         top: false,
         child: SingleChildScrollView(

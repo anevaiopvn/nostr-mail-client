@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../../../services/nostr_mail_service.dart';
 import '../../../utils/blossom_utils.dart';
 import '../../../app/config/nostr_config.dart';
@@ -50,6 +51,7 @@ class _BlossomServersSectionState extends State<BlossomServersSection> {
   }
 
   Future<void> _addServer() async {
+    final l = AppLocalizations.of(context);
     final controller = TextEditingController();
     String? errorText;
     String? preview;
@@ -58,7 +60,7 @@ class _BlossomServersSectionState extends State<BlossomServersSection> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Add Blossom Server'),
+          title: Text(l.blossomAddTitle),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,8 +68,8 @@ class _BlossomServersSectionState extends State<BlossomServersSection> {
               TextField(
                 controller: controller,
                 decoration: InputDecoration(
-                  hintText: 'https://blossom.example.com',
-                  labelText: 'Server URL',
+                  hintText: l.blossomServerUrlHint,
+                  labelText: l.blossomServerUrlLabel,
                   errorText: errorText,
                 ),
                 autofocus: true,
@@ -87,7 +89,7 @@ class _BlossomServersSectionState extends State<BlossomServersSection> {
                 onSubmitted: (value) {
                   final url = normalizeBlossomUrl(value.trim());
                   if (!isValidBlossomUrl(url)) {
-                    setDialogState(() => errorText = 'Invalid server URL');
+                    setDialogState(() => errorText = l.blossomInvalidUrl);
                     return;
                   }
                   Navigator.pop(context, url);
@@ -97,7 +99,7 @@ class _BlossomServersSectionState extends State<BlossomServersSection> {
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
-                    'Will be added as: $preview',
+                    l.hostingWillBeAddedAs(preview!),
                     style: TextStyle(
                       fontSize: 12,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -109,18 +111,18 @@ class _BlossomServersSectionState extends State<BlossomServersSection> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text(l.actionCancel),
             ),
             TextButton(
               onPressed: () {
                 final url = normalizeBlossomUrl(controller.text.trim());
                 if (!isValidBlossomUrl(url)) {
-                  setDialogState(() => errorText = 'Invalid server URL');
+                  setDialogState(() => errorText = l.blossomInvalidUrl);
                   return;
                 }
                 Navigator.pop(context, url);
               },
-              child: const Text('Add'),
+              child: Text(l.actionAdd),
             ),
           ],
         ),
@@ -165,14 +167,15 @@ class _BlossomServersSectionState extends State<BlossomServersSection> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     if (_isLoading) {
-      return const ListTile(
-        leading: SizedBox(
+      return ListTile(
+        leading: const SizedBox(
           width: 24,
           height: 24,
           child: CircularProgressIndicator(strokeWidth: 2),
         ),
-        title: Text('Loading...'),
+        title: Text(l.stateLoadingEllipsis),
       );
     }
 
@@ -182,7 +185,7 @@ class _BlossomServersSectionState extends State<BlossomServersSection> {
         ListTile(
           dense: true,
           title: Text(
-            'File Hosting',
+            l.blossomSectionTitle,
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.w600,
@@ -192,7 +195,7 @@ class _BlossomServersSectionState extends State<BlossomServersSection> {
           trailing: IconButton(
             icon: const Icon(Icons.add, size: 18),
             onPressed: _addServer,
-            tooltip: 'Add server',
+            tooltip: l.blossomAddTooltip,
           ),
         ),
         RecommendationChips(
@@ -202,10 +205,10 @@ class _BlossomServersSectionState extends State<BlossomServersSection> {
           formatLabel: formatBlossomUrl,
         ),
         if (_servers == null || _servers!.isEmpty)
-          const ListTile(
-            leading: Icon(Icons.cloud_off_outlined),
-            title: Text('No Blossom servers configured'),
-            subtitle: Text('Tap + to add a server'),
+          ListTile(
+            leading: const Icon(Icons.cloud_off_outlined),
+            title: Text(l.blossomEmpty),
+            subtitle: Text(l.blossomEmptyHint),
           )
         else
           ..._servers!.map((server) {
@@ -226,7 +229,7 @@ class _BlossomServersSectionState extends State<BlossomServersSection> {
               trailing: IconButton(
                 icon: Icon(isMarked ? Icons.undo : Icons.close, size: 18),
                 onPressed: () => _toggleServerDeletion(server),
-                tooltip: isMarked ? 'Undo' : 'Remove server',
+                tooltip: isMarked ? l.actionUndo : l.blossomRemoveTooltip,
               ),
             );
           }),
@@ -243,7 +246,7 @@ class _BlossomServersSectionState extends State<BlossomServersSection> {
                         height: 16,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Save'),
+                    : Text(l.actionSave),
               ),
             ),
           ),

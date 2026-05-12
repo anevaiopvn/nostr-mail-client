@@ -1,0 +1,450 @@
+{
+  "@@locale": "zh",
+
+  "actionCancel": "取消",
+  "actionSave": "保存",
+  "actionDelete": "删除",
+  "actionAdd": "添加",
+  "actionClose": "关闭",
+  "actionContinue": "继续",
+  "actionBack": "返回",
+  "actionConfirm": "确认",
+  "actionOk": "确定",
+  "actionCopy": "复制",
+  "actionOpen": "打开",
+  "actionUpload": "上传",
+  "actionReset": "重置",
+  "actionUndo": "撤销",
+  "actionRemove": "移除",
+  "actionDiscard": "放弃",
+
+  "stateLoading": "加载中",
+  "stateLoadingEllipsis": "加载中...",
+  "stateResetting": "重置中...",
+  "stateValidating": "验证中...",
+  "stateDownloading": "下载中...",
+  "stateUploading": "上传中...",
+
+  "settingsTitle": "设置",
+  "settingsAppearance": "外观",
+  "settingsDynamicTheme": "动态主题",
+  "settingsDynamicThemeSubtitle": "根据背景图片生成颜色",
+  "settingsAdvancedOptions": "高级选项",
+  "settingsShowEmailSource": "显示邮件源代码",
+  "settingsShowEmailSourceSubtitle": "添加查看原始邮件的按钮",
+  "settingsAlwaysLoadImages": "始终加载图片",
+  "settingsAlwaysLoadImagesSubtitle": "为保护隐私,图片默认被屏蔽",
+  "settingsIdentities": "身份",
+  "settingsManageIdentities": "管理身份",
+  "settingsManageIdentitiesSubtitle": "添加、移除或重新排序地址",
+  "settingsCompose": "撰写",
+  "settingsEmailSignature": "邮件签名",
+  "settingsEmailSignatureEmpty": "未配置签名",
+  "settingsEmailSignatureHint": "输入您的签名...",
+  "settingsSynchronization": "同步",
+  "settingsHosting": "托管",
+  "settingsHostingSubtitle": "中继、Blossom 服务器、连接",
+  "settingsDebugTools": "调试工具",
+  "settingsDebugToolsSubtitle": "测试和开发功能",
+  "settingsAccount": "账户",
+  "settingsCopySyncCode": "复制同步码",
+  "settingsCopySyncCodeSubtitle": "使用此代码在其他设备上同步您的账户",
+  "settingsSyncCodeCopied": "已复制同步码",
+  "settingsLogOut": "退出登录",
+  "settingsResetApplication": "重置应用",
+  "settingsResetApplicationSubtitle": "删除所有本地数据",
+  "settingsResetConfirmMessage": "这将删除所有本地数据,包括设置和背景图片,并将您注销。\n\n此操作无法撤销。",
+
+  "settingsTheme": "主题",
+  "settingsThemeAuto": "自动",
+  "settingsThemeLight": "浅色",
+  "settingsThemeDark": "深色",
+
+  "settingsBackgroundDefaultLabel": "默认主题颜色",
+  "settingsBackgroundSelectLabel": "选择背景图片",
+  "settingsBackgroundDeleteLabel": "删除背景图片",
+  "settingsBackgroundRemoveLabel": "移除背景图片",
+  "settingsBackgroundAddLabel": "添加背景图片",
+  "settingsBackgroundDeleteTitle": "删除背景",
+  "settingsBackgroundDeleteMessage": "从已保存的背景中移除此图片?",
+  "settingsBackgroundImageDeleted": "图片已删除",
+  "settingsBackgroundDeleteFailed": "删除图片失败",
+  "settingsBackgroundDialogTitle": "背景",
+  "settingsBackgroundSelectFile": "选择文件",
+  "settingsBackgroundPasteUrl": "粘贴 URL",
+  "settingsBackgroundUrlTitle": "背景 URL",
+  "settingsBackgroundUrlHint": "https://example.com/image.jpg",
+  "settingsBackgroundSet": "已设置背景",
+  "settingsBackgroundImageSet": "已设置图片",
+  "settingsBackgroundCopyFailed": "复制图片失败",
+  "settingsBackgroundUrlError": "图片无法访问(CORS 或网络错误)",
+  "settingsBackgroundDownloaded": "图片已下载",
+  "settingsBackgroundDownloadFailed": "下载图片失败",
+  "settingsBackgroundUploadTitle": "上传图片",
+  "settingsBackgroundUploadWarning": "此图片将被上传到 Blossom 服务器。服务器运营者和拥有链接的任何人都可以查看。",
+
+  "hostingRecommended": "推荐:",
+  "hostingWillBeAddedAs": "将以以下方式添加: {url}",
+  "@hostingWillBeAddedAs": {
+    "placeholders": {
+      "url": { "type": "String" }
+    }
+  },
+
+  "relayAddTitle": "添加中继",
+  "relayUrlLabel": "中继 URL",
+  "relayUrlHint": "wss://relay.example.com",
+  "relayInvalidUrl": "无效的中继 URL",
+  "relayDirection": "方向",
+  "relayReadWrite": "读和写",
+  "relayRead": "读",
+  "relayWrite": "写",
+  "relayMarkerReadWrite": "读/写",
+  "relayMarkerRead": "读",
+  "relayMarkerWrite": "写",
+  "relayInboxOutboxTitle": "收件箱/发件箱中继",
+  "relayAddTooltip": "添加中继",
+  "relayRemoveTooltip": "移除中继",
+  "relayInboxOutboxEmpty": "未配置收件箱/发件箱中继",
+  "relayEmptyHint": "点击 + 添加中继",
+
+  "dmRelayAddTitle": "添加 DM 中继",
+  "dmRelaySectionTitle": "DM 中继",
+  "dmRelayEmpty": "未配置 DM 中继",
+
+  "bridgeAddTitle": "添加桥接",
+  "bridgeDomainLabel": "桥接域名",
+  "bridgeDomainHint": "bridge.example.com",
+  "bridgeInvalidDomain": "无效的域名",
+  "bridgeSectionTitle": "桥接",
+  "bridgeAddTooltip": "添加桥接",
+  "bridgeEmpty": "未配置桥接",
+  "bridgeEmptyHint": "点击 + 添加桥接",
+  "bridgeDefault": "默认桥接",
+
+  "blossomAddTitle": "添加 Blossom 服务器",
+  "blossomServerUrlLabel": "服务器 URL",
+  "blossomServerUrlHint": "https://blossom.example.com",
+  "blossomInvalidUrl": "无效的服务器 URL",
+  "blossomSectionTitle": "文件托管",
+  "blossomAddTooltip": "添加服务器",
+  "blossomRemoveTooltip": "移除服务器",
+  "blossomEmpty": "未配置 Blossom 服务器",
+  "blossomEmptyHint": "点击 + 添加服务器",
+
+  "connectivitySectionTitle": "实时连接",
+  "connectivityRelayConnectivity": "中继连接状态",
+
+  "syncStatusSectionTitle": "同步状态",
+  "syncStatusEmpty": "暂无同步数据",
+  "syncStatusEmptyHint": "同步您的邮件以查看中继状态",
+  "syncStatusResync": "重新同步",
+  "syncStatusBeginningOfTime": "时间的起点",
+
+  "identitiesTitle": "身份",
+  "identitiesEmptyTitle": "暂无身份",
+  "identitiesEmptyMessage": "创建一个以从自定义地址发送邮件。",
+  "identitiesCreate": "创建身份",
+  "identitiesDiscardTitle": "放弃更改?",
+  "identitiesDiscardMessage": "您有未保存的更改。现在离开将被放弃。",
+  "identitiesKeepEditing": "继续编辑",
+
+  "debugToolsEmailTesting": "邮件测试",
+  "debugToolsCreateOldTrashed": "创建旧的已删除邮件",
+  "debugToolsCreateOldTrashedDescription": "在回收站创建一封 31 天前的测试邮件。用于测试「删除旧邮件」功能。",
+
+  "folderInbox": "收件箱",
+  "folderSent": "已发送",
+  "folderTrash": "回收站",
+  "folderArchive": "归档",
+  "inboxEmptyInbox": "暂无邮件",
+  "inboxEmptySent": "没有已发送邮件",
+  "inboxEmptyTrash": "回收站为空",
+  "inboxEmptyArchive": "归档为空",
+  "inboxSyncFromRelays": "从中继同步",
+  "inboxSearch": "搜索",
+  "inboxSync": "同步",
+  "inboxMenu": "菜单",
+  "inboxClearSelection": "清除选择",
+  "inboxSelectedCount": "已选择 {count} 项",
+  "@inboxSelectedCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "inboxProfile": "个人资料",
+  "inboxCopyNpub": "复制 npub",
+  "inboxLogout": "退出登录",
+  "inboxAccount": "账户",
+  "inboxCompose": "撰写",
+  "inboxNpubCopied": "已复制 npub",
+  "inboxUnknown": "未知",
+  "inboxEditProfile": "编辑个人资料",
+  "inboxSettings": "设置",
+  "inboxDeleteOldEmailsTitle": "删除旧邮件",
+  "inboxDeleteOldEmailsMessage": "这将永久删除 {count} 封超过 30 天的邮件。\n\n此操作无法撤销。",
+  "@inboxDeleteOldEmailsMessage": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "inboxDeleteFailed": "删除失败",
+  "inboxDeleteFailedDescription": "无法删除旧邮件: {error}",
+  "@inboxDeleteFailedDescription": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "inboxOldEmailsCount": "{count} 封待删除的旧邮件",
+  "@inboxOldEmailsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "inboxDeleteNow": "立即删除",
+  "inboxDeleteOldEmailsTooltip": "删除旧邮件",
+  "inboxSearchHint": "搜索所有邮件...",
+  "inboxCloseSearch": "关闭搜索",
+  "inboxSelectAll": "全选",
+  "inboxMoreActions": "更多操作",
+
+  "emailReply": "回复",
+  "emailForward": "转发",
+  "emailArchive": "归档",
+  "emailUnarchive": "取消归档",
+  "emailMarkAsRead": "标记为已读",
+  "emailMarkAsUnread": "标记为未读",
+  "emailMoveToTrash": "移至回收站",
+  "emailRestore": "恢复",
+  "emailDeletePermanently": "永久删除",
+  "emailNoSubject": "(无主题)",
+
+  "emailNotFound": "未找到邮件",
+  "emailShowFormatted": "显示格式化版本",
+  "emailShowRaw": "显示源代码",
+  "emailSenderNpub": "发件人 npub: {npub}",
+  "@emailSenderNpub": {
+    "placeholders": {
+      "npub": { "type": "String" }
+    }
+  },
+  "emailDeletePermanentlyTitle": "永久删除?",
+  "emailDeletePermanentlyMessage": "此操作无法撤销。",
+  "emailDefaultFilename": "email",
+  "emailSaved": "邮件已保存: {path}",
+  "@emailSaved": {
+    "placeholders": {
+      "path": { "type": "String" }
+    }
+  },
+  "emailSaveFailed": "保存邮件失败: {error}",
+  "@emailSaveFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "emailRepostFailedEvent": "无法获取用于转发的邮件事件",
+  "emailRepostSuccess": "邮件转发成功",
+  "emailRepostFailed": "转发邮件失败: {error}",
+  "@emailRepostFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "emailAttachmentLoadFailed": "加载附件失败",
+  "emailFileSaved": "文件已保存: {path}",
+  "@emailFileSaved": {
+    "placeholders": {
+      "path": { "type": "String" }
+    }
+  },
+  "emailFileSaveFailed": "保存文件失败: {error}",
+  "@emailFileSaveFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "emailDownloadedAllSuccess": "成功下载 {count} 个文件",
+  "@emailDownloadedAllSuccess": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "emailDownloadedAllFailed": "无法下载 {count} 个文件",
+  "@emailDownloadedAllFailed": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "emailDownloadedMixed": "成功 {success} 个,失败 {failed} 个",
+  "@emailDownloadedMixed": {
+    "placeholders": {
+      "success": { "type": "int" },
+      "failed": { "type": "int" }
+    }
+  },
+  "emailDownload": "下载",
+  "emailImageLoadFailed": "加载图片失败",
+  "emailPdfLoadFailed": "加载 PDF 失败",
+  "emailActionReply": "回复",
+  "emailActionReplyAll": "全部回复",
+  "emailActionForward": "转发",
+  "emailActionArchive": "归档",
+  "emailActionUnarchive": "取消归档",
+  "emailActionMarkRead": "已读",
+  "emailActionMarkUnread": "未读",
+  "emailActionNip59": "NIP-59 事件",
+  "emailActionRepost": "转发",
+  "emailActionDownload": "下载邮件",
+  "emailMoreActions": "更多操作",
+  "emailMoreOptions": "更多选项",
+  "emailShowRecipients": "显示收件人",
+  "emailImagesHidden": "为保护隐私,图片已隐藏",
+  "emailLoadImages": "加载图片",
+  "emailRecipientTo": "收件人",
+  "emailRecipientCc": "抄送",
+  "emailRecipientBcc": "密送",
+  "emailAttachmentsTitle": "附件",
+  "emailDownloadAll": "全部下载",
+  "emailNip59Dismiss": "关闭",
+  "emailNip59Title": "NIP-59 事件",
+  "emailNip59GiftWrap": "Gift Wrap",
+  "emailNip59Seal": "Seal",
+  "emailNip59Rumor": "Rumor",
+  "emailNip59CopyJson": "复制 JSON",
+  "emailNip59Kind": "Kind {kind}",
+  "@emailNip59Kind": {
+    "placeholders": {
+      "kind": { "type": "int" }
+    }
+  },
+  "emailNip59NotAvailable": "不可用",
+
+  "authHeaderTitle": "登录 Nmail",
+  "authSyncCodeLabel": "同步码",
+  "authInvalidSyncCode": "无效的同步码",
+  "authInvalidSyncCodeDescription": "我们会在您输入时检查代码。一旦有效,您将自动登录。",
+  "authLogIn": "登录",
+  "authCreateAccount": "创建账户",
+  "authMoreOptions": "更多选项",
+  "authRegisterPrompt": "其他人会看到什么?",
+  "authDisplayNameLabel": "显示名称",
+  "authDisplayNameHint": "例如 Alice",
+  "authBackToLogin": "返回登录",
+  "authUnableRetrieveCode": "无法获取同步码",
+  "authYourSyncCode": "您的同步码",
+  "authSyncCodeIntro": "此代码是您账户的密钥。它赋予您完全的控制权,并允许您:",
+  "authSyncCodeFeatureRestore": "在任何设备上恢复您的账户",
+  "authSyncCodeFeatureBackup": "安全备份您的身份",
+  "authSyncCodeFeatureLogin": "登录其他 Nostr 应用",
+  "authSyncCodeWarning": "切勿与任何人分享此代码。请保存在安全的地方。您随时可以在「设置」中找到它。",
+  "authCopied": "已复制!",
+  "authCopySyncCode": "复制同步码",
+  "authContinueToInbox": "进入收件箱",
+
+  "composeTitle": "撰写",
+  "composeTo": "收件人",
+  "composeAddMore": "添加更多",
+  "composeHideExpanded": "隐藏抄送/密送/发件人",
+  "composeShowExpanded": "显示抄送/密送/发件人",
+  "composeCc": "抄送",
+  "composeBcc": "密送",
+  "composeSubject": "主题",
+  "composeAttachFile": "添加附件",
+  "composePlaceholder": "撰写邮件",
+  "composeFrom": "发件人",
+  "composeSendAs": "发送身份",
+  "composeCreateNewIdentity": "创建新身份",
+  "composeRemoveAttachment": "移除附件",
+  "composeSend": "发送",
+  "composeMoreSendOptions": "更多发送选项",
+  "composeChooseSendMode": "选择发送模式",
+  "composeModePrivateDeniable": "私密(可否认)",
+  "composeModePrivateSigned": "私密(已签名)",
+  "composeModePublic": "公开",
+  "composeModePrivateDeniableDescription": "作为加密邮件发送。无签名 — 必要时可否认。",
+  "composeModePrivateSignedDescription": "作为加密邮件发送。已签名 — 证明您是作者。",
+  "composeModePublicDescription": "作为公开事件发送。任何人都能阅读。无加密。",
+  "composeResolvingNip05": "正在解析 NIP-05...",
+  "contactSourceEmailHistory": "邮件历史",
+  "contactSourceFollowing": "关注中",
+  "contactSourceCachedProfile": "缓存的资料",
+  "contactSourceNip05Verified": "已验证 NIP-05",
+
+  "profileEditTitle": "编辑个人资料",
+  "profileDisplayNameLabel": "显示名称",
+  "profileDisplayNameHint": "您的全名或别名",
+  "profileUsernameLabel": "用户名",
+  "profileUsernameHint": "用户名",
+  "profileAboutLabel": "关于",
+  "profileAboutHint": "关于您的简短介绍",
+  "profileAdvanced": "高级",
+  "profilePictureUrlLabel": "图片 URL",
+  "profilePictureUrlHint": "https://example.com/avatar.png",
+  "profileChangePicture": "更换头像",
+
+  "onboardingPage1Title": "欢迎使用 Nmail",
+  "onboardingPage1Body": "发现一种由您掌控的去中心化邮件体验。一种围绕您构建的全新沟通方式。",
+  "onboardingPage2Title": "没有主宰的网络",
+  "onboardingPage2Body": "您的消息通过全球独立服务器网络传输。没有任何一家公司拥有您的收件箱。",
+  "onboardingPage3Title": "选择的自由",
+  "onboardingPage3Body": "您永远不会被锁定在单一提供商。随时切换桥接或中继,不会丢失身份或联系人。",
+  "onboardingPage4Title": "一个身份打通一切",
+  "onboardingPage4Body": "用您的账户发邮件、关注资料或使用其他应用。在众多应用中通用的永久身份。",
+  "onboardingPage5Title": "为未来而设计",
+  "onboardingPage5Body": "受益于专为隐私设计的现代架构。Nmail 助您平稳过渡到更安全、更具韧性的沟通方式。",
+  "onboardingSkip": "跳过",
+  "onboardingNext": "下一步",
+  "onboardingDone": "完成",
+
+  "createIdentityTitle": "创建身份",
+  "createIdentityAddress": "地址",
+  "createIdentityCustomUsername": "自定义用户名",
+  "createIdentityBridge": "桥接",
+  "createIdentityNoBridges": "没有可用的桥接",
+  "createIdentityBridgeHint": "bridge.com",
+  "createIdentityPreview": "预览",
+  "createIdentityPreviewEmpty": "输入地址并选择桥接以查看预览",
+
+  "leftRailSettings": "设置",
+
+  "linkOpenTitle": "打开链接?",
+  "linkCopied": "已复制链接",
+
+  "debugNotAuthenticated": "未认证",
+  "debugTestEmailCreated": "测试邮件已创建并移至回收站(31 天)",
+  "debugTestEmailPartial": "邮件已创建并移至回收站,但无法更新时间戳",
+  "debugError": "错误: {error}",
+  "@debugError": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "composeSelectAttachments": "选择附件",
+  "composePickFilesFailed": "选择文件失败: {error}",
+  "@composePickFilesFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "composeInvalidRecipient": "收件人格式无效",
+  "composeAddRecipient": "请至少添加一位收件人",
+  "composeSendFailed": "发送邮件失败",
+
+  "profileLoadFailed": "加载个人资料失败",
+  "profileSelectPicture": "选择头像",
+  "profileUploadNoServers": "没有服务器响应",
+  "profileUploadFailed": "上传失败",
+  "profileUploadError": "上传过程中发生错误",
+  "profileUpdateFailed": "更新个人资料失败",
+  "authEnterUsername": "请输入用户名",
+  "createIdentityFailed": "创建身份失败: {error}",
+  "@createIdentityFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "dateYesterday": "昨天"
+}

@@ -17,6 +17,7 @@ import '../../app/config/nostr_config.dart';
 import '../../app/routes/app_routes.dart';
 import '../../controllers/auth_controller.dart';
 import '../../controllers/settings_controller.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../services/nostr_mail_service.dart';
 import '../../utils/platform_helper.dart';
 import '../../utils/responsive_helper.dart';
@@ -28,11 +29,12 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final settingsController = Get.find<SettingsController>();
     final isWide = ResponsiveHelper.isNotMobile(context);
 
     Widget content = Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(l.settingsTitle)),
       body: SingleChildScrollView(
         child: ResponsiveCenter(
           maxWidth: 600,
@@ -40,79 +42,77 @@ class SettingsView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16),
-              _buildSectionHeader(context, 'Appearance'),
+              _buildSectionHeader(context, l.settingsAppearance),
               _buildThemeModeTile(context, settingsController),
               Obx(
                 () => SwitchListTile(
-                  title: const Text('Dynamic theme'),
-                  subtitle: const Text('Generate colors from background image'),
+                  title: Text(l.settingsDynamicTheme),
+                  subtitle: Text(l.settingsDynamicThemeSubtitle),
                   value: settingsController.dynamicTheme.value,
                   onChanged: settingsController.setDynamicTheme,
                 ),
               ),
               _buildBackgroundGallery(context, settingsController),
               const SizedBox(height: 16),
-              _buildSectionHeader(context, 'Advanced options'),
+              _buildSectionHeader(context, l.settingsAdvancedOptions),
               Obx(
                 () => SwitchListTile(
-                  title: const Text('Show email source code'),
-                  subtitle: const Text('Adds a button to view raw email'),
+                  title: Text(l.settingsShowEmailSource),
+                  subtitle: Text(l.settingsShowEmailSourceSubtitle),
                   value: settingsController.showRawEmail.value,
                   onChanged: settingsController.setShowRawEmail,
                 ),
               ),
               Obx(
                 () => SwitchListTile(
-                  title: const Text('Always load images'),
-                  subtitle: const Text(
-                    'Images are blocked by default for privacy',
-                  ),
+                  title: Text(l.settingsAlwaysLoadImages),
+                  subtitle: Text(l.settingsAlwaysLoadImagesSubtitle),
                   value: settingsController.alwaysLoadImages.value,
                   onChanged: settingsController.setAlwaysLoadImages,
                 ),
               ),
               const SizedBox(height: 24),
-              _buildSectionHeader(context, 'Identities'),
+              _buildSectionHeader(context, l.settingsIdentities),
               ListTile(
                 leading: const Icon(Icons.alternate_email),
-                title: const Text('Manage identities'),
-                subtitle: const Text('Add, remove or reorder addresses'),
+                title: Text(l.settingsManageIdentities),
+                subtitle: Text(l.settingsManageIdentitiesSubtitle),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => Get.toNamed(AppRoutes.identities),
               ),
               const SizedBox(height: 24),
-              _buildSectionHeader(context, 'Compose'),
+              _buildSectionHeader(context, l.settingsCompose),
               Obx(() {
                 final signature = settingsController.emailSignature.value;
                 return ListTile(
                   leading: const Icon(Icons.edit_note),
-                  title: const Text('Email signature'),
+                  title: Text(l.settingsEmailSignature),
                   subtitle: signature.isEmpty
-                      ? const Text('No signature configured')
+                      ? Text(l.settingsEmailSignatureEmpty)
                       : Text(signature),
                   onTap: () =>
                       _showSignatureDialog(context, settingsController),
                 );
               }),
               const SizedBox(height: 24),
-              _buildSectionHeader(context, 'Synchronization'),
+              _buildSectionHeader(context, l.settingsSynchronization),
               ListTile(
                 leading: const Icon(Icons.cloud_outlined),
-                title: const Text('Hosting'),
-                subtitle: const Text('Relays, blossom servers, connectivity'),
+                title: Text(l.settingsHosting),
+                subtitle: Text(l.settingsHostingSubtitle),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => Get.toNamed(AppRoutes.nostrTechnicalSettings),
               ),
               if (kDebugMode)
                 ListTile(
                   leading: const Icon(Icons.bug_report_outlined),
-                  title: const Text('Debug Tools'),
-                  subtitle: const Text('Testing and development features'),
+                  title: Text(l.settingsDebugTools),
+                  subtitle: Text(l.settingsDebugToolsSubtitle),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => Get.toNamed(AppRoutes.debugTools),
                 ),
               const SizedBox(height: 24),
-              _buildSectionHeader(context, 'Account'),
+              _buildSectionHeader(context, l.settingsAccount),
               Builder(
                 builder: (context) {
                   final authController = Get.find<AuthController>();
@@ -120,14 +120,12 @@ class SettingsView extends StatelessWidget {
                   if (nsec == null) return const SizedBox.shrink();
                   return ListTile(
                     leading: const Icon(Icons.key),
-                    title: const Text('Copy sync code'),
-                    subtitle: const Text(
-                      'Use this code to sync your account on other devices',
-                    ),
+                    title: Text(l.settingsCopySyncCode),
+                    subtitle: Text(l.settingsCopySyncCodeSubtitle),
                     onTap: () async {
                       await Clipboard.setData(ClipboardData(text: nsec));
                       if (!PlatformHelper.isAndroid && context.mounted) {
-                        ToastHelper.success(context, 'Sync code copied');
+                        ToastHelper.success(context, l.settingsSyncCodeCopied);
                       }
                     },
                   );
@@ -135,9 +133,9 @@ class SettingsView extends StatelessWidget {
               ),
               ListTile(
                 leading: const Icon(Icons.logout, color: Colors.red),
-                title: const Text(
-                  'Log out',
-                  style: TextStyle(color: Colors.red),
+                title: Text(
+                  l.settingsLogOut,
+                  style: const TextStyle(color: Colors.red),
                 ),
                 onTap: () {
                   Get.find<AuthController>().logout();
@@ -146,11 +144,11 @@ class SettingsView extends StatelessWidget {
               ),
               ListTile(
                 leading: const Icon(Icons.delete_forever, color: Colors.red),
-                title: const Text(
-                  'Reset application',
-                  style: TextStyle(color: Colors.red),
+                title: Text(
+                  l.settingsResetApplication,
+                  style: const TextStyle(color: Colors.red),
                 ),
-                subtitle: const Text('Delete all local data'),
+                subtitle: Text(l.settingsResetApplicationSubtitle),
                 onTap: () => _showResetConfirmationDialog(context),
               ),
               const SizedBox(height: 48),
@@ -181,24 +179,23 @@ class SettingsView extends StatelessWidget {
   }
 
   void _showResetConfirmationDialog(BuildContext context) {
+    final l = AppLocalizations.of(context);
     Get.dialog(
       AlertDialog(
-        title: const Text('Reset application'),
-        content: const Text(
-          'This will delete all local data including settings, background images, and log you out.\n\nThis action cannot be undone.',
-        ),
+        title: Text(l.settingsResetApplication),
+        content: Text(l.settingsResetConfirmMessage),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          TextButton(onPressed: () => Get.back(), child: Text(l.actionCancel)),
           TextButton(
             onPressed: () async {
               Get.back();
               Get.dialog(
-                const AlertDialog(
+                AlertDialog(
                   content: Row(
                     children: [
-                      CircularProgressIndicator(),
-                      SizedBox(width: 16),
-                      Text('Resetting...'),
+                      const CircularProgressIndicator(),
+                      const SizedBox(width: 16),
+                      Text(l.stateResetting),
                     ],
                   ),
                 ),
@@ -206,7 +203,10 @@ class SettingsView extends StatelessWidget {
               );
               await Get.find<SettingsController>().resetApplication();
             },
-            child: const Text('Reset', style: TextStyle(color: Colors.red)),
+            child: Text(
+              l.actionReset,
+              style: const TextStyle(color: Colors.red),
+            ),
           ),
         ],
       ),
@@ -217,20 +217,21 @@ class SettingsView extends StatelessWidget {
     BuildContext context,
     SettingsController controller,
   ) {
+    final l = AppLocalizations.of(context);
     final textController = TextEditingController(
       text: controller.emailSignature.value,
     );
 
     Get.dialog(
       AlertDialog(
-        title: const Text('Email signature'),
+        title: Text(l.settingsEmailSignature),
         content: SizedBox(
           width: 400,
           child: TextField(
             controller: textController,
             maxLines: 5,
             decoration: InputDecoration(
-              hintText: 'Enter your signature...',
+              hintText: l.settingsEmailSignatureHint,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -238,13 +239,13 @@ class SettingsView extends StatelessWidget {
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          TextButton(onPressed: () => Get.back(), child: Text(l.actionCancel)),
           TextButton(
             onPressed: () {
               controller.setEmailSignature(textController.text);
               Get.back();
             },
-            child: const Text('Save'),
+            child: Text(l.actionSave),
           ),
         ],
       ),
@@ -255,6 +256,7 @@ class SettingsView extends StatelessWidget {
     BuildContext context,
     SettingsController controller,
   ) {
+    final l = AppLocalizations.of(context);
     return Obx(() {
       final mode = controller.themeMode.value;
       return ListTile(
@@ -265,13 +267,22 @@ class SettingsView extends StatelessWidget {
               ? Icons.light_mode
               : Icons.brightness_auto,
         ),
-        title: const Text('Theme'),
+        title: Text(l.settingsTheme),
         trailing: SegmentedButton<ThemeMode>(
           showSelectedIcon: false,
-          segments: const [
-            ButtonSegment(value: ThemeMode.system, label: Text('Auto')),
-            ButtonSegment(value: ThemeMode.light, label: Text('Light')),
-            ButtonSegment(value: ThemeMode.dark, label: Text('Dark')),
+          segments: [
+            ButtonSegment(
+              value: ThemeMode.system,
+              label: Text(l.settingsThemeAuto),
+            ),
+            ButtonSegment(
+              value: ThemeMode.light,
+              label: Text(l.settingsThemeLight),
+            ),
+            ButtonSegment(
+              value: ThemeMode.dark,
+              label: Text(l.settingsThemeDark),
+            ),
           ],
           selected: {mode},
           onSelectionChanged: (selected) {
@@ -407,8 +418,9 @@ class SettingsView extends StatelessWidget {
     SettingsController controller,
     String url,
   ) {
+    final l = AppLocalizations.of(context);
     return Semantics(
-      label: 'Remove background image',
+      label: l.settingsBackgroundRemoveLabel,
       button: true,
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
@@ -477,6 +489,7 @@ class SettingsView extends StatelessWidget {
     BuildContext context,
     SettingsController controller,
   ) {
+    final l = AppLocalizations.of(context);
     final isSelected =
         controller.backgroundImage.value == null ||
         controller.backgroundImage.value!.isEmpty;
@@ -488,7 +501,7 @@ class SettingsView extends StatelessWidget {
     );
 
     return Semantics(
-      label: 'Default theme color',
+      label: l.settingsBackgroundDefaultLabel,
       button: true,
       selected: isSelected,
       child: MouseRegion(
@@ -515,8 +528,9 @@ class SettingsView extends StatelessWidget {
   }
 
   Widget _buildAddButton(BuildContext context, SettingsController controller) {
+    final l = AppLocalizations.of(context);
     return Semantics(
-      label: 'Add background image',
+      label: l.settingsBackgroundAddLabel,
       button: true,
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
@@ -545,8 +559,9 @@ class SettingsView extends StatelessWidget {
     File file,
     bool isSelected,
   ) {
+    final l = AppLocalizations.of(context);
     return Semantics(
-      label: 'Select background image',
+      label: l.settingsBackgroundSelectLabel,
       button: true,
       selected: isSelected,
       child: MouseRegion(
@@ -582,7 +597,7 @@ class SettingsView extends StatelessWidget {
                 top: 4,
                 right: 4,
                 child: Semantics(
-                  label: 'Delete background image',
+                  label: l.settingsBackgroundDeleteLabel,
                   button: true,
                   child: GestureDetector(
                     onTap: () =>
@@ -635,12 +650,13 @@ class SettingsView extends StatelessWidget {
     SettingsController controller,
     File file,
   ) {
+    final l = AppLocalizations.of(context);
     Get.dialog(
       AlertDialog(
-        title: const Text('Delete background'),
-        content: const Text('Remove this image from your saved backgrounds?'),
+        title: Text(l.settingsBackgroundDeleteTitle),
+        content: Text(l.settingsBackgroundDeleteMessage),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          TextButton(onPressed: () => Get.back(), child: Text(l.actionCancel)),
           TextButton(
             onPressed: () async {
               Get.back();
@@ -649,15 +665,18 @@ class SettingsView extends StatelessWidget {
                 // Force rebuild
                 controller.backgroundImage.refresh();
                 if (context.mounted) {
-                  ToastHelper.success(context, 'Image deleted');
+                  ToastHelper.success(
+                    context,
+                    l.settingsBackgroundImageDeleted,
+                  );
                 }
               } catch (e) {
                 if (context.mounted) {
-                  ToastHelper.error(context, 'Failed to delete image');
+                  ToastHelper.error(context, l.settingsBackgroundDeleteFailed);
                 }
               }
             },
-            child: const Text('Delete'),
+            child: Text(l.actionDelete),
           ),
         ],
       ),
@@ -668,9 +687,10 @@ class SettingsView extends StatelessWidget {
     BuildContext context,
     SettingsController controller,
   ) {
+    final l = AppLocalizations.of(context);
     Get.dialog(
       AlertDialog(
-        title: const Text('Background'),
+        title: Text(l.settingsBackgroundDialogTitle),
         contentPadding: const EdgeInsets.symmetric(vertical: 8),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -678,7 +698,7 @@ class SettingsView extends StatelessWidget {
             ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               leading: const Icon(Icons.image_outlined),
-              title: const Text('Select file'),
+              title: Text(l.settingsBackgroundSelectFile),
               onTap: () {
                 Get.back();
                 _pickBackgroundImage(context, controller);
@@ -687,7 +707,7 @@ class SettingsView extends StatelessWidget {
             ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               leading: const Icon(Icons.link),
-              title: const Text('Paste URL'),
+              title: Text(l.settingsBackgroundPasteUrl),
               onTap: () {
                 Get.back();
                 _showBackgroundUrlDialog(context, controller);
@@ -696,7 +716,7 @@ class SettingsView extends StatelessWidget {
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          TextButton(onPressed: () => Get.back(), child: Text(l.actionCancel)),
         ],
       ),
     );
@@ -728,6 +748,7 @@ class SettingsView extends StatelessWidget {
     BuildContext context,
     SettingsController controller,
   ) async {
+    final l = AppLocalizations.of(context);
     final result = await FilePicker.platform.pickFiles(
       type: FileType.image,
       allowMultiple: false,
@@ -746,11 +767,11 @@ class SettingsView extends StatelessWidget {
 
       controller.setBackgroundImage(destPath);
       if (context.mounted) {
-        ToastHelper.success(context, 'Image set');
+        ToastHelper.success(context, l.settingsBackgroundImageSet);
       }
     } catch (e) {
       if (context.mounted) {
-        ToastHelper.error(context, 'Failed to copy image');
+        ToastHelper.error(context, l.settingsBackgroundCopyFailed);
       }
     }
   }
@@ -759,6 +780,7 @@ class SettingsView extends StatelessWidget {
     BuildContext context,
     SettingsController controller,
   ) {
+    final l = AppLocalizations.of(context);
     final textController = TextEditingController(
       text: PlatformHelper.isNative
           ? ''
@@ -767,13 +789,13 @@ class SettingsView extends StatelessWidget {
 
     Get.dialog(
       AlertDialog(
-        title: const Text('Background URL'),
+        title: Text(l.settingsBackgroundUrlTitle),
         content: SizedBox(
           width: 400,
           child: TextField(
             controller: textController,
             decoration: InputDecoration(
-              hintText: 'https://example.com/image.jpg',
+              hintText: l.settingsBackgroundUrlHint,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -781,7 +803,7 @@ class SettingsView extends StatelessWidget {
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          TextButton(onPressed: () => Get.back(), child: Text(l.actionCancel)),
           TextButton(
             onPressed: () {
               final url = textController.text.trim();
@@ -794,7 +816,7 @@ class SettingsView extends StatelessWidget {
                 _validateAndSetWebImage(context, controller, url);
               }
             },
-            child: const Text('Save'),
+            child: Text(l.actionSave),
           ),
         ],
       ),
@@ -806,14 +828,15 @@ class SettingsView extends StatelessWidget {
     SettingsController controller,
     String url,
   ) async {
+    final l = AppLocalizations.of(context);
     // Show loading
     Get.dialog(
-      const AlertDialog(
+      AlertDialog(
         content: Row(
           children: [
-            CircularProgressIndicator(),
-            SizedBox(width: 16),
-            Text('Validating...'),
+            const CircularProgressIndicator(),
+            const SizedBox(width: 16),
+            Text(l.stateValidating),
           ],
         ),
       ),
@@ -839,15 +862,12 @@ class SettingsView extends StatelessWidget {
 
       controller.setBackgroundImage(url);
       if (context.mounted) {
-        ToastHelper.success(context, 'Background set');
+        ToastHelper.success(context, l.settingsBackgroundSet);
       }
     } catch (e) {
       Get.back(); // Close loading dialog
       if (context.mounted) {
-        ToastHelper.error(
-          context,
-          'Image not accessible (CORS or network error)',
-        );
+        ToastHelper.error(context, l.settingsBackgroundUrlError);
       }
     }
   }
@@ -857,14 +877,15 @@ class SettingsView extends StatelessWidget {
     SettingsController controller,
     String url,
   ) async {
+    final l = AppLocalizations.of(context);
     // Show loading
     Get.dialog(
-      const AlertDialog(
+      AlertDialog(
         content: Row(
           children: [
-            CircularProgressIndicator(),
-            SizedBox(width: 16),
-            Text('Downloading...'),
+            const CircularProgressIndicator(),
+            const SizedBox(width: 16),
+            Text(l.stateDownloading),
           ],
         ),
       ),
@@ -893,12 +914,12 @@ class SettingsView extends StatelessWidget {
 
       controller.setBackgroundImage(destPath);
       if (context.mounted) {
-        ToastHelper.success(context, 'Image downloaded');
+        ToastHelper.success(context, l.settingsBackgroundDownloaded);
       }
     } catch (e) {
       Get.back(); // Close loading dialog
       if (context.mounted) {
-        ToastHelper.error(context, 'Failed to download image');
+        ToastHelper.error(context, l.settingsBackgroundDownloadFailed);
       }
     }
   }
@@ -907,6 +928,7 @@ class SettingsView extends StatelessWidget {
     BuildContext context,
     SettingsController controller,
   ) async {
+    final l = AppLocalizations.of(context);
     final result = await FilePicker.platform.pickFiles(
       type: FileType.image,
       allowMultiple: false,
@@ -919,18 +941,16 @@ class SettingsView extends StatelessWidget {
     // Warning about upload
     final confirmed = await Get.dialog<bool>(
       AlertDialog(
-        title: const Text('Upload image'),
-        content: const Text(
-          'This image will be uploaded to Blossom servers. Server operators and anyone with the link can view it.',
-        ),
+        title: Text(l.settingsBackgroundUploadTitle),
+        content: Text(l.settingsBackgroundUploadWarning),
         actions: [
           TextButton(
             onPressed: () => Get.back(result: false),
-            child: const Text('Cancel'),
+            child: Text(l.actionCancel),
           ),
           TextButton(
             onPressed: () => Get.back(result: true),
-            child: const Text('Upload'),
+            child: Text(l.actionUpload),
           ),
         ],
       ),
@@ -942,12 +962,12 @@ class SettingsView extends StatelessWidget {
 
     // Show loading
     Get.dialog(
-      const AlertDialog(
+      AlertDialog(
         content: Row(
           children: [
-            CircularProgressIndicator(),
-            SizedBox(width: 16),
-            Text('Uploading...'),
+            const CircularProgressIndicator(),
+            const SizedBox(width: 16),
+            Text(l.stateUploading),
           ],
         ),
       ),

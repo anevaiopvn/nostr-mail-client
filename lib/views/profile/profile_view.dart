@@ -5,6 +5,7 @@ import 'package:ndk/ndk.dart';
 
 import '../../controllers/auth_controller.dart';
 import '../../controllers/profile_controller.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../utils/responsive_helper.dart';
 import '../../widgets/nostr_avatar.dart';
 import '../shared/desktop_shell.dart';
@@ -17,12 +18,13 @@ class ProfileView extends GetView<ProfileController> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final isWide = ResponsiveHelper.isNotMobile(context);
 
     Widget content = Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: const Text('Edit Profile'),
+        title: Text(l.profileEditTitle),
         actionsPadding: const EdgeInsets.only(right: 8),
         actions: [
           GetBuilder<ProfileController>(
@@ -38,7 +40,7 @@ class ProfileView extends GetView<ProfileController> {
                         height: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('Save'),
+                    : Text(l.actionSave),
               );
             },
           ),
@@ -60,9 +62,9 @@ class ProfileView extends GetView<ProfileController> {
                   const SizedBox(height: 24),
                   TextField(
                     controller: controller.displayNameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Display Name',
-                      hintText: 'Your full name or alias',
+                    decoration: InputDecoration(
+                      labelText: l.profileDisplayNameLabel,
+                      hintText: l.profileDisplayNameHint,
                     ),
                     textCapitalization: TextCapitalization.words,
                     onChanged: (_) => controller.update(),
@@ -70,9 +72,9 @@ class ProfileView extends GetView<ProfileController> {
                   const SizedBox(height: 16),
                   TextField(
                     controller: controller.nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Username',
-                      hintText: 'handle',
+                    decoration: InputDecoration(
+                      labelText: l.profileUsernameLabel,
+                      hintText: l.profileUsernameHint,
                       prefixText: '@',
                     ),
                     inputFormatters: [
@@ -84,9 +86,9 @@ class ProfileView extends GetView<ProfileController> {
                   const SizedBox(height: 16),
                   TextField(
                     controller: controller.aboutController,
-                    decoration: const InputDecoration(
-                      labelText: 'About',
-                      hintText: 'A short bio about yourself',
+                    decoration: InputDecoration(
+                      labelText: l.profileAboutLabel,
+                      hintText: l.profileAboutHint,
                     ),
                     maxLines: 3,
                     textCapitalization: TextCapitalization.sentences,
@@ -104,16 +106,16 @@ class ProfileView extends GetView<ProfileController> {
                             duration: const Duration(milliseconds: 200),
                             child: const Icon(Icons.expand_more),
                           ),
-                          label: const Text('Advanced'),
+                          label: Text(l.profileAdvanced),
                         ),
                         if (controller.showMoreOptions.value)
                           Padding(
                             padding: const EdgeInsets.only(top: 16),
                             child: TextField(
                               controller: controller.pictureController,
-                              decoration: const InputDecoration(
-                                labelText: 'Picture URL',
-                                hintText: 'https://example.com/avatar.png',
+                              decoration: InputDecoration(
+                                labelText: l.profilePictureUrlLabel,
+                                hintText: l.profilePictureUrlHint,
                               ),
                               keyboardType: TextInputType.url,
                               onChanged: (_) => controller.update(),
@@ -140,6 +142,7 @@ class ProfileView extends GetView<ProfileController> {
     BuildContext context,
     ProfileController controller,
   ) {
+    final l = AppLocalizations.of(context);
     final pictureUrl = controller.pictureController.text.trim();
     final displayName = controller.displayNameController.text.trim();
     final name = controller.nameController.text.trim();
@@ -153,7 +156,7 @@ class ProfileView extends GetView<ProfileController> {
     );
 
     return Semantics(
-      label: 'Change profile picture',
+      label: l.profileChangePicture,
       button: true,
       enabled: !controller.isUploadingPicture.value,
       child: MouseRegion(

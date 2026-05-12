@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../controllers/inbox_controller.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../email_controller.dart';
 import 'email_actions.dart';
 
@@ -10,7 +11,9 @@ class DesktopActionsBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final actions = buildEmailActions(
+      l,
       Get.find<EmailController>(),
       Get.find<InboxController>().currentFolder.value,
     );
@@ -65,6 +68,7 @@ class _MoreButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return MenuAnchor(
       alignmentOffset: const Offset(-110, 4),
       style: MenuStyle(
@@ -81,7 +85,7 @@ class _MoreButton extends StatelessWidget {
       builder: (context, menuController, child) {
         return IconButton(
           icon: const Icon(Icons.more_vert),
-          tooltip: 'More actions',
+          tooltip: l.emailMoreActions,
           onPressed: () {
             if (menuController.isOpen) {
               menuController.close();

@@ -6,6 +6,7 @@ import 'package:toastification/toastification.dart';
 
 import '../../app/routes/app_routes.dart';
 import '../../controllers/auth_controller.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../utils/platform_helper.dart';
 import '../../utils/metadata_extensions.dart';
 import '../../widgets/nostr_avatar.dart';
@@ -16,6 +17,7 @@ class LeftRail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final isDesktop = PlatformHelper.isDesktop;
 
     return Container(
@@ -48,7 +50,7 @@ class LeftRail extends StatelessWidget {
           // Settings
           IconButton(
             icon: const Icon(Icons.settings),
-            tooltip: 'Settings',
+            tooltip: l.leftRailSettings,
             onPressed: () => Get.toNamed(AppRoutes.settings),
           ),
           // Account menu
@@ -118,6 +120,7 @@ class _AccountMenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return MenuAnchor(
       // TODO: Refactor account popup into a reusable widget to avoid duplication with inbox_view.dart
       alignmentOffset: const Offset(LayoutConstants.railWidth - 8, -44),
@@ -138,7 +141,7 @@ class _AccountMenuButton extends StatelessWidget {
         MenuItemButton(
           leadingIcon: const Icon(Icons.person_outline),
           onPressed: () => Get.toNamed(AppRoutes.profile),
-          child: const Text('Profile'),
+          child: Text(l.inboxProfile),
         ),
         MenuItemButton(
           leadingIcon: const Icon(Icons.copy),
@@ -149,13 +152,13 @@ class _AccountMenuButton extends StatelessWidget {
               toastification.show(
                 context: context,
                 type: ToastificationType.success,
-                title: const Text('npub copied'),
+                title: Text(l.inboxNpubCopied),
                 autoCloseDuration: const Duration(seconds: 2),
                 alignment: Alignment.bottomRight,
               );
             }
           },
-          child: const Text('Copy npub'),
+          child: Text(l.inboxCopyNpub),
         ),
         MenuItemButton(
           leadingIcon: const Icon(Icons.logout, color: Colors.red),
@@ -163,7 +166,7 @@ class _AccountMenuButton extends StatelessWidget {
             Get.find<AuthController>().logout();
             Get.offAllNamed(AppRoutes.login);
           },
-          child: const Text('Logout', style: TextStyle(color: Colors.red)),
+          child: Text(l.inboxLogout, style: const TextStyle(color: Colors.red)),
         ),
       ],
       builder: (context, menuController, child) {
@@ -176,7 +179,7 @@ class _AccountMenuButton extends StatelessWidget {
             }
           },
           icon: Obx(() => _buildAvatar(context)),
-          tooltip: 'Account',
+          tooltip: l.inboxAccount,
         );
       },
     );

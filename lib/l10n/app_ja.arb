@@ -1,0 +1,450 @@
+{
+  "@@locale": "ja",
+
+  "actionCancel": "キャンセル",
+  "actionSave": "保存",
+  "actionDelete": "削除",
+  "actionAdd": "追加",
+  "actionClose": "閉じる",
+  "actionContinue": "続ける",
+  "actionBack": "戻る",
+  "actionConfirm": "確認",
+  "actionOk": "OK",
+  "actionCopy": "コピー",
+  "actionOpen": "開く",
+  "actionUpload": "アップロード",
+  "actionReset": "リセット",
+  "actionUndo": "元に戻す",
+  "actionRemove": "削除",
+  "actionDiscard": "破棄",
+
+  "stateLoading": "読み込み中",
+  "stateLoadingEllipsis": "読み込み中...",
+  "stateResetting": "リセット中...",
+  "stateValidating": "検証中...",
+  "stateDownloading": "ダウンロード中...",
+  "stateUploading": "アップロード中...",
+
+  "settingsTitle": "設定",
+  "settingsAppearance": "外観",
+  "settingsDynamicTheme": "ダイナミックテーマ",
+  "settingsDynamicThemeSubtitle": "背景画像から色を生成",
+  "settingsAdvancedOptions": "詳細設定",
+  "settingsShowEmailSource": "メールのソースコードを表示",
+  "settingsShowEmailSourceSubtitle": "生メールを表示するボタンを追加します",
+  "settingsAlwaysLoadImages": "常に画像を読み込む",
+  "settingsAlwaysLoadImagesSubtitle": "プライバシー保護のため、画像は既定でブロックされます",
+  "settingsIdentities": "アイデンティティ",
+  "settingsManageIdentities": "アイデンティティを管理",
+  "settingsManageIdentitiesSubtitle": "アドレスの追加・削除・並び替え",
+  "settingsCompose": "作成",
+  "settingsEmailSignature": "メール署名",
+  "settingsEmailSignatureEmpty": "署名が設定されていません",
+  "settingsEmailSignatureHint": "署名を入力...",
+  "settingsSynchronization": "同期",
+  "settingsHosting": "ホスティング",
+  "settingsHostingSubtitle": "リレー、Blossom サーバー、接続",
+  "settingsDebugTools": "デバッグツール",
+  "settingsDebugToolsSubtitle": "テストおよび開発機能",
+  "settingsAccount": "アカウント",
+  "settingsCopySyncCode": "同期コードをコピー",
+  "settingsCopySyncCodeSubtitle": "このコードで他のデバイスとアカウントを同期できます",
+  "settingsSyncCodeCopied": "同期コードをコピーしました",
+  "settingsLogOut": "ログアウト",
+  "settingsResetApplication": "アプリをリセット",
+  "settingsResetApplicationSubtitle": "ローカルデータをすべて削除",
+  "settingsResetConfirmMessage": "設定や背景画像を含むすべてのローカルデータが削除され、ログアウトされます。\n\nこの操作は元に戻せません。",
+
+  "settingsTheme": "テーマ",
+  "settingsThemeAuto": "自動",
+  "settingsThemeLight": "ライト",
+  "settingsThemeDark": "ダーク",
+
+  "settingsBackgroundDefaultLabel": "既定のテーマカラー",
+  "settingsBackgroundSelectLabel": "背景画像を選択",
+  "settingsBackgroundDeleteLabel": "背景画像を削除",
+  "settingsBackgroundRemoveLabel": "背景画像を取り除く",
+  "settingsBackgroundAddLabel": "背景画像を追加",
+  "settingsBackgroundDeleteTitle": "背景を削除",
+  "settingsBackgroundDeleteMessage": "保存済みの背景からこの画像を削除しますか?",
+  "settingsBackgroundImageDeleted": "画像を削除しました",
+  "settingsBackgroundDeleteFailed": "画像の削除に失敗しました",
+  "settingsBackgroundDialogTitle": "背景",
+  "settingsBackgroundSelectFile": "ファイルを選択",
+  "settingsBackgroundPasteUrl": "URL を貼り付け",
+  "settingsBackgroundUrlTitle": "背景の URL",
+  "settingsBackgroundUrlHint": "https://example.com/image.jpg",
+  "settingsBackgroundSet": "背景を設定しました",
+  "settingsBackgroundImageSet": "画像を設定しました",
+  "settingsBackgroundCopyFailed": "画像のコピーに失敗しました",
+  "settingsBackgroundUrlError": "画像にアクセスできません (CORS またはネットワークエラー)",
+  "settingsBackgroundDownloaded": "画像をダウンロードしました",
+  "settingsBackgroundDownloadFailed": "画像のダウンロードに失敗しました",
+  "settingsBackgroundUploadTitle": "画像をアップロード",
+  "settingsBackgroundUploadWarning": "この画像は Blossom サーバーにアップロードされます。サーバー運営者やリンクを知る誰でも閲覧できます。",
+
+  "hostingRecommended": "おすすめ:",
+  "hostingWillBeAddedAs": "次のように追加されます: {url}",
+  "@hostingWillBeAddedAs": {
+    "placeholders": {
+      "url": { "type": "String" }
+    }
+  },
+
+  "relayAddTitle": "リレーを追加",
+  "relayUrlLabel": "リレー URL",
+  "relayUrlHint": "wss://relay.example.com",
+  "relayInvalidUrl": "無効なリレー URL",
+  "relayDirection": "方向",
+  "relayReadWrite": "読み書き",
+  "relayRead": "読み取り",
+  "relayWrite": "書き込み",
+  "relayMarkerReadWrite": "読み書き",
+  "relayMarkerRead": "読み取り",
+  "relayMarkerWrite": "書き込み",
+  "relayInboxOutboxTitle": "受信/送信リレー",
+  "relayAddTooltip": "リレーを追加",
+  "relayRemoveTooltip": "リレーを削除",
+  "relayInboxOutboxEmpty": "受信/送信リレーが設定されていません",
+  "relayEmptyHint": "+ をタップしてリレーを追加",
+
+  "dmRelayAddTitle": "DM リレーを追加",
+  "dmRelaySectionTitle": "DM リレー",
+  "dmRelayEmpty": "DM リレーが設定されていません",
+
+  "bridgeAddTitle": "ブリッジを追加",
+  "bridgeDomainLabel": "ブリッジドメイン",
+  "bridgeDomainHint": "bridge.example.com",
+  "bridgeInvalidDomain": "無効なドメイン",
+  "bridgeSectionTitle": "ブリッジ",
+  "bridgeAddTooltip": "ブリッジを追加",
+  "bridgeEmpty": "ブリッジが設定されていません",
+  "bridgeEmptyHint": "+ をタップしてブリッジを追加",
+  "bridgeDefault": "既定のブリッジ",
+
+  "blossomAddTitle": "Blossom サーバーを追加",
+  "blossomServerUrlLabel": "サーバー URL",
+  "blossomServerUrlHint": "https://blossom.example.com",
+  "blossomInvalidUrl": "無効なサーバー URL",
+  "blossomSectionTitle": "ファイルホスティング",
+  "blossomAddTooltip": "サーバーを追加",
+  "blossomRemoveTooltip": "サーバーを削除",
+  "blossomEmpty": "Blossom サーバーが設定されていません",
+  "blossomEmptyHint": "+ をタップしてサーバーを追加",
+
+  "connectivitySectionTitle": "リアルタイム接続",
+  "connectivityRelayConnectivity": "リレー接続状態",
+
+  "syncStatusSectionTitle": "同期ステータス",
+  "syncStatusEmpty": "同期データがありません",
+  "syncStatusEmptyHint": "メールを同期するとリレーの状態が表示されます",
+  "syncStatusResync": "再同期",
+  "syncStatusBeginningOfTime": "時の始まり",
+
+  "identitiesTitle": "アイデンティティ",
+  "identitiesEmptyTitle": "アイデンティティがありません",
+  "identitiesEmptyMessage": "カスタムアドレスからメールを送信するために 1 つ作成してください。",
+  "identitiesCreate": "アイデンティティを作成",
+  "identitiesDiscardTitle": "変更を破棄しますか?",
+  "identitiesDiscardMessage": "保存されていない変更があります。今離れると破棄されます。",
+  "identitiesKeepEditing": "編集を続ける",
+
+  "debugToolsEmailTesting": "メールテスト",
+  "debugToolsCreateOldTrashed": "古いゴミ箱メールを作成",
+  "debugToolsCreateOldTrashedDescription": "31 日前のテストメールをゴミ箱に作成します。「古いメールを削除」機能のテストに使用します。",
+
+  "folderInbox": "受信トレイ",
+  "folderSent": "送信済み",
+  "folderTrash": "ゴミ箱",
+  "folderArchive": "アーカイブ",
+  "inboxEmptyInbox": "メールはまだありません",
+  "inboxEmptySent": "送信済みメールはありません",
+  "inboxEmptyTrash": "ゴミ箱は空です",
+  "inboxEmptyArchive": "アーカイブは空です",
+  "inboxSyncFromRelays": "リレーから同期",
+  "inboxSearch": "検索",
+  "inboxSync": "同期",
+  "inboxMenu": "メニュー",
+  "inboxClearSelection": "選択を解除",
+  "inboxSelectedCount": "{count} 件選択中",
+  "@inboxSelectedCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "inboxProfile": "プロフィール",
+  "inboxCopyNpub": "npub をコピー",
+  "inboxLogout": "ログアウト",
+  "inboxAccount": "アカウント",
+  "inboxCompose": "作成",
+  "inboxNpubCopied": "npub をコピーしました",
+  "inboxUnknown": "不明",
+  "inboxEditProfile": "プロフィールを編集",
+  "inboxSettings": "設定",
+  "inboxDeleteOldEmailsTitle": "古いメールを削除",
+  "inboxDeleteOldEmailsMessage": "30 日以上前のメール {count} 件を完全に削除します。\n\nこの操作は元に戻せません。",
+  "@inboxDeleteOldEmailsMessage": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "inboxDeleteFailed": "削除に失敗しました",
+  "inboxDeleteFailedDescription": "古いメールの削除に失敗しました: {error}",
+  "@inboxDeleteFailedDescription": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "inboxOldEmailsCount": "削除予定の古いメール {count} 件",
+  "@inboxOldEmailsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "inboxDeleteNow": "今すぐ削除",
+  "inboxDeleteOldEmailsTooltip": "古いメールを削除",
+  "inboxSearchHint": "すべてのメールを検索...",
+  "inboxCloseSearch": "検索を閉じる",
+  "inboxSelectAll": "すべて選択",
+  "inboxMoreActions": "その他の操作",
+
+  "emailReply": "返信",
+  "emailForward": "転送",
+  "emailArchive": "アーカイブ",
+  "emailUnarchive": "アーカイブ解除",
+  "emailMarkAsRead": "既読にする",
+  "emailMarkAsUnread": "未読にする",
+  "emailMoveToTrash": "ゴミ箱へ移動",
+  "emailRestore": "復元",
+  "emailDeletePermanently": "完全に削除",
+  "emailNoSubject": "(件名なし)",
+
+  "emailNotFound": "メールが見つかりません",
+  "emailShowFormatted": "整形表示",
+  "emailShowRaw": "ソースを表示",
+  "emailSenderNpub": "送信者の npub: {npub}",
+  "@emailSenderNpub": {
+    "placeholders": {
+      "npub": { "type": "String" }
+    }
+  },
+  "emailDeletePermanentlyTitle": "完全に削除しますか?",
+  "emailDeletePermanentlyMessage": "この操作は元に戻せません。",
+  "emailDefaultFilename": "email",
+  "emailSaved": "メールを保存しました: {path}",
+  "@emailSaved": {
+    "placeholders": {
+      "path": { "type": "String" }
+    }
+  },
+  "emailSaveFailed": "メールの保存に失敗しました: {error}",
+  "@emailSaveFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "emailRepostFailedEvent": "リポスト用のイベントを取得できませんでした",
+  "emailRepostSuccess": "メールをリポストしました",
+  "emailRepostFailed": "メールのリポストに失敗しました: {error}",
+  "@emailRepostFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "emailAttachmentLoadFailed": "添付ファイルの読み込みに失敗しました",
+  "emailFileSaved": "ファイルを保存しました: {path}",
+  "@emailFileSaved": {
+    "placeholders": {
+      "path": { "type": "String" }
+    }
+  },
+  "emailFileSaveFailed": "ファイルの保存に失敗しました: {error}",
+  "@emailFileSaveFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "emailDownloadedAllSuccess": "{count} 件のファイルをダウンロードしました",
+  "@emailDownloadedAllSuccess": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "emailDownloadedAllFailed": "{count} 件のファイルのダウンロードに失敗しました",
+  "@emailDownloadedAllFailed": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "emailDownloadedMixed": "{success} 件成功、{failed} 件失敗",
+  "@emailDownloadedMixed": {
+    "placeholders": {
+      "success": { "type": "int" },
+      "failed": { "type": "int" }
+    }
+  },
+  "emailDownload": "ダウンロード",
+  "emailImageLoadFailed": "画像の読み込みに失敗しました",
+  "emailPdfLoadFailed": "PDF の読み込みに失敗しました",
+  "emailActionReply": "返信",
+  "emailActionReplyAll": "全員に返信",
+  "emailActionForward": "転送",
+  "emailActionArchive": "アーカイブ",
+  "emailActionUnarchive": "アーカイブ解除",
+  "emailActionMarkRead": "既読",
+  "emailActionMarkUnread": "未読",
+  "emailActionNip59": "NIP-59 イベント",
+  "emailActionRepost": "リポスト",
+  "emailActionDownload": "メールをダウンロード",
+  "emailMoreActions": "その他の操作",
+  "emailMoreOptions": "その他のオプション",
+  "emailShowRecipients": "宛先を表示",
+  "emailImagesHidden": "プライバシー保護のため画像は非表示です",
+  "emailLoadImages": "画像を読み込む",
+  "emailRecipientTo": "宛先",
+  "emailRecipientCc": "Cc",
+  "emailRecipientBcc": "Bcc",
+  "emailAttachmentsTitle": "添付ファイル",
+  "emailDownloadAll": "すべてダウンロード",
+  "emailNip59Dismiss": "閉じる",
+  "emailNip59Title": "NIP-59 イベント",
+  "emailNip59GiftWrap": "Gift Wrap",
+  "emailNip59Seal": "Seal",
+  "emailNip59Rumor": "Rumor",
+  "emailNip59CopyJson": "JSON をコピー",
+  "emailNip59Kind": "Kind {kind}",
+  "@emailNip59Kind": {
+    "placeholders": {
+      "kind": { "type": "int" }
+    }
+  },
+  "emailNip59NotAvailable": "利用できません",
+
+  "authHeaderTitle": "Nmail にログイン",
+  "authSyncCodeLabel": "同期コード",
+  "authInvalidSyncCode": "無効な同期コード",
+  "authInvalidSyncCodeDescription": "入力中にコードを確認しています。有効になると自動的にログインされます。",
+  "authLogIn": "ログイン",
+  "authCreateAccount": "アカウントを作成",
+  "authMoreOptions": "その他のオプション",
+  "authRegisterPrompt": "他の人に表示する名前は?",
+  "authDisplayNameLabel": "表示名",
+  "authDisplayNameHint": "例: アリス",
+  "authBackToLogin": "ログイン画面に戻る",
+  "authUnableRetrieveCode": "同期コードを取得できませんでした",
+  "authYourSyncCode": "あなたの同期コード",
+  "authSyncCodeIntro": "このコードはアカウントの鍵です。完全なコントロールを得られ、次のことができます:",
+  "authSyncCodeFeatureRestore": "任意のデバイスでアカウントを復元",
+  "authSyncCodeFeatureBackup": "アイデンティティを安全にバックアップ",
+  "authSyncCodeFeatureLogin": "他の Nostr アプリにログイン",
+  "authSyncCodeWarning": "このコードを誰とも共有しないでください。安全な場所に保管してください。後から「設定」でいつでも確認できます。",
+  "authCopied": "コピーしました!",
+  "authCopySyncCode": "同期コードをコピー",
+  "authContinueToInbox": "受信トレイへ",
+
+  "composeTitle": "作成",
+  "composeTo": "宛先",
+  "composeAddMore": "さらに追加",
+  "composeHideExpanded": "Cc/Bcc/送信元を隠す",
+  "composeShowExpanded": "Cc/Bcc/送信元を表示",
+  "composeCc": "Cc",
+  "composeBcc": "Bcc",
+  "composeSubject": "件名",
+  "composeAttachFile": "ファイルを添付",
+  "composePlaceholder": "メールを作成",
+  "composeFrom": "送信元",
+  "composeSendAs": "送信元として",
+  "composeCreateNewIdentity": "新しいアイデンティティを作成",
+  "composeRemoveAttachment": "添付を削除",
+  "composeSend": "送信",
+  "composeMoreSendOptions": "その他の送信オプション",
+  "composeChooseSendMode": "送信モードを選択",
+  "composeModePrivateDeniable": "プライベート(否認可能)",
+  "composeModePrivateSigned": "プライベート(署名付き)",
+  "composeModePublic": "公開",
+  "composeModePrivateDeniableDescription": "暗号化メールとして送信。署名なし — 必要に応じて否認可能。",
+  "composeModePrivateSignedDescription": "暗号化メールとして送信。署名付き — 作者であることを証明。",
+  "composeModePublicDescription": "公開イベントとして送信。誰でも読めます。暗号化なし。",
+  "composeResolvingNip05": "NIP-05 を解決中...",
+  "contactSourceEmailHistory": "メール履歴",
+  "contactSourceFollowing": "フォロー中",
+  "contactSourceCachedProfile": "キャッシュされたプロフィール",
+  "contactSourceNip05Verified": "NIP-05 認証済み",
+
+  "profileEditTitle": "プロフィールを編集",
+  "profileDisplayNameLabel": "表示名",
+  "profileDisplayNameHint": "フルネームまたはエイリアス",
+  "profileUsernameLabel": "ユーザー名",
+  "profileUsernameHint": "ハンドル",
+  "profileAboutLabel": "自己紹介",
+  "profileAboutHint": "あなたについての短いプロフィール",
+  "profileAdvanced": "詳細",
+  "profilePictureUrlLabel": "画像 URL",
+  "profilePictureUrlHint": "https://example.com/avatar.png",
+  "profileChangePicture": "プロフィール画像を変更",
+
+  "onboardingPage1Title": "Nmail へようこそ",
+  "onboardingPage1Body": "あなたが主導権を握る分散型メール体験を発見しましょう。あなたを中心にした、新しいコミュニケーションの形です。",
+  "onboardingPage2Title": "支配者のいないネットワーク",
+  "onboardingPage2Body": "メッセージは独立したサーバーのグローバルネットワークを通じて流れます。あなたの受信トレイを所有する企業はありません。",
+  "onboardingPage3Title": "選択の自由",
+  "onboardingPage3Body": "単一のプロバイダーに縛られることはありません。アイデンティティや連絡先を失うことなく、いつでもブリッジやリレーを切り替えられます。",
+  "onboardingPage4Title": "すべてに 1 つのアイデンティティ",
+  "onboardingPage4Body": "メール送信、プロフィールのフォロー、他のアプリの利用にあなたのアカウントを使用。多くのアプリで動作する、永続的なアイデンティティです。",
+  "onboardingPage5Title": "未来のために設計",
+  "onboardingPage5Body": "プライバシーのために設計されたモダンなアーキテクチャの恩恵を受けましょう。Nmail は、より安全で回復力のあるコミュニケーションへの円滑な移行を支援します。",
+  "onboardingSkip": "スキップ",
+  "onboardingNext": "次へ",
+  "onboardingDone": "完了",
+
+  "createIdentityTitle": "アイデンティティを作成",
+  "createIdentityAddress": "アドレス",
+  "createIdentityCustomUsername": "カスタムユーザー名",
+  "createIdentityBridge": "ブリッジ",
+  "createIdentityNoBridges": "利用可能なブリッジがありません",
+  "createIdentityBridgeHint": "bridge.com",
+  "createIdentityPreview": "プレビュー",
+  "createIdentityPreviewEmpty": "プレビューを表示するにはアドレスを入力しブリッジを選択してください",
+
+  "leftRailSettings": "設定",
+
+  "linkOpenTitle": "リンクを開きますか?",
+  "linkCopied": "リンクをコピーしました",
+
+  "debugNotAuthenticated": "未認証",
+  "debugTestEmailCreated": "テストメールを作成しゴミ箱に移動しました (31 日前)",
+  "debugTestEmailPartial": "メールを作成しゴミ箱に移動しましたが、タイムスタンプを更新できませんでした",
+  "debugError": "エラー: {error}",
+  "@debugError": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "composeSelectAttachments": "添付ファイルを選択",
+  "composePickFilesFailed": "ファイルの選択に失敗しました: {error}",
+  "@composePickFilesFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "composeInvalidRecipient": "宛先の形式が無効です",
+  "composeAddRecipient": "宛先を 1 つ以上追加してください",
+  "composeSendFailed": "メールの送信に失敗しました",
+
+  "profileLoadFailed": "プロフィールデータの読み込みに失敗しました",
+  "profileSelectPicture": "プロフィール画像を選択",
+  "profileUploadNoServers": "応答するサーバーがありません",
+  "profileUploadFailed": "アップロードに失敗しました",
+  "profileUploadError": "アップロード中にエラーが発生しました",
+  "profileUpdateFailed": "プロフィールの更新に失敗しました",
+  "authEnterUsername": "ユーザー名を入力してください",
+  "createIdentityFailed": "アイデンティティの作成に失敗しました: {error}",
+  "@createIdentityFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "dateYesterday": "昨日"
+}

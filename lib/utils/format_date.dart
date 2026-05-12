@@ -1,15 +1,21 @@
-String formatDate(DateTime date) {
+import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
+
+import '../l10n/generated/app_localizations.dart';
+
+String formatDate(BuildContext context, DateTime date) {
+  final l = AppLocalizations.of(context);
+  final locale = Localizations.localeOf(context).toString();
   final now = DateTime.now();
   final diff = now.difference(date);
 
   if (diff.inDays == 0) {
-    return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+    return DateFormat.Hm(locale).format(date);
   } else if (diff.inDays == 1) {
-    return 'Yesterday';
+    return l.dateYesterday;
   } else if (diff.inDays < 7) {
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    return days[date.weekday - 1];
+    return DateFormat.E(locale).format(date);
   } else {
-    return '${date.day}/${date.month}';
+    return DateFormat.Md(locale).format(date);
   }
 }

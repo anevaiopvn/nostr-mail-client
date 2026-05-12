@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../controllers/create_identity_controller.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../../utils/responsive_helper.dart';
 import '../shared/desktop_shell.dart';
 import 'widgets/display_name_field.dart';
@@ -17,12 +18,13 @@ class CreateIdentityView extends GetView<CreateIdentityController> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final isWide = ResponsiveHelper.isNotMobile(context);
 
     Widget content = Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: const Text('Create Identity'),
+        title: Text(l.createIdentityTitle),
         actionsPadding: const EdgeInsets.only(right: 8),
         actions: [
           GetBuilder<CreateIdentityController>(
@@ -36,7 +38,7 @@ class CreateIdentityView extends GetView<CreateIdentityController> {
                       height: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Save'),
+                  : Text(l.actionSave),
             ),
           ),
         ],

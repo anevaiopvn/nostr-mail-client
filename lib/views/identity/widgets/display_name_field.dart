@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../controllers/create_identity_controller.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class DisplayNameField extends StatelessWidget {
   final CreateIdentityController controller;
@@ -9,9 +10,10 @@ class DisplayNameField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return TextField(
       controller: controller.nameController,
-      decoration: const InputDecoration(labelText: 'Display Name'),
+      decoration: InputDecoration(labelText: l.profileDisplayNameLabel),
       textCapitalization: TextCapitalization.words,
     );
   }

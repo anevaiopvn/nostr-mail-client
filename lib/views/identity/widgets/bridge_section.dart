@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../controllers/create_identity_controller.dart';
 import '../../../app/config/nostr_config.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class BridgeSection extends StatelessWidget {
   final CreateIdentityController controller;
@@ -12,10 +13,14 @@ class BridgeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Bridge', style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          l.createIdentityBridge,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         const SizedBox(height: 12),
         GetBuilder<CreateIdentityController>(
           builder: (_) => _buildBridgeChips(context),
@@ -36,10 +41,11 @@ class BridgeSection extends StatelessWidget {
     }.toSet().toList()..sort();
 
     if (allBridges.isEmpty) {
-      return const Card(
+      final l = AppLocalizations.of(context);
+      return Card(
         child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Text('No bridges available'),
+          padding: const EdgeInsets.all(16),
+          child: Text(l.createIdentityNoBridges),
         ),
       );
     }
@@ -74,9 +80,10 @@ class BridgeSection extends StatelessWidget {
   }
 
   Widget _buildBridgeTextField(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return TextField(
       controller: controller.bridgeController,
-      decoration: InputDecoration(hintText: 'bridge.com'),
+      decoration: InputDecoration(hintText: l.createIdentityBridgeHint),
       keyboardType: TextInputType.url,
       inputFormatters: [
         FilteringTextInputFormatter.deny(RegExp(r'\s'), replacementString: ''),

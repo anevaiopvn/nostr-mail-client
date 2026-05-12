@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../controllers/create_identity_controller.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../../../widgets/nostr_avatar.dart';
 
 class PreviewSection extends StatelessWidget {
@@ -12,6 +13,7 @@ class PreviewSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return GetBuilder<CreateIdentityController>(
       builder: (_) {
         final mailAddress = controller.buildIdentity();
@@ -23,10 +25,13 @@ class PreviewSection extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Preview', style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  l.createIdentityPreview,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 const SizedBox(height: 8),
                 Text(
-                  'Enter an address and select a bridge to see preview',
+                  l.createIdentityPreviewEmpty,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -39,7 +44,10 @@ class PreviewSection extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Preview', style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              l.createIdentityPreview,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             const SizedBox(height: 8),
             _buildVisualPreview(context, mailAddress),
             _buildRawPreview(context, mailAddress),

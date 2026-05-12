@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../controllers/inbox_controller.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 /// Adaptive widget that manages selection actions intelligently
 /// Shows actions directly if possible, otherwise puts them in a "more_vert" menu
@@ -9,11 +10,14 @@ class SelectionActionsBar extends StatelessWidget {
   const SelectionActionsBar({super.key});
 
   /// Determines available actions based on current folder
-  List<_ActionItem> _getActions(InboxController controller) {
+  List<_ActionItem> _getActions(
+    AppLocalizations l,
+    InboxController controller,
+  ) {
     final actions = <_ActionItem>[
       _ActionItem(
         icon: const Icon(Icons.select_all),
-        label: 'Select all',
+        label: l.inboxSelectAll,
         onPressed: controller.selectAll,
         isPrimary: true,
       ),
@@ -24,13 +28,13 @@ class SelectionActionsBar extends StatelessWidget {
       actions.addAll([
         _ActionItem(
           icon: const Icon(Icons.mark_email_read),
-          label: 'Mark as read',
+          label: l.emailMarkAsRead,
           onPressed: controller.markSelectedAsRead,
           isPrimary: true,
         ),
         _ActionItem(
           icon: const Icon(Icons.mark_email_unread),
-          label: 'Mark as unread',
+          label: l.emailMarkAsUnread,
           onPressed: controller.markSelectedAsUnread,
           isPrimary: true,
         ),
@@ -48,8 +52,8 @@ class SelectionActionsBar extends StatelessWidget {
         label:
             controller.currentFolder.value == MailFolder.trash ||
                 controller.currentFolder.value == MailFolder.archive
-            ? 'Restore'
-            : 'Archive',
+            ? l.emailRestore
+            : l.emailArchive,
         onPressed:
             controller.currentFolder.value == MailFolder.trash ||
                 controller.currentFolder.value == MailFolder.archive
@@ -59,7 +63,7 @@ class SelectionActionsBar extends StatelessWidget {
       ),
       _ActionItem(
         icon: const Icon(Icons.delete_outline),
-        label: 'Delete',
+        label: l.actionDelete,
         onPressed: controller.deleteSelected,
         isPrimary: true,
       ),
@@ -70,8 +74,9 @@ class SelectionActionsBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final controller = Get.find<InboxController>();
-    final actions = _getActions(controller);
+    final actions = _getActions(l, controller);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -103,7 +108,7 @@ class SelectionActionsBar extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ...primaryActions.map((action) => _buildActionButton(action)),
-              _buildMoreMenu(secondaryActions),
+              _buildMoreMenu(l, secondaryActions),
             ],
           );
         }
@@ -141,7 +146,7 @@ class SelectionActionsBar extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             ...displayActions.map((action) => _buildActionButton(action)),
-            _buildMoreMenu(menuActions),
+            _buildMoreMenu(l, menuActions),
           ],
         );
       },
@@ -156,7 +161,7 @@ class SelectionActionsBar extends StatelessWidget {
     );
   }
 
-  Widget _buildMoreMenu(List<_ActionItem> actions) {
+  Widget _buildMoreMenu(AppLocalizations l, List<_ActionItem> actions) {
     return MenuAnchor(
       alignmentOffset: const Offset(-8, 0),
       style: MenuStyle(
@@ -173,7 +178,7 @@ class SelectionActionsBar extends StatelessWidget {
       builder: (context, menuController, child) {
         return IconButton(
           icon: const Icon(Icons.more_vert),
-          tooltip: 'More actions',
+          tooltip: l.inboxMoreActions,
           onPressed: () {
             if (menuController.isOpen) {
               menuController.close();

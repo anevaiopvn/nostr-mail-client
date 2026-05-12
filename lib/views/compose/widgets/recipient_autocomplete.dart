@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../../../models/contact.dart';
 import '../../../services/contacts_service.dart';
 import 'contact_suggestion_tile.dart';
@@ -314,6 +315,7 @@ class _RecipientAutocompleteState extends State<RecipientAutocomplete> {
   }
 
   Widget _buildOverlay(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final renderBox =
         _textFieldKey.currentContext?.findRenderObject() as RenderBox?;
@@ -359,7 +361,7 @@ class _RecipientAutocompleteState extends State<RecipientAutocomplete> {
                             ),
                             const SizedBox(width: 12),
                             Text(
-                              'Resolving NIP-05...',
+                              l.composeResolvingNip05,
                               style: TextStyle(
                                 color: colorScheme.onSurfaceVariant,
                                 fontSize: 14,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nostr_mail_client/l10n/generated/app_localizations.dart';
 import 'package:nostr_mail_client/utils/format_date_time.dart';
 import 'package:nostr_mail_client/views/email/email_controller.dart';
 import 'package:nostr_mail_client/views/email/widgets/sender_avatar_view.dart';
@@ -10,6 +11,7 @@ class HeaderView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final controller = EmailController.to;
     final email = controller.email;
     if (email == null) return const SizedBox.shrink();
@@ -23,7 +25,7 @@ class HeaderView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          (email.subject?.isEmpty ?? true) ? '(No subject)' : email.subject!,
+          (email.subject?.isEmpty ?? true) ? l.emailNoSubject : email.subject!,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
         ),
         const SizedBox(height: 16),
@@ -46,7 +48,7 @@ class HeaderView extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        formatDateTime(email.date),
+                        formatDateTime(context, email.date),
                         style: TextStyle(color: Colors.grey[600], fontSize: 13),
                       ),
                       const SizedBox(width: 12),
@@ -72,7 +74,7 @@ class HeaderView extends StatelessWidget {
                             ),
                           ],
                         ),
-                        tooltip: 'Show recipients',
+                        tooltip: l.emailShowRecipients,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
                           vertical: 4,

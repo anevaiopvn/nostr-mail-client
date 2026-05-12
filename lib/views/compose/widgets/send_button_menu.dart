@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nostr_mail_client/controllers/compose_controller.dart';
+import 'package:nostr_mail_client/l10n/generated/app_localizations.dart';
 import 'package:nostr_mail_client/models/send_mode.dart';
 
 class SendButtonMenu extends StatelessWidget {
@@ -19,29 +20,30 @@ class SendButtonMenu extends StatelessWidget {
     }
   }
 
-  String _getModeLabel(SendMode mode) {
+  String _getModeLabel(AppLocalizations l, SendMode mode) {
     switch (mode) {
       case SendMode.normal:
-        return 'Private deniable';
+        return l.composeModePrivateDeniable;
       case SendMode.signed:
-        return 'Private signed';
+        return l.composeModePrivateSigned;
       case SendMode.public:
-        return 'Public';
+        return l.composeModePublic;
     }
   }
 
-  String _getModeDescription(SendMode mode) {
+  String _getModeDescription(AppLocalizations l, SendMode mode) {
     switch (mode) {
       case SendMode.normal:
-        return 'Send as encrypted email. No signature - deniable if needed.';
+        return l.composeModePrivateDeniableDescription;
       case SendMode.signed:
-        return 'Send as encrypted email. Signed - proves you\'re the author.';
+        return l.composeModePrivateSignedDescription;
       case SendMode.public:
-        return 'Send as a public event. Anyone can read this. No encryption.';
+        return l.composeModePublicDescription;
     }
   }
 
   Future<void> _showModeMenu(BuildContext context, SendMode currentMode) async {
+    final l = AppLocalizations.of(context);
     final selected = await showModalBottomSheet<SendMode>(
       showDragHandle: true,
       context: context,
@@ -51,14 +53,17 @@ class SendButtonMenu extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Choose send mode',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Text(
+                l.composeChooseSendMode,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 16),
-              _buildModeOption(SendMode.normal),
-              _buildModeOption(SendMode.signed),
-              _buildModeOption(SendMode.public),
+              _buildModeOption(l, SendMode.normal),
+              _buildModeOption(l, SendMode.signed),
+              _buildModeOption(l, SendMode.public),
             ],
           ),
         ),
@@ -71,17 +76,18 @@ class SendButtonMenu extends StatelessWidget {
     }
   }
 
-  Widget _buildModeOption(SendMode mode) {
+  Widget _buildModeOption(AppLocalizations l, SendMode mode) {
     return ListTile(
       leading: Icon(_getModeIcon(mode)),
-      title: Text(_getModeLabel(mode)),
-      subtitle: Text(_getModeDescription(mode)),
+      title: Text(_getModeLabel(l, mode)),
+      subtitle: Text(_getModeDescription(l, mode)),
       onTap: () => Get.back(result: mode),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final controller = Get.find<ComposeController>();
 
     return Obx(() {
@@ -102,7 +108,7 @@ class SendButtonMenu extends StatelessWidget {
                   height: 20,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : Text('Send'),
+              : Text(l.composeSend),
         );
       } else {
         // Desktop: use FilledButton with dropdown
@@ -118,7 +124,7 @@ class SendButtonMenu extends StatelessWidget {
                 maintainState: true,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: [Text('Send')],
+                  children: [Text(l.composeSend)],
                 ),
               ),
               Visibility(
@@ -156,7 +162,7 @@ class SendButtonMenu extends StatelessWidget {
               builder: (context, menuController, child) {
                 return IconButton(
                   icon: const Icon(Icons.arrow_drop_down, size: 20),
-                  tooltip: 'More send options',
+                  tooltip: l.composeMoreSendOptions,
                   onPressed: () {
                     if (menuController.isOpen) {
                       menuController.close();
@@ -177,9 +183,9 @@ class SendButtonMenu extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(_getModeLabel(SendMode.normal)),
+                      Text(_getModeLabel(l, SendMode.normal)),
                       Text(
-                        _getModeDescription(SendMode.normal),
+                        _getModeDescription(l, SendMode.normal),
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
@@ -195,9 +201,9 @@ class SendButtonMenu extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(_getModeLabel(SendMode.signed)),
+                      Text(_getModeLabel(l, SendMode.signed)),
                       Text(
-                        _getModeDescription(SendMode.signed),
+                        _getModeDescription(l, SendMode.signed),
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
@@ -213,9 +219,9 @@ class SendButtonMenu extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(_getModeLabel(SendMode.public)),
+                      Text(_getModeLabel(l, SendMode.public)),
                       Text(
-                        _getModeDescription(SendMode.public),
+                        _getModeDescription(l, SendMode.public),
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 import 'package:sembast/sembast.dart';
 
+import '../l10n/generated/app_localizations.dart';
 import '../services/nostr_mail_service.dart';
 import '../services/storage_service.dart';
 
@@ -12,6 +13,7 @@ class DebugToolsController extends GetxController {
   final _storageService = Get.find<StorageService>();
 
   Future<void> createOldTrashedEmail(BuildContext context) async {
+    final l = AppLocalizations.of(context);
     try {
       final client = _nostrMailService.client;
       final myPubkey = _nostrMailService.getPublicKey();
@@ -19,8 +21,8 @@ class DebugToolsController extends GetxController {
       if (myPubkey == null) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Not authenticated'),
+            SnackBar(
+              content: Text(l.debugNotAuthenticated),
               backgroundColor: Colors.red,
             ),
           );
@@ -71,22 +73,20 @@ class DebugToolsController extends GetxController {
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Created and trashed test email (31 days old)'),
+            SnackBar(
+              content: Text(l.debugTestEmailCreated),
               backgroundColor: Colors.green,
-              duration: Duration(seconds: 3),
+              duration: const Duration(seconds: 3),
             ),
           );
         }
       } else {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Email created and trashed, but could not update timestamp',
-              ),
+            SnackBar(
+              content: Text(l.debugTestEmailPartial),
               backgroundColor: Colors.orange,
-              duration: Duration(seconds: 3),
+              duration: const Duration(seconds: 3),
             ),
           );
         }
@@ -95,7 +95,7 @@ class DebugToolsController extends GetxController {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'),
+            content: Text(l.debugError(e.toString())),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 3),
           ),

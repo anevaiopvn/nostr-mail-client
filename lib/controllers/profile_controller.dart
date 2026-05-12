@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 
 import '../app/config/nostr_config.dart';
+import '../l10n/generated/app_localizations.dart';
 import '../services/nostr_mail_service.dart';
 import '../utils/toast_helper.dart';
 import 'auth_controller.dart';
@@ -68,7 +69,8 @@ class ProfileController extends GetxController {
       }
     } catch (e) {
       if (!isClosed) {
-        ToastHelper.error(Get.context!, 'Failed to load profile data');
+        final l = AppLocalizations.of(Get.context!);
+        ToastHelper.error(Get.context!, l.profileLoadFailed);
       }
     } finally {
       if (!isClosed) {
@@ -79,8 +81,9 @@ class ProfileController extends GetxController {
   }
 
   Future<void> pickAndUploadPicture(BuildContext context) async {
+    final l = AppLocalizations.of(context);
     final result = await FilePicker.platform.pickFiles(
-      dialogTitle: 'Select profile picture',
+      dialogTitle: l.profileSelectPicture,
       type: FileType.image,
       allowMultiple: false,
       withData: true,
@@ -110,7 +113,7 @@ class ProfileController extends GetxController {
 
       if (uploadResults.isEmpty) {
         if (context.mounted) {
-          ToastHelper.error(context, 'No servers responded');
+          ToastHelper.error(context, l.profileUploadNoServers);
         }
         return;
       }
@@ -124,12 +127,15 @@ class ProfileController extends GetxController {
         pictureController.text = successResult.descriptor!.url;
       } else {
         if (context.mounted) {
-          ToastHelper.error(context, successResult.error ?? 'Upload failed');
+          ToastHelper.error(
+            context,
+            successResult.error ?? l.profileUploadFailed,
+          );
         }
       }
     } catch (e) {
       if (context.mounted) {
-        ToastHelper.error(context, 'An error occurred during upload');
+        ToastHelper.error(context, l.profileUploadError);
       }
     } finally {
       if (!isClosed) {
@@ -190,7 +196,8 @@ class ProfileController extends GetxController {
       if (!isClosed) {
         isSaving.value = false;
         update();
-        ToastHelper.error(Get.context!, 'Failed to update profile');
+        final l = AppLocalizations.of(Get.context!);
+        ToastHelper.error(Get.context!, l.profileUpdateFailed);
       }
     }
   }
