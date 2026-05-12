@@ -81,6 +81,7 @@ class _MoreButton extends StatelessWidget {
       builder: (context, menuController, child) {
         return IconButton(
           icon: const Icon(Icons.more_vert),
+          tooltip: 'More actions',
           onPressed: () {
             if (menuController.isOpen) {
               menuController.close();

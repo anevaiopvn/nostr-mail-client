@@ -151,10 +151,7 @@ class _Nip59EventsContent extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
+          const CloseButton(),
         ],
       ),
     );

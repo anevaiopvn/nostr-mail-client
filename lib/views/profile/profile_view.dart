@@ -152,54 +152,59 @@ class ProfileView extends GetView<ProfileController> {
       name: name,
     );
 
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: controller.isUploadingPicture.value
-            ? null
-            : () => controller.pickAndUploadPicture(context),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            NostrAvatar(
-              pubkey: pubkey ?? '',
-              metadata: previewMetadata,
-              radius: 60,
-            ),
-            if (controller.isUploadingPicture.value)
-              Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  color: Colors.black45,
-                  shape: BoxShape.circle,
-                ),
-                child: const Center(
-                  child: CircularProgressIndicator(color: Colors.white),
-                ),
-              )
-            else
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(8),
+    return Semantics(
+      label: 'Change profile picture',
+      button: true,
+      enabled: !controller.isUploadingPicture.value,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: controller.isUploadingPicture.value
+              ? null
+              : () => controller.pickAndUploadPicture(context),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              NostrAvatar(
+                pubkey: pubkey ?? '',
+                metadata: previewMetadata,
+                radius: 60,
+              ),
+              if (controller.isUploadingPicture.value)
+                Container(
+                  width: 120,
+                  height: 120,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Colors.black45,
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      width: 3,
+                  ),
+                  child: const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  ),
+                )
+              else
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        width: 3,
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.camera_alt,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
-                  child: Icon(
-                    Icons.camera_alt,
-                    size: 20,
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -110,6 +110,7 @@ class OnboardingView extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.w600),
           ),
           next: const Icon(Icons.arrow_forward),
+          nextSemantic: 'Next',
           done: const Text(
             'Done',
             style: TextStyle(fontWeight: FontWeight.w600),

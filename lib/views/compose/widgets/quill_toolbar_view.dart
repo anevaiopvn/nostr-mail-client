@@ -21,16 +21,34 @@ class QuillToolbarView extends StatelessWidget {
       controller: ComposeController.to.quillController,
       config: QuillSimpleToolbarConfig(
         buttonOptions: QuillSimpleToolbarButtonOptions(
-          bold: QuillToolbarToggleStyleButtonOptions(iconTheme: iconTheme),
-          italic: QuillToolbarToggleStyleButtonOptions(iconTheme: iconTheme),
-          underLine: QuillToolbarToggleStyleButtonOptions(iconTheme: iconTheme),
-          strikeThrough: QuillToolbarToggleStyleButtonOptions(
+          bold: _toggleOptions(
+            label: (loc) => loc.bold,
+            icon: Icons.format_bold,
             iconTheme: iconTheme,
           ),
-          listNumbers: QuillToolbarToggleStyleButtonOptions(
+          italic: _toggleOptions(
+            label: (loc) => loc.italic,
+            icon: Icons.format_italic,
             iconTheme: iconTheme,
           ),
-          listBullets: QuillToolbarToggleStyleButtonOptions(
+          underLine: _toggleOptions(
+            label: (loc) => loc.underline,
+            icon: Icons.format_underline,
+            iconTheme: iconTheme,
+          ),
+          strikeThrough: _toggleOptions(
+            label: (loc) => loc.strikeThrough,
+            icon: Icons.format_strikethrough,
+            iconTheme: iconTheme,
+          ),
+          listNumbers: _toggleOptions(
+            label: (loc) => loc.numberedList,
+            icon: Icons.format_list_numbered,
+            iconTheme: iconTheme,
+          ),
+          listBullets: _toggleOptions(
+            label: (loc) => loc.bulletList,
+            icon: Icons.format_list_bulleted,
             iconTheme: iconTheme,
           ),
         ),
@@ -65,6 +83,26 @@ class QuillToolbarView extends StatelessWidget {
         showClipboardPaste: false,
         multiRowsDisplay: false,
       ),
+    );
+  }
+
+  QuillToolbarToggleStyleButtonOptions _toggleOptions({
+    required String Function(FlutterQuillLocalizations loc) label,
+    required IconData icon,
+    required QuillIconTheme iconTheme,
+  }) {
+    return QuillToolbarToggleStyleButtonOptions(
+      childBuilder: (dynamic options, dynamic extraOptions) {
+        final extra = extraOptions as QuillToolbarToggleStyleButtonExtraOptions;
+        final loc = FlutterQuillLocalizations.of(extra.context)!;
+        return QuillToolbarIconButton(
+          icon: Icon(icon),
+          isSelected: extra.isToggled,
+          onPressed: extra.onPressed,
+          iconTheme: iconTheme,
+          tooltip: label(loc),
+        );
+      },
     );
   }
 }

@@ -86,35 +86,39 @@ class AppDrawer extends StatelessWidget {
                   Obx(
                     () => Row(
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                            Get.toNamed(AppRoutes.profile);
-                          },
-                          child: Stack(
-                            children: [
-                              _buildAvatar(context),
-                              Positioned(
-                                right: 0,
-                                bottom: 0,
-                                child: Container(
-                                  padding: const EdgeInsets.all(2),
-                                  decoration: BoxDecoration(
-                                    color: colorScheme.surface,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
+                        Semantics(
+                          label: 'Edit profile',
+                          button: true,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              Get.toNamed(AppRoutes.profile);
+                            },
+                            child: Stack(
+                              children: [
+                                _buildAvatar(context),
+                                Positioned(
+                                  right: 0,
+                                  bottom: 0,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
                                       color: colorScheme.surface,
-                                      width: 1,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: colorScheme.surface,
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Icon(
+                                      Icons.edit,
+                                      size: 12,
+                                      color: colorScheme.primary,
                                     ),
                                   ),
-                                  child: Icon(
-                                    Icons.edit,
-                                    size: 12,
-                                    color: colorScheme.primary,
-                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -132,29 +136,33 @@ class AppDrawer extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 4),
-                              InkWell(
-                                onTap: () => _copyNpub(context),
-                                borderRadius: BorderRadius.circular(4),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Flexible(
-                                      child: Text(
-                                        _shortNpub(),
-                                        style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontSize: 12,
+                              Semantics(
+                                label: 'Copy npub',
+                                button: true,
+                                child: InkWell(
+                                  onTap: () => _copyNpub(context),
+                                  borderRadius: BorderRadius.circular(4),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          _shortNpub(),
+                                          style: TextStyle(
+                                            color: Colors.grey[600],
+                                            fontSize: 12,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        overflow: TextOverflow.ellipsis,
                                       ),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Icon(
-                                      Icons.copy,
-                                      size: 12,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ],
+                                      const SizedBox(width: 4),
+                                      Icon(
+                                        Icons.copy,
+                                        size: 12,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],

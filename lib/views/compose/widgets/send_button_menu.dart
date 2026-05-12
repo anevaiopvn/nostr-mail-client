@@ -156,6 +156,7 @@ class SendButtonMenu extends StatelessWidget {
               builder: (context, menuController, child) {
                 return IconButton(
                   icon: const Icon(Icons.arrow_drop_down, size: 20),
+                  tooltip: 'More send options',
                   onPressed: () {
                     if (menuController.isOpen) {
                       menuController.close();

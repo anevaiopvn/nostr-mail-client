@@ -17,6 +17,7 @@ class BottomToolbarView extends StatelessWidget {
           IconButton(
             onPressed: controller.pickAttachments,
             icon: const Icon(Icons.attach_file),
+            tooltip: 'Attach file',
           ),
         ],
       ),

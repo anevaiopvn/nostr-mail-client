@@ -41,6 +41,7 @@ class IdentitiesView extends StatelessWidget {
           await Get.toNamed(AppRoutes.createIdentity);
           await controller.loadData();
         },
+        tooltip: 'Create identity',
         child: const Icon(Icons.add),
       ),
       body: SafeArea(

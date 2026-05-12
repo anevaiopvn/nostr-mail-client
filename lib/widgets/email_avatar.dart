@@ -4,14 +4,8 @@ import 'package:flutter/material.dart';
 class EmailAvatar extends StatelessWidget {
   final MailAddress mailAddress;
   final double radius;
-  final VoidCallback? onTap;
 
-  const EmailAvatar({
-    super.key,
-    required this.mailAddress,
-    this.radius = 20,
-    this.onTap,
-  });
+  const EmailAvatar({super.key, required this.mailAddress, this.radius = 20});
 
   Color _getAvatarColor(BuildContext context) {
     if (mailAddress.email.isEmpty) {
@@ -46,7 +40,7 @@ class EmailAvatar extends StatelessWidget {
     final isDark =
         ThemeData.estimateBrightnessForColor(avatarColor) == Brightness.dark;
 
-    final avatar = CircleAvatar(
+    return CircleAvatar(
       radius: radius,
       backgroundColor: avatarColor,
       child: Text(
@@ -58,10 +52,5 @@ class EmailAvatar extends StatelessWidget {
         ),
       ),
     );
-
-    if (onTap != null) {
-      return GestureDetector(onTap: onTap, child: avatar);
-    }
-    return avatar;
   }
 }

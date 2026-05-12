@@ -60,15 +60,19 @@ class AttachmentChip extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          InkWell(
-            onTap: onDelete,
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              child: Icon(
-                Icons.close,
-                size: 16,
-                color: colorScheme.primary.withValues(alpha: 0.6),
+          Semantics(
+            label: 'Remove attachment',
+            button: true,
+            child: InkWell(
+              onTap: onDelete,
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                child: Icon(
+                  Icons.close,
+                  size: 16,
+                  color: colorScheme.primary.withValues(alpha: 0.6),
+                ),
               ),
             ),
           ),

@@ -92,6 +92,7 @@ class InboxView extends GetView<InboxController> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.close),
+                    tooltip: 'Clear selection',
                     onPressed: controller.clearSelection,
                   ),
                   const SizedBox(width: 8),
@@ -287,12 +288,14 @@ class InboxView extends GetView<InboxController> {
               if (controller.hasSelection) {
                 return IconButton(
                   icon: const Icon(Icons.close),
+                  tooltip: 'Clear selection',
                   onPressed: controller.clearSelection,
                 );
               }
               return Builder(
                 builder: (context) => IconButton(
                   icon: const Icon(Icons.menu),
+                  tooltip: 'Menu',
                   onPressed: () => Scaffold.of(context).openDrawer(),
                 ),
               );
@@ -309,10 +312,12 @@ class InboxView extends GetView<InboxController> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.search),
+                      tooltip: 'Search',
                       onPressed: () => controller.enterSearchMode(),
                     ),
                     IconButton(
                       icon: const Icon(Icons.settings),
+                      tooltip: 'Settings',
                       onPressed: () => Get.toNamed(AppRoutes.settings),
                     ),
                     const SizedBox(width: 8),
@@ -367,22 +372,27 @@ class InboxView extends GetView<InboxController> {
                           ),
                         ],
                         builder: (context, menuController, child) {
-                          return GestureDetector(
-                            onTap: () {
-                              if (menuController.isOpen) {
-                                menuController.close();
-                              } else {
-                                menuController.open();
-                              }
-                            },
-                            child: Obx(() {
-                              final authController = Get.find<AuthController>();
-                              return NostrAvatar(
-                                pubkey: authController.publicKey ?? '',
-                                metadata: authController.userMetadata.value,
-                                radius: 18,
-                              );
-                            }),
+                          return Semantics(
+                            label: 'Account',
+                            button: true,
+                            child: GestureDetector(
+                              onTap: () {
+                                if (menuController.isOpen) {
+                                  menuController.close();
+                                } else {
+                                  menuController.open();
+                                }
+                              },
+                              child: Obx(() {
+                                final authController =
+                                    Get.find<AuthController>();
+                                return NostrAvatar(
+                                  pubkey: authController.publicKey ?? '',
+                                  metadata: authController.userMetadata.value,
+                                  radius: 18,
+                                );
+                              }),
+                            ),
                           );
                         },
                       ),
@@ -397,6 +407,7 @@ class InboxView extends GetView<InboxController> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => Get.toNamed(AppRoutes.compose),
         backgroundColor: colorScheme.primary,
+        tooltip: 'Compose',
         child: Icon(Icons.edit, color: colorScheme.onPrimary),
       ),
       body: Column(

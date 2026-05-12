@@ -56,9 +56,7 @@ class SettingsView extends StatelessWidget {
               Obx(
                 () => SwitchListTile(
                   title: const Text('Show email source code'),
-                  subtitle: const Text(
-                    'Adds a button to view raw RFC 2822 content',
-                  ),
+                  subtitle: const Text('Adds a button to view raw email'),
                   value: settingsController.showRawEmail.value,
                   onChanged: settingsController.setShowRawEmail,
                 ),
@@ -409,57 +407,67 @@ class SettingsView extends StatelessWidget {
     SettingsController controller,
     String url,
   ) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: () => controller.setBackgroundImage(null),
-        child: Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                url,
-                width: 80,
-                height: 80,
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => Container(
+    return Semantics(
+      label: 'Remove background image',
+      button: true,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () => controller.setBackgroundImage(null),
+          child: Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  url,
                   width: 80,
                   height: 80,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.errorContainer,
-                    borderRadius: BorderRadius.circular(8),
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) => Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.errorContainer,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.broken_image),
                   ),
-                  child: const Icon(Icons.broken_image),
                 ),
               ),
-            ),
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.primary,
-                  width: 3,
-                ),
-              ),
-            ),
-            Positioned(
-              top: 4,
-              right: 4,
-              child: GestureDetector(
-                onTap: () => controller.setBackgroundImage(null),
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.black54,
-                    borderRadius: BorderRadius.circular(12),
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.primary,
+                    width: 3,
                   ),
-                  child: const Icon(Icons.close, size: 14, color: Colors.white),
                 ),
               ),
-            ),
-          ],
+              Positioned(
+                top: 4,
+                right: 4,
+                child: ExcludeSemantics(
+                  child: GestureDetector(
+                    onTap: () => controller.setBackgroundImage(null),
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.black54,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.close,
+                        size: 14,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -479,22 +487,27 @@ class SettingsView extends StatelessWidget {
       brightness: Theme.of(context).brightness,
     );
 
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: () => controller.setBackgroundImage(null),
-        child: Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            color: systemScheme.tertiaryContainer,
-            borderRadius: BorderRadius.circular(8),
-            border: isSelected
-                ? Border.all(
-                    color: Theme.of(context).colorScheme.primary,
-                    width: 3,
-                  )
-                : null,
+    return Semantics(
+      label: 'Default theme color',
+      button: true,
+      selected: isSelected,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () => controller.setBackgroundImage(null),
+          child: Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: systemScheme.tertiaryContainer,
+              borderRadius: BorderRadius.circular(8),
+              border: isSelected
+                  ? Border.all(
+                      color: Theme.of(context).colorScheme.primary,
+                      width: 3,
+                    )
+                  : null,
+            ),
           ),
         ),
       ),
@@ -502,20 +515,24 @@ class SettingsView extends StatelessWidget {
   }
 
   Widget _buildAddButton(BuildContext context, SettingsController controller) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: () => _showBackgroundImageOptions(context, controller),
-        child: Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(
-            Icons.add,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+    return Semantics(
+      label: 'Add background image',
+      button: true,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () => _showBackgroundImageOptions(context, controller),
+          child: Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              Icons.add,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ),
       ),
@@ -528,47 +545,65 @@ class SettingsView extends StatelessWidget {
     File file,
     bool isSelected,
   ) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: () => controller.setBackgroundImage(file.path),
-        onLongPress: () =>
-            _showDeleteBackgroundDialog(context, controller, file),
-        child: Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.file(file, width: 80, height: 80, fit: BoxFit.cover),
-            ),
-            if (isSelected)
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: Theme.of(context).colorScheme.primary,
-                    width: 3,
-                  ),
+    return Semantics(
+      label: 'Select background image',
+      button: true,
+      selected: isSelected,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () => controller.setBackgroundImage(file.path),
+          onLongPress: () =>
+              _showDeleteBackgroundDialog(context, controller, file),
+          child: Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.file(
+                  file,
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.cover,
                 ),
               ),
-            Positioned(
-              top: 4,
-              right: 4,
-              child: GestureDetector(
-                onTap: () =>
-                    _showDeleteBackgroundDialog(context, controller, file),
-                child: Container(
-                  padding: const EdgeInsets.all(4),
+              if (isSelected)
+                Container(
+                  width: 80,
+                  height: 80,
                   decoration: BoxDecoration(
-                    color: Colors.black54,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.primary,
+                      width: 3,
+                    ),
                   ),
-                  child: const Icon(Icons.close, size: 14, color: Colors.white),
+                ),
+              Positioned(
+                top: 4,
+                right: 4,
+                child: Semantics(
+                  label: 'Delete background image',
+                  button: true,
+                  child: GestureDetector(
+                    onTap: () =>
+                        _showDeleteBackgroundDialog(context, controller, file),
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.black54,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.close,
+                        size: 14,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
