@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../controllers/create_identity_controller.dart';
+import '../../../models/local_part_format.dart';
 
 class LocalPartSection extends StatelessWidget {
   final CreateIdentityController controller;

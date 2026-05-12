@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../controllers/auth_controller.dart';
+import '../models/local_part_format.dart';
 import '../services/nostr_mail_service.dart';
 import '../utils/toast_helper.dart';
-
-enum LocalPartFormat { npub, hex, base36 }
 
 class CreateIdentityController extends GetxController {
   final nameController = TextEditingController();

@@ -74,6 +74,15 @@ class SettingsView extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
+              _buildSectionHeader(context, 'Identities'),
+              ListTile(
+                leading: const Icon(Icons.alternate_email),
+                title: const Text('Manage identities'),
+                subtitle: const Text('Add, remove or reorder addresses'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => Get.toNamed(AppRoutes.identities),
+              ),
+              const SizedBox(height: 24),
               _buildSectionHeader(context, 'Compose'),
               Obx(() {
                 final signature = settingsController.emailSignature.value;
