@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
-import 'package:ndk_flutter/ndk_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
@@ -15,7 +13,6 @@ import '../services/nostr_mail_service.dart';
 import '../services/storage_service.dart';
 import '../services/theme_service.dart';
 import '../utils/color_scheme_serializer.dart';
-import '../utils/event_verifiers.dart';
 import '../utils/platform_helper.dart';
 
 class SettingsController extends GetxController {
@@ -27,13 +24,11 @@ class SettingsController extends GetxController {
   static const _alwaysLoadImagesKey = 'always_load_images';
   static const _backgroundImageKey = 'background_image';
   static const themeModeKey = 'theme_mode';
-  static const skipEventVerificationKey = 'skip_event_verification';
   static const backgroundsDirName = 'backgrounds';
   static const _defaultSignature = '--\nSent with Nmail\nhttps://nostrmail.org';
 
   final showRawEmail = false.obs;
   final alwaysLoadImages = false.obs;
-  final skipEventVerification = false.obs;
   final emailSignature = _defaultSignature.obs;
   final backgroundImage = Rxn<String>();
   final themeMode = ThemeMode.system.obs;
@@ -67,7 +62,6 @@ class SettingsController extends GetxController {
     final results = await Future.wait([
       _storageService.getSetting<bool>(_showRawEmailKey),
       _storageService.getSetting<bool>(_alwaysLoadImagesKey),
-      _storageService.getSetting<bool>(skipEventVerificationKey),
       _storageService.getSetting<String>(_backgroundKey),
       _storageService.getSetting<int>(themeModeKey),
       _storageService.getSetting<bool>(ThemeService.dynamicThemeKey),
@@ -77,22 +71,21 @@ class SettingsController extends GetxController {
 
     showRawEmail.value = (results[0] as bool?) ?? false;
     alwaysLoadImages.value = (results[1] as bool?) ?? false;
-    skipEventVerification.value = (results[2] as bool?) ?? false;
 
     // Signature starts as default, will be updated by _loadSignatureFromNostr
     // if a synced value is available
     emailSignature.value = _defaultSignature;
 
-    backgroundImage.value = results[3] as String?;
-    themeMode.value = ThemeMode.values[(results[4] as int?) ?? 0];
-    dynamicTheme.value = (results[5] as bool?) ?? true;
+    backgroundImage.value = results[2] as String?;
+    themeMode.value = ThemeMode.values[(results[3] as int?) ?? 0];
+    dynamicTheme.value = (results[4] as bool?) ?? true;
 
-    final savedLightScheme = results[6] as String?;
+    final savedLightScheme = results[5] as String?;
     if (savedLightScheme != null) {
       lightColorScheme.value = colorSchemeFromJson(savedLightScheme);
     }
 
-    final savedDarkScheme = results[7] as String?;
+    final savedDarkScheme = results[6] as String?;
     if (savedDarkScheme != null) {
       darkColorScheme.value = colorSchemeFromJson(savedDarkScheme);
     }
@@ -142,21 +135,6 @@ class SettingsController extends GetxController {
   Future<void> setAlwaysLoadImages(bool value) async {
     alwaysLoadImages.value = value;
     await _storageService.saveSetting(_alwaysLoadImagesKey, value);
-  }
-
-  Future<void> setSkipEventVerification(bool value) async {
-    skipEventVerification.value = value;
-    await _storageService.saveSetting(skipEventVerificationKey, value);
-
-    // Hot-swap the verifier
-    final switchableVerifier = Get.find<SwitchableVerifier>();
-    if (value) {
-      switchableVerifier.setDelegate(NoVerifier());
-    } else {
-      switchableVerifier.setDelegate(
-        kIsWeb ? WebEventVerifier() : RustEventVerifier(),
-      );
-    }
   }
 
   /// Set the email signature and sync to Nostr.
@@ -304,7 +282,6 @@ class SettingsController extends GetxController {
     // Reset in-memory state
     showRawEmail.value = false;
     alwaysLoadImages.value = false;
-    skipEventVerification.value = false;
     emailSignature.value = _defaultSignature;
     backgroundImage.value = null;
     themeMode.value = ThemeMode.system;
