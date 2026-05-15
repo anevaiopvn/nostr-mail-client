@@ -22,7 +22,6 @@ import 'services/ndk_cache_service.dart';
 import 'services/nostr_mail_service.dart';
 import 'services/storage_service.dart';
 import 'services/theme_service.dart';
-import 'utils/event_verifiers.dart';
 import 'utils/platform_helper.dart';
 
 void main() async {
@@ -49,19 +48,10 @@ void main() async {
 
   // Initialize NDK with switchable verifier for hot-swap capability
   final cacheManager = await NdkCacheService.createCacheManager(storageService);
-  final skipVerification =
-      await storageService.getSetting<bool>(
-        SettingsController.skipEventVerificationKey,
-      ) ??
-      false;
-  final defaultVerifier = kIsWeb ? WebEventVerifier() : RustEventVerifier();
-  final switchableVerifier = SwitchableVerifier(
-    skipVerification ? NoVerifier() : defaultVerifier,
-  );
-  Get.put(switchableVerifier, permanent: true);
   final ndk = Ndk(
     NdkConfig(
-      eventVerifier: switchableVerifier,
+      eventVerifier: NdkEventVerifier(),
+      eventSignerFactory: NdkEventSignerFactory(),
       cache: cacheManager,
       bootstrapRelays: NostrConfig.bootstrapRelays,
       fetchedRangesEnabled: true,

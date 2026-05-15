@@ -42,8 +42,11 @@ class NostrMailService extends GetxService {
   Stream<Map<String, RelayConnectivity>> get relayConnectivityChanges =>
       _ndk.connectivity.relayConnectivityChanges;
 
-  void initClient() {
-    _client = NostrMailClient(ndk: _ndk, db: _storageService.db);
+  Future<void> initClient() async {
+    _client = await NostrMailClient.create(
+      ndk: _ndk,
+      db: _storageService.db,
+    );
   }
 
   String? getPublicKey() {

@@ -20,8 +20,8 @@ class LoginForm extends GetView<AuthController> {
         children: [
           NLogin(
             ndkFlutter: controller.ndkFlutter,
-            onLoggedIn: () {
-              controller.onLoggedIn();
+            onLoggedIn: () async {
+              await controller.onLoggedIn();
               Get.offAllNamed(AppRoutes.inbox);
             },
             nsecLabelText: l.authSyncCodeLabel,
@@ -74,8 +74,8 @@ class LoginForm extends GetView<AuthController> {
                 padding: const EdgeInsets.only(top: 4),
                 child: NLogin(
                   ndkFlutter: controller.ndkFlutter,
-                  onLoggedIn: () {
-                    controller.onLoggedIn();
+                  onLoggedIn: () async {
+                    await controller.onLoggedIn();
                     Get.offAllNamed(AppRoutes.inbox);
                   },
                   enableNsecLogin: false,

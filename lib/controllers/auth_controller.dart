@@ -32,7 +32,7 @@ class AuthController extends GetxController {
       await ndkFlutter.restoreAccountsState();
 
       if (ndk.accounts.getPublicKey() != null) {
-        _nostrMailService.initClient();
+        await _nostrMailService.initClient();
         isLoggedIn.value = true;
         // Non-blocking metadata load
         loadUserMetadata();
@@ -74,8 +74,8 @@ class AuthController extends GetxController {
     } catch (_) {}
   }
 
-  void onLoggedIn() {
-    _nostrMailService.initClient();
+  Future<void> onLoggedIn() async {
+    await _nostrMailService.initClient();
     isLoggedIn.value = true;
     loadUserMetadata();
   }
@@ -125,7 +125,7 @@ class AuthController extends GetxController {
     _nostrMailService.saveDmRelays(NostrConfig.recommendedDmRelays);
     _nostrMailService.saveBlossomServers(NostrConfig.recommendedBlossomServers);
 
-    onLoggedIn();
+    await onLoggedIn();
 
     // Clear registration state
     username.value = '';
@@ -175,9 +175,9 @@ class AuthController extends GetxController {
     final account = ndk.accounts.getLoggedAccount();
     if (account == null || account.type != AccountType.privateKey) return null;
 
-    final signer = account.signer as Bip340EventSigner;
-    if (signer.privateKey == null) return null;
+    final privateKey = (account.signer as dynamic).privateKey as String?;
+    if (privateKey == null) return null;
 
-    return Nip19.encodePrivateKey(signer.privateKey!);
+    return Nip19.encodePrivateKey(privateKey);
   }
 }

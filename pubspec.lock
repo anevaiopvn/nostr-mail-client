@@ -769,10 +769,10 @@ packages:
     dependency: "direct main"
     description:
       name: ndk
-      sha256: b45ce59d9a5c2b090ccf442d4cad3144102bb35db81fd918b98f03bc2f774531
+      sha256: "8d3723bc72bf7fccd1147e5afd1a5c2f60e565f79cb1faa01bb113a18906a753"
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.2-dev.1"
+    version: "0.8.2"
   ndk_bip32_keys:
     dependency: transitive
     description:
@@ -785,25 +785,25 @@ packages:
     dependency: "direct main"
     description:
       name: ndk_flutter
-      sha256: f55670d6891598c8a6f2b23930ad8d3e82f8407e3b5039a7c2ab5ca7316a2b72
+      sha256: "7103718ecf28a85a600cc8c70383277b02331f0544f5e350e56e35535a706838"
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.1"
+    version: "0.8.3"
   nip07_event_signer:
     dependency: transitive
     description:
       name: nip07_event_signer
-      sha256: "6e1c63b10dcac4ee203276f89dd2374e942cf4542014515e7c081ee28121ad52"
+      sha256: "6c1786161a2e68a61d2945e5a487a85dfcfd095b90e28cec8077f5f567ba3cd4"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.8"
+    version: "1.0.10"
   nostr_mail:
     dependency: "direct main"
     description:
       path: "../nostr-mail-dart"
       relative: true
     source: path
-    version: "1.14.2"
+    version: "1.15.0"
   objective_c:
     dependency: transitive
     description:
