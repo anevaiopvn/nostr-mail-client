@@ -378,8 +378,24 @@ class ComposeController extends GetxController {
       // Get plain text from document
       final plainText = document.toPlainText();
 
-      // Build MIME message using MessageBuilder
-      final builder = MessageBuilder.prepareMultipartAlternativeMessage();
+      // Build MIME message using MessageBuilder.
+      // With attachments, the root must be multipart/mixed; the text/html
+      // alternative pair goes in a nested multipart/alternative part.
+      // Otherwise clients like Yandex treat the attachment as just another
+      // alternative representation and hide it.
+      final hasAttachments = attachments.isNotEmpty;
+      final hasHtml = htmlBody.isNotEmpty;
+      final MessageBuilder builder;
+      final PartBuilder bodyBuilder;
+      if (hasAttachments) {
+        builder = MessageBuilder.prepareMultipartMixedMessage();
+        bodyBuilder = hasHtml
+            ? builder.addPart(mediaSubtype: MediaSubtype.multipartAlternative)
+            : builder;
+      } else {
+        builder = MessageBuilder.prepareMultipartAlternativeMessage();
+        bodyBuilder = builder;
+      }
 
       // Set From header
       if (from != null) {
@@ -421,9 +437,9 @@ class ComposeController extends GetxController {
       builder.subject = subject;
 
       // Add body parts
-      builder.addTextPlain(plainText);
-      if (htmlBody.isNotEmpty) {
-        builder.addTextHtml(
+      bodyBuilder.addTextPlain(plainText);
+      if (hasHtml) {
+        bodyBuilder.addTextHtml(
           htmlBody,
           transferEncoding: TransferEncoding.base64,
         );
