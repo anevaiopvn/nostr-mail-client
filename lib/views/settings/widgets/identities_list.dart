@@ -15,7 +15,7 @@ class IdentitiesList extends StatelessWidget {
         buildDefaultDragHandles: false,
         padding: const EdgeInsets.only(bottom: 88),
         itemCount: controller.identities.length,
-        onReorder: controller.reorder,
+        onReorderItem: controller.reorder,
         itemBuilder: (context, index) {
           final identity = controller.identities[index];
           return IdentityTile(

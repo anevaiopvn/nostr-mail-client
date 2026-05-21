@@ -89,7 +89,6 @@ class IdentitiesController extends GetxController {
   }
 
   void reorder(int oldIndex, int newIndex) {
-    if (newIndex > oldIndex) newIndex -= 1;
     final item = identities.removeAt(oldIndex);
     identities.insert(newIndex, item);
 
