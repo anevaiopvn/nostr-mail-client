@@ -407,7 +407,7 @@ class EmailController extends GetxController {
         );
       } else {
         result = await FileSaver.instance.saveFile(
-          name: cleanName,
+          name: p.basenameWithoutExtension(cleanName),
           bytes: fileData,
           fileExtension: extension,
           mimeType: mimeType,
@@ -458,7 +458,7 @@ class EmailController extends GetxController {
           );
         } else {
           await FileSaver.instance.saveFile(
-            name: cleanName,
+            name: p.basenameWithoutExtension(cleanName),
             bytes: fileData,
             fileExtension: extension,
             mimeType: mimeType,
