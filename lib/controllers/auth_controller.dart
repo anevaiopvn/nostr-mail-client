@@ -1,3 +1,4 @@
+import 'package:broadcast_queue_shim_for_ndk/broadcast_queue_shim_for_ndk.dart';
 import 'package:get/get.dart';
 import 'package:ndk/entities.dart';
 import 'package:ndk/ndk.dart';
@@ -113,17 +114,64 @@ class AuthController extends GetxController {
       displayName: rawName,
     );
 
-    await ndk.config.cache.saveMetadata(metadata);
-
     final relays = {
       for (var r in NostrConfig.recommendedInboxOutboxRelays)
         r: ReadWriteMarker.readWrite,
     };
 
-    ndk.metadata.broadcastMetadata(metadata);
-    _nostrMailService.saveNip65Relays(relays);
-    _nostrMailService.saveDmRelays(NostrConfig.recommendedDmRelays);
-    _nostrMailService.saveBlossomServers(NostrConfig.recommendedBlossomServers);
+    final account = ndk.accounts.getLoggedAccount()!;
+    final broadcastQueue = Get.find<OfflineBroadcast>();
+
+    final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    final userRelayList = UserRelayList(
+      pubKey: account.pubkey,
+      relays: relays,
+      createdAt: now,
+      refreshedTimestamp: now,
+    );
+    // Signaling events: broadcast widely (popular + outbox).
+    final signalingTargets = {
+      ...NostrConfig.popularRelays,
+      ...userRelayList.writeUrls,
+    }.toList();
+
+    // Metadata (kind 0)
+    final signedMetadata = await account.signer.sign(metadata.toEvent());
+    await ndk.config.cache.saveMetadata(metadata);
+    await broadcastQueue.broadcast(signedMetadata, relays: signalingTargets);
+
+    // NIP-65 relay list (kind 10002)
+    final signedNip65 = await account.signer.sign(
+      userRelayList.toNip65().toEvent(),
+    );
+    await ndk.config.cache.saveUserRelayList(userRelayList);
+    await broadcastQueue.broadcast(signedNip65, relays: signalingTargets);
+
+    // DM relay list (kind 10050)
+    final dmRelays = NostrConfig.recommendedDmRelays;
+    final unsignedDm = Nip01Event(
+      pubKey: account.pubkey,
+      kind: dmRelayListKind,
+      tags: dmRelays.map((r) => ['relay', r]).toList(),
+      content: '',
+    );
+    final signedDm = await account.signer.sign(unsignedDm);
+    await ndk.config.cache.saveEvent(signedDm);
+    await broadcastQueue.broadcast(signedDm, relays: signalingTargets);
+
+    // Blossom user server list (kind 10063)
+    final blossomServers = NostrConfig.recommendedBlossomServers;
+    final unsignedBlossom = Nip01Event(
+      pubKey: account.pubkey,
+      kind: blossomServerListKind,
+      tags: [
+        for (final s in blossomServers) ['server', s],
+      ],
+      content: '',
+    );
+    final signedBlossom = await account.signer.sign(unsignedBlossom);
+    await ndk.config.cache.saveEvent(signedBlossom);
+    await broadcastQueue.broadcast(signedBlossom, relays: signalingTargets);
 
     await onLoggedIn();
 

@@ -1,3 +1,4 @@
+import 'package:broadcast_queue_shim_for_ndk/broadcast_queue_shim_for_ndk.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -153,8 +154,6 @@ class ProfileController extends GetxController {
     update();
 
     try {
-      final ndk = Get.find<Ndk>();
-
       // Start from current object to preserve fields like banner, nip05, website, etc.
       final metadata = _currentMetadata.value ?? Metadata(pubKey: pubkey);
 
@@ -175,15 +174,16 @@ class ProfileController extends GetxController {
 
       metadata.updatedAt = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
+      final ndk = Get.find<Ndk>();
+      final account = ndk.accounts.getLoggedAccount()!;
+      final signed = await account.signer.sign(metadata.toEvent());
       await ndk.config.cache.saveMetadata(metadata);
-
-      final event = metadata.toEvent();
-      final signedEvent = await ndk.accounts.getLoggedAccount()!.signer.sign(
-        event,
+      // Signaling event: broadcast widely (popular + outbox).
+      final outbox = await Get.find<NostrMailService>().getOutboxRelays();
+      await Get.find<OfflineBroadcast>().broadcast(
+        signed,
+        relays: {...NostrConfig.popularRelays, ...outbox}.toList(),
       );
-
-      final broadcast = ndk.broadcast.broadcast(nostrEvent: signedEvent);
-      await broadcast.broadcastDoneFuture;
 
       // Refresh metadata in AuthController
       // Use refresh() to force rebuild even with same object reference
