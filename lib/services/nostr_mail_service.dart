@@ -1,10 +1,17 @@
+import 'package:blossom_cache/blossom_cache.dart';
+import 'package:blossom_upload_queue_shim_for_ndk/blossom_upload_queue_shim_for_ndk.dart';
+import 'package:broadcast_queue_shim_for_ndk/broadcast_queue_shim_for_ndk.dart';
 import 'package:get/get.dart';
 import 'package:ndk/entities.dart';
 import 'package:ndk/ndk.dart';
 import 'package:ndk/domain_layer/entities/filter.dart' as ndk_filter;
 import 'package:nostr_mail/nostr_mail.dart';
 
+import '../app/config/nostr_config.dart';
 import 'storage_service.dart';
+
+const dmRelayListKind = 10050;
+const blossomServerListKind = 10063;
 
 /// Information about email sync status from relays
 class EmailSyncStatus {
@@ -18,8 +25,6 @@ class EmailSyncStatus {
     this.newestTimestamp,
   });
 }
-
-const _dmRelayListKind = 10050;
 
 class NostrMailService extends GetxService {
   NostrMailClient? _client;
@@ -43,7 +48,13 @@ class NostrMailService extends GetxService {
       _ndk.connectivity.relayConnectivityChanges;
 
   Future<void> initClient() async {
-    _client = await NostrMailClient.create(ndk: _ndk, db: _storageService.db);
+    _client = await NostrMailClient.create(
+      ndk: _ndk,
+      db: _storageService.db,
+      blossomCache: Get.find<BlossomCache>(),
+      broadcastQueue: Get.find<OfflineBroadcast>(),
+      blossomUploadQueue: Get.find<OfflineBlossomUpload>(),
+    );
   }
 
   String? getPublicKey() {
@@ -51,8 +62,24 @@ class NostrMailService extends GetxService {
   }
 
   Future<void> logout() async {
-    _ndk.accounts.logout();
+    await _client?.dispose();
     _client = null;
+    _ndk.accounts.logout();
+  }
+
+  /// Returns the current user's NIP-65 outbox (write/readWrite) relays,
+  /// falling back to [NostrConfig.bootstrapRelays] when none are set yet.
+  Future<List<String>> getOutboxRelays() async {
+    final pubkey = _ndk.accounts.getPublicKey();
+    if (pubkey == null) return List<String>.from(NostrConfig.bootstrapRelays);
+
+    final userRelayList = await _ndk.userRelayLists.getSingleUserRelayList(
+      pubkey,
+    );
+    final outbox = userRelayList?.writeUrls.toList() ?? const [];
+    return outbox.isNotEmpty
+        ? outbox
+        : List<String>.from(NostrConfig.bootstrapRelays);
   }
 
   /// Get the user's DM relay list (kind 10050) from local cache
@@ -62,7 +89,7 @@ class NostrMailService extends GetxService {
 
     final events = await _ndk.config.cache.loadEvents(
       pubKeys: [pubkey],
-      kinds: [_dmRelayListKind],
+      kinds: [dmRelayListKind],
     );
 
     if (events.isEmpty) return [];
@@ -82,26 +109,6 @@ class NostrMailService extends GetxService {
     return relays;
   }
 
-  /// Save DM relays list (kind 10050) to local cache and broadcast to network
-  Future<void> saveDmRelays(List<String> relays) async {
-    final pubkey = _ndk.accounts.getPublicKey();
-    if (pubkey == null) return;
-
-    final event = Nip01Event(
-      pubKey: pubkey,
-      kind: _dmRelayListKind,
-      tags: relays.map((r) => ['relay', r]).toList(),
-      content: '',
-    );
-
-    // Save to local cache first
-    await _ndk.config.cache.saveEvent(event);
-
-    // Then broadcast to network
-    final broadcast = _ndk.broadcast.broadcast(nostrEvent: event);
-    await broadcast.broadcastDoneFuture;
-  }
-
   /// Get the user's Blossom server list
   Future<List<String>> getBlossomServers() async {
     final pubkey = _ndk.accounts.getPublicKey();
@@ -114,13 +121,6 @@ class NostrMailService extends GetxService {
     return servers ?? [];
   }
 
-  /// Save Blossom server list and broadcast to network
-  Future<void> saveBlossomServers(List<String> servers) async {
-    await _ndk.blossomUserServerList.publishUserServerList(
-      serverUrlsOrdered: servers,
-    );
-  }
-
   /// Get the user's NIP-65 relay list (kind 10002)
   Future<Map<String, ReadWriteMarker>> getNip65Relays() async {
     final pubkey = _ndk.accounts.getPublicKey();
@@ -131,22 +131,6 @@ class NostrMailService extends GetxService {
     );
 
     return userRelayList?.relays ?? {};
-  }
-
-  /// Save NIP-65 relay list and broadcast to network
-  Future<void> saveNip65Relays(Map<String, ReadWriteMarker> relays) async {
-    final pubkey = _ndk.accounts.getPublicKey();
-    if (pubkey == null) return;
-
-    final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    final userRelayList = UserRelayList(
-      pubKey: pubkey,
-      relays: relays,
-      createdAt: now,
-      refreshedTimestamp: now,
-    );
-
-    await _ndk.userRelayLists.setInitialUserRelayList(userRelayList);
   }
 
   /// Get sync status for emails from DM relays only using fetchedRanges

@@ -1,6 +1,8 @@
+import 'package:broadcast_queue_shim_for_ndk/broadcast_queue_shim_for_ndk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:ndk/ndk.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../services/nostr_mail_service.dart';
@@ -148,11 +150,27 @@ class _DmRelaysSectionState extends State<DmRelaysSection> {
     if (!_hasChanges || _isSaving) return;
     setState(() => _isSaving = true);
     try {
-      final nostrMailService = Get.find<NostrMailService>();
       final relaysToSave = _dmRelays!
           .where((r) => !_markedForDeletion.contains(r))
           .toList();
-      await nostrMailService.saveDmRelays(relaysToSave);
+
+      final ndk = Get.find<Ndk>();
+      final account = ndk.accounts.getLoggedAccount()!;
+      final unsigned = Nip01Event(
+        pubKey: account.pubkey,
+        kind: dmRelayListKind,
+        tags: relaysToSave.map((r) => ['relay', r]).toList(),
+        content: '',
+      );
+      final signed = await account.signer.sign(unsigned);
+      await ndk.config.cache.saveEvent(signed);
+      // Signaling event: broadcast widely (popular + outbox).
+      final outbox = await Get.find<NostrMailService>().getOutboxRelays();
+      await Get.find<OfflineBroadcast>().broadcast(
+        signed,
+        relays: {...NostrConfig.popularRelays, ...outbox}.toList(),
+      );
+
       setState(() {
         _dmRelays = relaysToSave;
         _originalDmRelays = List.from(relaysToSave);
