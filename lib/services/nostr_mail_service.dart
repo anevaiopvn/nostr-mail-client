@@ -1,3 +1,6 @@
+import 'package:blossom_cache/blossom_cache.dart';
+import 'package:blossom_upload_queue_shim_for_ndk/blossom_upload_queue_shim_for_ndk.dart';
+import 'package:broadcast_queue_shim_for_ndk/broadcast_queue_shim_for_ndk.dart';
 import 'package:get/get.dart';
 import 'package:ndk/entities.dart';
 import 'package:ndk/ndk.dart';
@@ -43,7 +46,13 @@ class NostrMailService extends GetxService {
       _ndk.connectivity.relayConnectivityChanges;
 
   Future<void> initClient() async {
-    _client = await NostrMailClient.create(ndk: _ndk, db: _storageService.db);
+    _client = await NostrMailClient.create(
+      ndk: _ndk,
+      db: _storageService.db,
+      blossomCache: Get.find<BlossomCache>(),
+      broadcastQueue: Get.find<OfflineBroadcast>(),
+      blossomUploadQueue: Get.find<OfflineBlossomUpload>(),
+    );
   }
 
   String? getPublicKey() {
@@ -51,8 +60,9 @@ class NostrMailService extends GetxService {
   }
 
   Future<void> logout() async {
-    _ndk.accounts.logout();
+    await _client?.dispose();
     _client = null;
+    _ndk.accounts.logout();
   }
 
   /// Get the user's DM relay list (kind 10050) from local cache
