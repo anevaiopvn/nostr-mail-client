@@ -1,6 +1,7 @@
 import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:ndk/ndk.dart';
 
+import '../utils/metadata_extensions.dart';
 import 'recipient.dart';
 
 enum ContactSource { emailHistory, nostrFollow, cachedProfile, nip05Lookup }
@@ -35,15 +36,6 @@ class Contact {
     }
   }
 
-  String? get shortNpub {
-    final n = npub;
-    if (n == null) return null;
-    if (n.length > 16) {
-      return 'npub1...${n.substring(n.length - 6)}';
-    }
-    return n;
-  }
-
   String get label {
     if (displayName != null && displayName!.isNotEmpty) {
       return displayName!;
@@ -54,35 +46,26 @@ class Contact {
     if (mailAddress?.email.isNotEmpty == true) {
       return mailAddress!.email;
     }
-    return shortNpub ?? 'Unknown';
+    if (pubkey != null && pubkey!.isNotEmpty) {
+      return getAnonName(pubkey!);
+    }
+    return 'Unknown';
   }
 
-  // TODO make it nullable
-  String get subtitle {
-    if (nip05 != null && nip05!.isNotEmpty) {
-      return _formatNip05(nip05!);
+  String? get subtitle {
+    if (nip05 != null && nip05!.isNotEmpty && !_hasNpubLocalPart(nip05!)) {
+      return nip05;
     }
-    if (mailAddress?.email.isNotEmpty == true) {
-      return mailAddress!.email;
+    final email = mailAddress?.email;
+    if (email != null && email.isNotEmpty && !_hasNpubLocalPart(email)) {
+      return email;
     }
-    return shortNpub ?? '';
+    return null;
   }
 
-  /// Format nip05 for display - shorten npub if present
-  String _formatNip05(String nip05) {
-    if (!nip05.contains('@')) return nip05;
-
-    final parts = nip05.split('@');
-    final localPart = parts.first;
-    final domain = parts.last;
-
-    // If local part is an npub, shorten it
-    if (localPart.startsWith('npub1') && localPart.length > 20) {
-      final short = 'npub1...${localPart.substring(localPart.length - 6)}';
-      return '$short@$domain';
-    }
-
-    return nip05;
+  bool _hasNpubLocalPart(String address) {
+    if (!address.contains('@')) return false;
+    return address.split('@').first.startsWith('npub1');
   }
 
   /// Unique identifier for this contact
