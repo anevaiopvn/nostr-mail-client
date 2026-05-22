@@ -47,7 +47,10 @@ class DebugToolsView extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     l.debugToolsCreateOldTrashedDescription,
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),

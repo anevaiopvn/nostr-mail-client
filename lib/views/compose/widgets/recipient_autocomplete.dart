@@ -283,7 +283,6 @@ class _RecipientAutocompleteState extends State<RecipientAutocomplete> {
             focusNode: _focusNode,
             decoration: InputDecoration(
               hintText: widget.hintText,
-              hintStyle: TextStyle(color: Colors.grey[400]),
               border: InputBorder.none,
               contentPadding: EdgeInsets.zero,
             ),

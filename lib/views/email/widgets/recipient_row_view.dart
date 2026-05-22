@@ -10,6 +10,7 @@ class RecipientRowView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -18,7 +19,7 @@ class RecipientRowView extends StatelessWidget {
           child: Text(
             l.emailRecipientTo,
             style: TextStyle(
-              color: Colors.grey[600],
+              color: colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w500,
             ),
           ),

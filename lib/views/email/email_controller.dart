@@ -231,9 +231,7 @@ class EmailController extends GetxController {
             TextButton(
               onPressed: () => Get.back(result: true),
               style: TextButton.styleFrom(
-                foregroundColor: Theme.of(
-                  Get.context!,
-                ).colorScheme.error,
+                foregroundColor: Theme.of(Get.context!).colorScheme.error,
               ),
               child: Text(l.actionDelete),
             ),

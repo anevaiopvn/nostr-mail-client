@@ -106,13 +106,14 @@ class RecipientsListView extends StatelessWidget {
   }
 
   Widget _buildLegacyChip(BuildContext context, MailAddress recipient) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Chip(
       shape: const StadiumBorder(),
-      backgroundColor: Colors.grey.shade100,
-      side: BorderSide(color: Colors.grey.shade300),
+      backgroundColor: colorScheme.surfaceContainerHighest,
+      side: BorderSide(color: colorScheme.outlineVariant),
       label: Text(
         recipient.personalName ?? recipient.email,
-        style: TextStyle(color: Colors.grey.shade700),
+        style: TextStyle(color: colorScheme.onSurfaceVariant),
       ),
     );
   }

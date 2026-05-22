@@ -81,6 +81,7 @@ class _AccountMenuButton extends StatelessWidget {
     final shortNpub = npub.length >= 20
         ? '${npub.substring(0, 10)}...${npub.substring(npub.length - 6)}'
         : npub;
+    final colorScheme = Theme.of(context).colorScheme;
 
     final displayName = metadata?.getBestName() ?? shortNpub;
 
@@ -107,7 +108,10 @@ class _AccountMenuButton extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   shortNpub,
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  style: TextStyle(
+                    color: colorScheme.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ],

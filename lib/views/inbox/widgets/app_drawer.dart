@@ -152,7 +152,7 @@ class AppDrawer extends StatelessWidget {
                                         child: Text(
                                           _shortNpub(l),
                                           style: TextStyle(
-                                            color: Colors.grey[600],
+                                            color: colorScheme.onSurfaceVariant,
                                             fontSize: 12,
                                           ),
                                           overflow: TextOverflow.ellipsis,
@@ -162,7 +162,7 @@ class AppDrawer extends StatelessWidget {
                                       Icon(
                                         Icons.copy,
                                         size: 12,
-                                        color: Colors.grey[600],
+                                        color: colorScheme.onSurfaceVariant,
                                       ),
                                     ],
                                   ),

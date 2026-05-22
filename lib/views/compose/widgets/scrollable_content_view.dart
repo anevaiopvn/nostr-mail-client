@@ -138,7 +138,6 @@ class ScrollableContentView extends StatelessWidget {
             controller: controller.subjectController,
             decoration: InputDecoration(
               hintText: l.composeSubject,
-              hintStyle: TextStyle(color: Colors.grey[400]),
               border: InputBorder.none,
               suffixIcon: isWide
                   ? null
