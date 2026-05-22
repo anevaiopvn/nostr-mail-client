@@ -1,5 +1,7 @@
 import 'package:enough_mail_plus/enough_mail.dart';
 
+import '../utils/metadata_extensions.dart';
+
 enum RecipientType { nostr, legacy }
 
 class Recipient {
@@ -46,8 +48,8 @@ class Recipient {
       if (displayName != null && displayName!.isNotEmpty) {
         return displayName!;
       }
-      if (pubkey != null && pubkey!.length > 16) {
-        return 'npub1...${pubkey!.substring(pubkey!.length - 6)}';
+      if (pubkey != null && pubkey!.isNotEmpty) {
+        return getAnonName(pubkey!);
       }
     }
     if (mailAddress?.hasPersonalName == true) {

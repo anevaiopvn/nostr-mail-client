@@ -73,15 +73,11 @@ class EmailController extends GetxController {
     if (recipientMetadata != null) {
       return recipientMetadata!.getBestName();
     }
-    // Fallback to shortened address
-    final to = email!.mime.to?.firstOrNull?.encode() ?? '';
-    if (to.contains('@nostr')) {
-      final npub = to.split('@').first;
-      if (npub.length > 16) {
-        return 'npub...${npub.substring(npub.length - 6)}';
-      }
+    final pubkey = recipientContactPubkey ?? email?.recipientPubkey;
+    if (pubkey != null && pubkey.isNotEmpty) {
+      return getAnonName(pubkey);
     }
-    return to;
+    return email!.mime.to?.firstOrNull?.encode() ?? '';
   }
 
   /// Check if Reply All should be shown (multiple recipients or cc/bcc)

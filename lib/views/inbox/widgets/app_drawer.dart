@@ -36,7 +36,7 @@ class AppDrawer extends StatelessWidget {
   Widget _buildAvatar(BuildContext context) {
     final authController = Get.find<AuthController>();
     return NostrAvatar(
-      pubkey: authController.publicKey ?? '',
+      pubkey: authController.publicKey!,
       metadata: authController.userMetadata.value,
       radius: 28,
     );
@@ -45,7 +45,7 @@ class AppDrawer extends StatelessWidget {
   String _displayName() {
     final authController = Get.find<AuthController>();
     final metadata = authController.userMetadata.value;
-    final pubkey = authController.publicKey ?? '';
+    final pubkey = authController.publicKey!;
 
     return metadata?.getBestName() ?? getAnonName(pubkey);
   }

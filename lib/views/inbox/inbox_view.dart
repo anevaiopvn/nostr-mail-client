@@ -39,7 +39,8 @@ class InboxView extends GetView<InboxController> {
         ? '${npub.substring(0, 10)}...${npub.substring(npub.length - 6)}'
         : npub;
 
-    final displayName = metadata?.getBestName() ?? shortNpub;
+    final displayName =
+        metadata?.getBestName() ?? getAnonName(authController.publicKey!);
 
     return Container(
       width: 240,
@@ -47,7 +48,7 @@ class InboxView extends GetView<InboxController> {
       child: Row(
         children: [
           NostrAvatar(
-            pubkey: authController.publicKey ?? '',
+            pubkey: authController.publicKey!,
             metadata: metadata,
             radius: 18,
           ),
@@ -388,7 +389,7 @@ class InboxView extends GetView<InboxController> {
                                 final authController =
                                     Get.find<AuthController>();
                                 return NostrAvatar(
-                                  pubkey: authController.publicKey ?? '',
+                                  pubkey: authController.publicKey!,
                                   metadata: authController.userMetadata.value,
                                   radius: 18,
                                 );

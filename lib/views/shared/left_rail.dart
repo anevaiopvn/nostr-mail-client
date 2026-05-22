@@ -68,7 +68,7 @@ class _AccountMenuButton extends StatelessWidget {
   Widget _buildAvatar(BuildContext context) {
     final authController = Get.find<AuthController>();
     return NostrAvatar(
-      pubkey: authController.publicKey ?? '',
+      pubkey: authController.publicKey!,
       metadata: authController.userMetadata.value,
       radius: 14,
     );
@@ -82,7 +82,8 @@ class _AccountMenuButton extends StatelessWidget {
         ? '${npub.substring(0, 10)}...${npub.substring(npub.length - 6)}'
         : npub;
 
-    final displayName = metadata?.getBestName() ?? shortNpub;
+    final displayName =
+        metadata?.getBestName() ?? getAnonName(authController.publicKey!);
 
     return Container(
       width: 220,
