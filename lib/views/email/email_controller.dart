@@ -32,6 +32,7 @@ class EmailController extends GetxController {
   Metadata? bridgeMetadata; // Bridge for sender
   Metadata? recipientMetadata;
   Metadata? recipientBridgeMetadata; // Bridge for recipient
+  final Map<String, Metadata> recipientsMetadata = {}; // keyed by hex pubkey
   bool isLoading = true;
   bool showRawContent = false;
   bool showRecipients = false;
@@ -127,6 +128,7 @@ class EmailController extends GetxController {
     if (loaded != null) {
       loadSenderMetadata(loaded);
       loadRecipientMetadata(loaded);
+      loadAllRecipientsMetadata(loaded);
     }
 
     email = loaded;
@@ -205,6 +207,30 @@ class EmailController extends GetxController {
         }
       }
     } catch (_) {}
+  }
+
+  Future<void> loadAllRecipientsMetadata(Email loadedEmail) async {
+    final addresses = [
+      ...?loadedEmail.mime.to,
+      ...?loadedEmail.mime.cc,
+      ...?loadedEmail.mime.bcc,
+    ];
+
+    final pubkeys = <String>{};
+    for (final a in addresses) {
+      final pk = extractPubkeyFromAddress(a.email);
+      if (pk != null) pubkeys.add(pk);
+    }
+    if (pubkeys.isEmpty) return;
+
+    final metadatas = await Get.find<Ndk>().metadata.loadMetadatas(
+      pubkeys.toList(),
+      null,
+    );
+    for (final m in metadatas) {
+      recipientsMetadata[m.pubKey] = m;
+    }
+    update();
   }
 
   Future<void> deleteEmail() async {

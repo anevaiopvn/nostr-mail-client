@@ -1,6 +1,8 @@
 import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:flutter/material.dart';
+import 'package:ndk/ndk.dart';
 import 'package:nostr_mail_client/l10n/generated/app_localizations.dart';
+import 'package:nostr_mail_client/utils/metadata_extensions.dart';
 import 'package:nostr_mail_client/utils/nostr_utils.dart';
 import 'package:nostr_mail_client/widgets/email_avatar.dart';
 import 'package:nostr_mail_client/widgets/nostr_avatar.dart';
@@ -89,14 +91,21 @@ class RecipientsListView extends StatelessWidget {
   Widget _buildNostrChip(BuildContext context, MailAddress recipient) {
     final colorScheme = Theme.of(context).colorScheme;
     final pubkey = extractPubkeyFromAddress(recipient.email);
+    final metadata = pubkey != null
+        ? EmailController.to.recipientsMetadata[pubkey]
+        : null;
+
+    final label = metadata != null
+        ? metadata.getBestName()
+        : (pubkey != null ? getAnonName(pubkey) : recipient.email);
 
     return Chip(
       shape: const StadiumBorder(),
       backgroundColor: colorScheme.primaryContainer,
       side: BorderSide(color: colorScheme.primary.withValues(alpha: 0.3)),
-      avatar: _buildAvatar(recipient, pubkey),
+      avatar: _buildAvatar(recipient, pubkey, metadata),
       label: Text(
-        recipient.personalName ?? recipient.email,
+        label,
         style: TextStyle(
           color: colorScheme.primary,
           fontWeight: FontWeight.w500,
@@ -117,11 +126,15 @@ class RecipientsListView extends StatelessWidget {
     );
   }
 
-  Widget _buildAvatar(MailAddress recipient, String? pubkey) {
+  Widget _buildAvatar(
+    MailAddress recipient,
+    String? pubkey,
+    Metadata? metadata,
+  ) {
     if (pubkey == null) {
       return EmailAvatar(mailAddress: recipient, radius: 12);
     }
 
-    return NostrAvatar(pubkey: pubkey, radius: 12);
+    return NostrAvatar(pubkey: pubkey, metadata: metadata, radius: 12);
   }
 }
