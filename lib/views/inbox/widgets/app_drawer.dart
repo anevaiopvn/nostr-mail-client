@@ -235,10 +235,10 @@ class AppDrawer extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: ListTile(
-              leading: const Icon(Icons.logout, color: Colors.red),
+              leading: Icon(Icons.logout, color: colorScheme.error),
               title: Text(
                 l.inboxLogout,
-                style: const TextStyle(color: Colors.red),
+                style: TextStyle(color: colorScheme.error),
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(28),

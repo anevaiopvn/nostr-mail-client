@@ -157,10 +157,10 @@ class _EmailTileState extends State<EmailTile> {
             ),
           ),
           secondaryBackground: Container(
-            color: Colors.red,
+            color: colorScheme.error,
             alignment: Alignment.centerRight,
             padding: const EdgeInsets.only(right: 16),
-            child: const Icon(Icons.delete, color: Colors.white),
+            child: Icon(Icons.delete, color: colorScheme.onError),
           ),
           onDismissed: (direction) {
             if (direction == DismissDirection.startToEnd) {

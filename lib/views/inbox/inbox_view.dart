@@ -358,9 +358,9 @@ class InboxView extends GetView<InboxController> {
                             child: Text(l.inboxCopyNpub),
                           ),
                           MenuItemButton(
-                            leadingIcon: const Icon(
+                            leadingIcon: Icon(
                               Icons.logout,
-                              color: Colors.red,
+                              color: colorScheme.error,
                             ),
                             onPressed: () {
                               Get.find<AuthController>().logout();
@@ -368,7 +368,7 @@ class InboxView extends GetView<InboxController> {
                             },
                             child: Text(
                               l.inboxLogout,
-                              style: const TextStyle(color: Colors.red),
+                              style: TextStyle(color: colorScheme.error),
                             ),
                           ),
                         ],
@@ -484,7 +484,7 @@ class InboxView extends GetView<InboxController> {
             },
             child: Text(
               l.actionDelete,
-              style: const TextStyle(color: Colors.red),
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
           ),
         ],

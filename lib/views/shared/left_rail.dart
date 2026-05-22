@@ -161,12 +161,18 @@ class _AccountMenuButton extends StatelessWidget {
           child: Text(l.inboxCopyNpub),
         ),
         MenuItemButton(
-          leadingIcon: const Icon(Icons.logout, color: Colors.red),
+          leadingIcon: Icon(
+            Icons.logout,
+            color: Theme.of(context).colorScheme.error,
+          ),
           onPressed: () {
             Get.find<AuthController>().logout();
             Get.offAllNamed(AppRoutes.login);
           },
-          child: Text(l.inboxLogout, style: const TextStyle(color: Colors.red)),
+          child: Text(
+            l.inboxLogout,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
         ),
       ],
       builder: (context, menuController, child) {

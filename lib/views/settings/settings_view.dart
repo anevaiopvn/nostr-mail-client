@@ -132,10 +132,13 @@ class SettingsView extends StatelessWidget {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.logout, color: Colors.red),
+                leading: Icon(
+                  Icons.logout,
+                  color: Theme.of(context).colorScheme.error,
+                ),
                 title: Text(
                   l.settingsLogOut,
-                  style: const TextStyle(color: Colors.red),
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
                 onTap: () {
                   Get.find<AuthController>().logout();
@@ -143,10 +146,13 @@ class SettingsView extends StatelessWidget {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.delete_forever, color: Colors.red),
+                leading: Icon(
+                  Icons.delete_forever,
+                  color: Theme.of(context).colorScheme.error,
+                ),
                 title: Text(
                   l.settingsResetApplication,
-                  style: const TextStyle(color: Colors.red),
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
                 subtitle: Text(l.settingsResetApplicationSubtitle),
                 onTap: () => _showResetConfirmationDialog(context),
@@ -205,7 +211,7 @@ class SettingsView extends StatelessWidget {
             },
             child: Text(
               l.actionReset,
-              style: const TextStyle(color: Colors.red),
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
           ),
         ],
