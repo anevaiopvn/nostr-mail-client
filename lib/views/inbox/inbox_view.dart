@@ -407,9 +407,8 @@ class InboxView extends GetView<InboxController> {
       drawer: const AppDrawer(),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Get.toNamed(AppRoutes.compose),
-        backgroundColor: colorScheme.primary,
         tooltip: l.inboxCompose,
-        child: Icon(Icons.edit, color: colorScheme.onPrimary),
+        child: const Icon(Icons.edit),
       ),
       body: Column(
         children: [
