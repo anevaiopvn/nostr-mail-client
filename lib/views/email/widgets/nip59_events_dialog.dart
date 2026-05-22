@@ -40,7 +40,6 @@ Future<void> showNip59EventsDialog({
       context: context,
       barrierDismissible: true,
       barrierLabel: l.emailNip59Dismiss,
-      barrierColor: Colors.black54,
       transitionDuration: const Duration(milliseconds: 200),
       pageBuilder: (context, animation, secondaryAnimation) {
         return _Nip59EventsContent(
