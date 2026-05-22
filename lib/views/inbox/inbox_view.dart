@@ -38,6 +38,7 @@ class InboxView extends GetView<InboxController> {
     final shortNpub = npub.length >= 20
         ? '${npub.substring(0, 10)}...${npub.substring(npub.length - 6)}'
         : npub;
+    final colorScheme = Theme.of(context).colorScheme;
 
     final displayName = metadata?.getBestName() ?? shortNpub;
 
@@ -68,7 +69,10 @@ class InboxView extends GetView<InboxController> {
                 const SizedBox(height: 2),
                 Text(
                   shortNpub,
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  style: TextStyle(
+                    color: colorScheme.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
@@ -175,6 +179,7 @@ class InboxView extends GetView<InboxController> {
 
   Widget _buildEmailList(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
     return Obx(() {
       if (controller.emails.isEmpty) {
         final (icon, message) = switch (controller.currentFolder.value) {
@@ -187,11 +192,14 @@ class InboxView extends GetView<InboxController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 64, color: Colors.grey[400]),
+              Icon(icon, size: 64, color: colorScheme.onSurfaceVariant),
               const SizedBox(height: 16),
               Text(
                 message,
-                style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+                style: TextStyle(
+                  fontSize: 18,
+                  color: colorScheme.onSurfaceVariant,
+                ),
               ),
               const SizedBox(height: 8),
               TextButton(
@@ -358,9 +366,9 @@ class InboxView extends GetView<InboxController> {
                             child: Text(l.inboxCopyNpub),
                           ),
                           MenuItemButton(
-                            leadingIcon: const Icon(
+                            leadingIcon: Icon(
                               Icons.logout,
-                              color: Colors.red,
+                              color: colorScheme.error,
                             ),
                             onPressed: () {
                               Get.find<AuthController>().logout();
@@ -368,7 +376,7 @@ class InboxView extends GetView<InboxController> {
                             },
                             child: Text(
                               l.inboxLogout,
-                              style: const TextStyle(color: Colors.red),
+                              style: TextStyle(color: colorScheme.error),
                             ),
                           ),
                         ],
@@ -407,9 +415,8 @@ class InboxView extends GetView<InboxController> {
       drawer: const AppDrawer(),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Get.toNamed(AppRoutes.compose),
-        backgroundColor: colorScheme.primary,
         tooltip: l.inboxCompose,
-        child: Icon(Icons.edit, color: colorScheme.onPrimary),
+        child: const Icon(Icons.edit),
       ),
       body: Column(
         children: [
@@ -485,7 +492,7 @@ class InboxView extends GetView<InboxController> {
             },
             child: Text(
               l.actionDelete,
-              style: const TextStyle(color: Colors.red),
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
           ),
         ],

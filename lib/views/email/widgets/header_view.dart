@@ -12,6 +12,7 @@ class HeaderView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
     final controller = EmailController.to;
     final email = controller.email;
     if (email == null) return const SizedBox.shrink();
@@ -49,7 +50,10 @@ class HeaderView extends StatelessWidget {
                     children: [
                       Text(
                         formatDateTime(context, email.date),
-                        style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                        style: TextStyle(
+                          color: colorScheme.onSurfaceVariant,
+                          fontSize: 13,
+                        ),
                       ),
                       const SizedBox(width: 12),
                       IconButton(

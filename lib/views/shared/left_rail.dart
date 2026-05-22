@@ -81,6 +81,7 @@ class _AccountMenuButton extends StatelessWidget {
     final shortNpub = npub.length >= 20
         ? '${npub.substring(0, 10)}...${npub.substring(npub.length - 6)}'
         : npub;
+    final colorScheme = Theme.of(context).colorScheme;
 
     final displayName = metadata?.getBestName() ?? shortNpub;
 
@@ -107,7 +108,10 @@ class _AccountMenuButton extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   shortNpub,
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  style: TextStyle(
+                    color: colorScheme.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
@@ -161,12 +165,18 @@ class _AccountMenuButton extends StatelessWidget {
           child: Text(l.inboxCopyNpub),
         ),
         MenuItemButton(
-          leadingIcon: const Icon(Icons.logout, color: Colors.red),
+          leadingIcon: Icon(
+            Icons.logout,
+            color: Theme.of(context).colorScheme.error,
+          ),
           onPressed: () {
             Get.find<AuthController>().logout();
             Get.offAllNamed(AppRoutes.login);
           },
-          child: Text(l.inboxLogout, style: const TextStyle(color: Colors.red)),
+          child: Text(
+            l.inboxLogout,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
         ),
       ],
       builder: (context, menuController, child) {

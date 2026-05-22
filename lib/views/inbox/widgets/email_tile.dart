@@ -157,10 +157,10 @@ class _EmailTileState extends State<EmailTile> {
             ),
           ),
           secondaryBackground: Container(
-            color: Colors.red,
+            color: colorScheme.error,
             alignment: Alignment.centerRight,
             padding: const EdgeInsets.only(right: 16),
-            child: const Icon(Icons.delete, color: Colors.white),
+            child: Icon(Icons.delete, color: colorScheme.onError),
           ),
           onDismissed: (direction) {
             if (direction == DismissDirection.startToEnd) {
@@ -491,7 +491,10 @@ class _EmailTileState extends State<EmailTile> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Text('—', style: TextStyle(color: Colors.grey[400])),
+                        Text(
+                          '—',
+                          style: TextStyle(color: colorScheme.onSurfaceVariant),
+                        ),
                         const SizedBox(width: 8),
                         Flexible(
                           flex: 3,
@@ -499,7 +502,9 @@ class _EmailTileState extends State<EmailTile> {
                             widget.email.body,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: Colors.grey[500]),
+                            style: TextStyle(
+                              color: colorScheme.onSurfaceVariant,
+                            ),
                           ),
                         ),
                       ],
@@ -513,7 +518,10 @@ class _EmailTileState extends State<EmailTile> {
               const SizedBox(width: 16),
               Text(
                 formatDate(context, widget.email.date),
-                style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                style: TextStyle(
+                  color: colorScheme.onSurfaceVariant,
+                  fontSize: 12,
+                ),
               ),
             ],
           ),
@@ -524,6 +532,7 @@ class _EmailTileState extends State<EmailTile> {
 
   Widget _buildDefaultTile(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
     return Obx(() {
       final isUnread = this.isUnread;
       final attachments = getAttachmentDetails(widget.email.mime);
@@ -571,20 +580,29 @@ class _EmailTileState extends State<EmailTile> {
                   _displayName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  style: TextStyle(
+                    color: colorScheme.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   widget.email.body,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.grey[500], fontSize: 13),
+                  style: TextStyle(
+                    color: colorScheme.onSurfaceVariant,
+                    fontSize: 13,
+                  ),
                 ),
               ],
             ),
             trailing: Text(
               formatDate(context, widget.email.date),
-              style: TextStyle(color: Colors.grey[500], fontSize: 11),
+              style: TextStyle(
+                color: colorScheme.onSurfaceVariant,
+                fontSize: 11,
+              ),
             ),
             isThreeLine: true,
           ),

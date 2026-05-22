@@ -23,7 +23,7 @@ class DebugToolsController extends GetxController {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(l.debugNotAuthenticated),
-              backgroundColor: Colors.red,
+              backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );
         }
@@ -96,7 +96,7 @@ class DebugToolsController extends GetxController {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l.debugError(e.toString())),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
             duration: const Duration(seconds: 3),
           ),
         );

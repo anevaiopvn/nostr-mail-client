@@ -33,7 +33,7 @@ class RecipientChip extends StatelessWidget {
       return _buildNostrChip(context);
     }
 
-    return _buildLegacyChip();
+    return _buildLegacyChip(context);
   }
 
   Widget _buildNostrChip(BuildContext context) {
@@ -80,16 +80,21 @@ class RecipientChip extends StatelessWidget {
     );
   }
 
-  Widget _buildLegacyChip() {
+  Widget _buildLegacyChip(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Chip(
       shape: const StadiumBorder(),
-      backgroundColor: Colors.grey.shade100,
-      side: BorderSide(color: Colors.grey.shade300),
+      backgroundColor: colorScheme.surfaceContainerHighest,
+      side: BorderSide(color: colorScheme.outlineVariant),
       label: Text(
         recipient.label,
-        style: TextStyle(color: Colors.grey.shade700),
+        style: TextStyle(color: colorScheme.onSurfaceVariant),
       ),
-      deleteIcon: Icon(Icons.close, size: 18, color: Colors.grey.shade500),
+      deleteIcon: Icon(
+        Icons.close,
+        size: 18,
+        color: colorScheme.onSurfaceVariant,
+      ),
       onDeleted: onDelete,
     );
   }
