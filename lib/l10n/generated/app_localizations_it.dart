@@ -180,6 +180,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get settingsSourceCodeSubtitle => 'Vedi su GitHub';
 
   @override
+  String get settingsEarlyAccess => 'Accesso anticipato';
+
+  @override
+  String get settingsEarlyAccessMessage =>
+      'Nmail e il protocollo che la alimenta sono ancora molto giovani. Tutto è pensato per funzionare al meglio, ma possono comparire bug e alcune cose possono sembrare lente o mancanti. Grazie di essere tra i primi utenti.';
+
+  @override
   String get settingsTheme => 'Tema';
 
   @override

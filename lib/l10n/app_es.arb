@@ -59,6 +59,8 @@
   "settingsVersion": "Versión",
   "settingsSourceCode": "Código fuente",
   "settingsSourceCodeSubtitle": "Ver en GitHub",
+  "settingsEarlyAccess": "Acceso anticipado",
+  "settingsEarlyAccessMessage": "Nmail y el protocolo en el que se basa son aún muy jóvenes. Todo está hecho para funcionar lo mejor posible, pero pueden surgir errores y algunas cosas pueden parecer lentas o incompletas. Gracias por ser de los primeros usuarios.",
 
   "settingsTheme": "Tema",
   "settingsThemeAuto": "Auto",

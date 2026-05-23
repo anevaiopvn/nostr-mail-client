@@ -180,6 +180,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get settingsSourceCodeSubtitle => 'Посмотреть на GitHub';
 
   @override
+  String get settingsEarlyAccess => 'Ранний доступ';
+
+  @override
+  String get settingsEarlyAccessMessage =>
+      'Nmail и протокол, лежащий в его основе, ещё очень молоды. Всё сделано, чтобы работать как можно лучше, но могут возникать ошибки, а что-то может казаться медленным или отсутствующим. Спасибо, что вы один из первых пользователей.';
+
+  @override
   String get settingsTheme => 'Тема';
 
   @override

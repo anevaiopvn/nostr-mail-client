@@ -43,6 +43,12 @@ class AboutSection extends StatelessWidget {
           trailing: const Icon(Icons.open_in_new),
           onTap: () => launchUrl(Uri.parse(AppConfig.sourceCodeUrl)),
         ),
+        ListTile(
+          leading: const Icon(Icons.construction_rounded),
+          title: Text(l.settingsEarlyAccess),
+          subtitle: Text(l.settingsEarlyAccessMessage),
+          isThreeLine: true,
+        ),
       ],
     );
   }

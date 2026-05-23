@@ -175,6 +175,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsSourceCodeSubtitle => '在 GitHub 上查看';
 
   @override
+  String get settingsEarlyAccess => '抢先体验';
+
+  @override
+  String get settingsEarlyAccessMessage =>
+      'Nmail 及其背后的协议都还很年轻。一切都尽力做到最好，但仍可能出现 bug，有些功能可能显得缓慢或缺失。感谢你成为早期用户。';
+
+  @override
   String get settingsTheme => '主题';
 
   @override

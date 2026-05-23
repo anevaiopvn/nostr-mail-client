@@ -442,6 +442,18 @@ abstract class AppLocalizations {
   /// **'View on GitHub'**
   String get settingsSourceCodeSubtitle;
 
+  /// Tile title in the About section warning that the app is in early development
+  ///
+  /// In en, this message translates to:
+  /// **'Early access'**
+  String get settingsEarlyAccess;
+
+  /// Subtitle/body for the early-access tile in About, setting expectations about bugs and missing features
+  ///
+  /// In en, this message translates to:
+  /// **'Nmail and the protocol behind it are very young. Everything is built to work as well as possible, but bugs can happen and some things may feel slow or missing. Thanks for being an early supporter.'**
+  String get settingsEarlyAccessMessage;
+
   /// Tile title for the theme mode selector (Auto/Light/Dark)
   ///
   /// In en, this message translates to:
