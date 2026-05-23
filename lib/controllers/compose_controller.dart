@@ -213,7 +213,7 @@ class ComposeController extends GetxController {
     final l = AppLocalizations.of(Get.context!);
     try {
       // TODO: limit file size
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         dialogTitle: l.composeSelectAttachments,
         allowMultiple: true,
         withData: true, // TODO: do not work on macos

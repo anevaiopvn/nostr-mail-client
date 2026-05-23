@@ -168,6 +168,25 @@ class AppLocalizationsRu extends AppLocalizations {
       'Все локальные данные, включая настройки и фоновые изображения, будут удалены, и вы выйдете из аккаунта.\n\nЭто действие нельзя отменить.';
 
   @override
+  String get settingsAbout => 'О приложении';
+
+  @override
+  String get settingsVersion => 'Версия';
+
+  @override
+  String get settingsSourceCode => 'Исходный код';
+
+  @override
+  String get settingsSourceCodeSubtitle => 'Посмотреть на GitHub';
+
+  @override
+  String get settingsEarlyAccess => 'Ранний доступ';
+
+  @override
+  String get settingsEarlyAccessMessage =>
+      'Nmail и протокол, лежащий в его основе, ещё очень молоды. Всё сделано, чтобы работать как можно лучше, но могут возникать ошибки, а что-то может казаться медленным или отсутствующим. Спасибо, что вы один из первых пользователей.';
+
+  @override
   String get settingsTheme => 'Тема';
 
   @override
@@ -990,6 +1009,13 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get onboardingPage5Body =>
       'Воспользуйтесь современной архитектурой, ориентированной на приватность. Nmail помогает плавно перейти к более безопасному и устойчивому общению.';
+
+  @override
+  String get onboardingPage6Title => 'Ранний доступ';
+
+  @override
+  String get onboardingPage6Body =>
+      'Nmail и протокол, лежащий в его основе, ещё очень молоды. Всё сделано, чтобы работать как можно лучше, но могут возникать ошибки, а что-то может казаться медленным или отсутствующим. Спасибо, что вы один из первых пользователей. Ваше терпение помогает формировать дальнейшее развитие.';
 
   @override
   String get onboardingSkip => 'Пропустить';

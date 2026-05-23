@@ -163,6 +163,25 @@ class AppLocalizationsJa extends AppLocalizations {
       '設定や背景画像を含むすべてのローカルデータが削除され、ログアウトされます。\n\nこの操作は元に戻せません。';
 
   @override
+  String get settingsAbout => 'アプリ情報';
+
+  @override
+  String get settingsVersion => 'バージョン';
+
+  @override
+  String get settingsSourceCode => 'ソースコード';
+
+  @override
+  String get settingsSourceCodeSubtitle => 'GitHubで見る';
+
+  @override
+  String get settingsEarlyAccess => 'アーリーアクセス';
+
+  @override
+  String get settingsEarlyAccessMessage =>
+      'Nmail とその基盤となるプロトコルはまだ非常に若いです。可能な限りうまく動くように作られていますが、バグが発生したり、一部の機能が遅く感じられたり、不足していることがあります。早期のユーザーとして使ってくださりありがとうございます。';
+
+  @override
   String get settingsTheme => 'テーマ';
 
   @override
@@ -940,6 +959,13 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get onboardingPage5Body =>
       'プライバシーのために設計されたモダンなアーキテクチャの恩恵を受けましょう。Nmail は、より安全で回復力のあるコミュニケーションへの円滑な移行を支援します。';
+
+  @override
+  String get onboardingPage6Title => 'アーリーアクセス';
+
+  @override
+  String get onboardingPage6Body =>
+      'Nmail とその基盤となるプロトコルはまだ非常に若いです。可能な限りうまく動くように作られていますが、バグが発生したり、一部の機能が遅く感じられたり、不足していることがあります。早期のユーザーとして使ってくださりありがとうございます。あなたの忍耐がこの先を形づくります。';
 
   @override
   String get onboardingSkip => 'スキップ';

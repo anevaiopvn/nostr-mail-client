@@ -163,6 +163,25 @@ class AppLocalizationsZh extends AppLocalizations {
       '这将删除所有本地数据,包括设置和背景图片,并将您注销。\n\n此操作无法撤销。';
 
   @override
+  String get settingsAbout => '关于';
+
+  @override
+  String get settingsVersion => '版本';
+
+  @override
+  String get settingsSourceCode => '源代码';
+
+  @override
+  String get settingsSourceCodeSubtitle => '在 GitHub 上查看';
+
+  @override
+  String get settingsEarlyAccess => '抢先体验';
+
+  @override
+  String get settingsEarlyAccessMessage =>
+      'Nmail 及其背后的协议都还很年轻。一切都尽力做到最好，但仍可能出现 bug，有些功能可能显得缓慢或缺失。感谢你成为早期用户。';
+
+  @override
   String get settingsTheme => '主题';
 
   @override
@@ -932,6 +951,13 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get onboardingPage5Body =>
       '受益于专为隐私设计的现代架构。Nmail 助您平稳过渡到更安全、更具韧性的沟通方式。';
+
+  @override
+  String get onboardingPage6Title => '抢先体验';
+
+  @override
+  String get onboardingPage6Body =>
+      'Nmail 及其背后的协议都还很年轻。一切都尽力做到最好，但仍可能出现 bug，有些功能可能显得缓慢或缺失。感谢你成为早期用户。你的耐心将塑造接下来的发展。';
 
   @override
   String get onboardingSkip => '跳过';

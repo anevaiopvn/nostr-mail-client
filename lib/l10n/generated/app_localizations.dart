@@ -418,6 +418,42 @@ abstract class AppLocalizations {
   /// **'This will delete all local data including settings, background images, and log you out.\n\nThis action cannot be undone.'**
   String get settingsResetConfirmMessage;
 
+  /// Settings section header for app info (version, source code)
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get settingsAbout;
+
+  /// Tile title for the app version in the About section
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get settingsVersion;
+
+  /// Tile title for the link to the project's GitHub repository
+  ///
+  /// In en, this message translates to:
+  /// **'Source code'**
+  String get settingsSourceCode;
+
+  /// Subtitle for the source code tile, hinting that tapping opens GitHub
+  ///
+  /// In en, this message translates to:
+  /// **'View on GitHub'**
+  String get settingsSourceCodeSubtitle;
+
+  /// Tile title in the About section warning that the app is in early development
+  ///
+  /// In en, this message translates to:
+  /// **'Early access'**
+  String get settingsEarlyAccess;
+
+  /// Subtitle/body for the early-access tile in About, setting expectations about bugs and missing features
+  ///
+  /// In en, this message translates to:
+  /// **'Nmail and the protocol behind it are very young. Everything is built to work as well as possible, but bugs can happen and some things may feel slow or missing. Thanks for being an early supporter.'**
+  String get settingsEarlyAccessMessage;
+
   /// Tile title for the theme mode selector (Auto/Light/Dark)
   ///
   /// In en, this message translates to:
@@ -1893,6 +1929,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Benefit from a modern architecture designed for privacy. Nmail helps you transition smoothly to a more secure and resilient way of communicating.'**
   String get onboardingPage5Body;
+
+  /// Onboarding page 6 title (early-access disclaimer)
+  ///
+  /// In en, this message translates to:
+  /// **'Early Access'**
+  String get onboardingPage6Title;
+
+  /// Onboarding page 6 body (early-access disclaimer)
+  ///
+  /// In en, this message translates to:
+  /// **'Nmail and the protocol behind it are very young. Everything is built to work as well as possible, but bugs can happen and some things may feel slow or missing. Thanks for being an early supporter. Your patience helps shape what comes next.'**
+  String get onboardingPage6Body;
 
   /// Skip button label on the onboarding screen
   ///

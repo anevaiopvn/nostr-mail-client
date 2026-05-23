@@ -55,6 +55,13 @@
   "settingsResetApplicationSubtitle": "Elimina tutti i dati locali",
   "settingsResetConfirmMessage": "Verranno eliminati tutti i dati locali, comprese le impostazioni e le immagini di sfondo, e verrai disconnesso.\n\nQuesta azione non può essere annullata.",
 
+  "settingsAbout": "Informazioni",
+  "settingsVersion": "Versione",
+  "settingsSourceCode": "Codice sorgente",
+  "settingsSourceCodeSubtitle": "Vedi su GitHub",
+  "settingsEarlyAccess": "Accesso anticipato",
+  "settingsEarlyAccessMessage": "Nmail e il protocollo che la alimenta sono ancora molto giovani. Tutto è pensato per funzionare al meglio, ma possono comparire bug e alcune cose possono sembrare lente o mancanti. Grazie di essere tra i primi utenti.",
+
   "settingsTheme": "Tema",
   "settingsThemeAuto": "Auto",
   "settingsThemeLight": "Chiaro",
@@ -394,6 +401,8 @@
   "onboardingPage4Body": "Usa il tuo account per inviare email, seguire profili o usare altre app. Un'identità permanente che funziona in molte applicazioni diverse.",
   "onboardingPage5Title": "Costruito per il futuro",
   "onboardingPage5Body": "Beneficia di un'architettura moderna pensata per la privacy. Nmail ti aiuta a passare in modo fluido a un modo di comunicare più sicuro e resiliente.",
+  "onboardingPage6Title": "Accesso anticipato",
+  "onboardingPage6Body": "Nmail e il protocollo che la alimenta sono ancora molto giovani. Tutto è pensato per funzionare al meglio, ma possono comparire bug e alcune cose possono sembrare lente o mancanti. Grazie di essere tra i primi utenti. La tua pazienza aiuta a plasmare ciò che verrà.",
   "onboardingSkip": "Salta",
   "onboardingNext": "Avanti",
   "onboardingDone": "Fine",

@@ -170,6 +170,25 @@ class AppLocalizationsEs extends AppLocalizations {
       'Esto eliminará todos los datos locales, incluidos ajustes e imágenes de fondo, y cerrará la sesión.\n\nEsta acción no se puede deshacer.';
 
   @override
+  String get settingsAbout => 'Acerca de';
+
+  @override
+  String get settingsVersion => 'Versión';
+
+  @override
+  String get settingsSourceCode => 'Código fuente';
+
+  @override
+  String get settingsSourceCodeSubtitle => 'Ver en GitHub';
+
+  @override
+  String get settingsEarlyAccess => 'Acceso anticipado';
+
+  @override
+  String get settingsEarlyAccessMessage =>
+      'Nmail y el protocolo en el que se basa son aún muy jóvenes. Todo está hecho para funcionar lo mejor posible, pero pueden surgir errores y algunas cosas pueden parecer lentas o incompletas. Gracias por ser de los primeros usuarios.';
+
+  @override
   String get settingsTheme => 'Tema';
 
   @override
@@ -987,6 +1006,13 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get onboardingPage5Body =>
       'Disfruta de una arquitectura moderna pensada para la privacidad. Nmail te ayuda a hacer la transición sin problemas a una forma de comunicar más segura y resiliente.';
+
+  @override
+  String get onboardingPage6Title => 'Acceso anticipado';
+
+  @override
+  String get onboardingPage6Body =>
+      'Nmail y el protocolo en el que se basa son aún muy jóvenes. Todo está hecho para funcionar lo mejor posible, pero pueden surgir errores y algunas cosas pueden parecer lentas o incompletas. Gracias por ser de los primeros usuarios. Tu paciencia ayuda a dar forma a lo que viene.';
 
   @override
   String get onboardingSkip => 'Saltar';

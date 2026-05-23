@@ -83,7 +83,7 @@ class ProfileController extends GetxController {
 
   Future<void> pickAndUploadPicture(BuildContext context) async {
     final l = AppLocalizations.of(context);
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       dialogTitle: l.profileSelectPicture,
       type: FileType.image,
       allowMultiple: false,
