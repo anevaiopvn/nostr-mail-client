@@ -614,6 +614,10 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get emailRawContentUnavailable =>
+      'Не удалось загрузить содержимое письма';
+
+  @override
   String get emailRepostFailedEvent =>
       'Не удалось получить событие для репоста';
 

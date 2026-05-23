@@ -586,6 +586,9 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get emailRawContentUnavailable => 'メールの内容を読み込めませんでした';
+
+  @override
   String get emailRepostFailedEvent => 'リポスト用のイベントを取得できませんでした';
 
   @override

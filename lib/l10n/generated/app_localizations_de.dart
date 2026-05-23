@@ -611,6 +611,10 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get emailRawContentUnavailable =>
+      'E-Mail-Inhalt konnte nicht geladen werden';
+
+  @override
   String get emailRepostFailedEvent =>
       'E-Mail-Ereignis zum Reposten nicht gefunden';
 

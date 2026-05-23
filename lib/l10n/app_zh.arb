@@ -243,6 +243,7 @@
       "error": { "type": "String" }
     }
   },
+  "emailRawContentUnavailable": "无法加载邮件内容",
   "emailRepostFailedEvent": "无法获取用于转发的邮件事件",
   "emailRepostSuccess": "邮件转发成功",
   "emailRepostFailed": "转发邮件失败: {error}",

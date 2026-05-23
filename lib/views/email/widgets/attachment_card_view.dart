@@ -7,7 +7,7 @@ import 'package:nostr_mail_client/views/email/widgets/pdf_thumbnail_view.dart';
 
 class AttachmentCardView extends StatelessWidget {
   final Email email;
-  final AttachmentDetails attachment;
+  final AttachmentRef attachment;
 
   const AttachmentCardView({
     super.key,
@@ -17,7 +17,7 @@ class AttachmentCardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final filename = attachment.filename;
+    final filename = attachment.filename ?? '';
     final icon = getAttachmentIcon(filename);
     final isImage = isImageFile(filename);
     final isPdf = isPdfFile(filename);
@@ -25,7 +25,7 @@ class AttachmentCardView extends StatelessWidget {
 
     return InkWell(
       onTap: () => EmailController.to.handleAttachmentTap(
-        attachmentDetails: attachment,
+        ref: attachment,
         isImage: isImage,
         isPdf: isPdf,
       ),
@@ -45,7 +45,7 @@ class AttachmentCardView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (isImage)
-              ImageThumbnailView(attachmentDetails: attachment, email: email)
+              ImageThumbnailView(ref: attachment, email: email)
             else if (isPdf)
               PdfThumbnailView()
             else

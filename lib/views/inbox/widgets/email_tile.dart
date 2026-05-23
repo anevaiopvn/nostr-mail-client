@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 import 'package:nostr_mail/nostr_mail.dart';
 import 'package:nostr_mail_client/utils/format_date.dart';
-import 'package:nostr_mail_client/utils/get_attachements.dart';
 import 'package:nostr_mail_client/views/inbox/widgets/attachments_chips_view.dart';
 import 'package:nostr_mail_client/views/inbox/widgets/unread_indicator.dart';
 
@@ -429,7 +428,7 @@ class _EmailTileState extends State<EmailTile> {
       final subject = (widget.email.subject?.isEmpty ?? true)
           ? l.emailNoSubject
           : widget.email.subject!;
-      final attachments = getAttachmentDetails(widget.email.mime);
+      final attachments = widget.email.attachmentRefs;
 
       return InkWell(
         onTap: widget.onTap,
@@ -535,7 +534,7 @@ class _EmailTileState extends State<EmailTile> {
     final colorScheme = Theme.of(context).colorScheme;
     return Obx(() {
       final isUnread = this.isUnread;
-      final attachments = getAttachmentDetails(widget.email.mime);
+      final attachments = widget.email.attachmentRefs;
       final controller = Get.find<InboxController>();
       final isSelectionMode = controller.hasSelection;
 

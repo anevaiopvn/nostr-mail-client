@@ -243,6 +243,7 @@
       "error": { "type": "String" }
     }
   },
+  "emailRawContentUnavailable": "Не удалось загрузить содержимое письма",
   "emailRepostFailedEvent": "Не удалось получить событие для репоста",
   "emailRepostSuccess": "Письмо успешно репостнуто",
   "emailRepostFailed": "Не удалось репостнуть письмо: {error}",

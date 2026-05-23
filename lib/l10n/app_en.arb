@@ -429,6 +429,8 @@
       "error": { "type": "String" }
     }
   },
+  "emailRawContentUnavailable": "Email content could not be loaded",
+  "@emailRawContentUnavailable": { "description": "Error toast when the raw MIME content can't be reconstructed for .eml download" },
   "emailRepostFailedEvent": "Failed to get email event for repost",
   "@emailRepostFailedEvent": { "description": "Error toast when the underlying rumor event can't be fetched for repost" },
   "emailRepostSuccess": "Email reposted successfully",

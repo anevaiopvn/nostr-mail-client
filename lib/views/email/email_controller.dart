@@ -11,7 +11,6 @@ import 'package:nostr_mail_client/controllers/inbox_controller.dart';
 import 'package:nostr_mail_client/models/compose_mode.dart';
 import 'package:nostr_mail_client/controllers/settings_controller.dart';
 import 'package:nostr_mail_client/services/nostr_mail_service.dart';
-import 'package:nostr_mail_client/utils/get_attachements.dart';
 import 'package:nostr_mail_client/utils/get_mime_type.dart';
 import 'package:nostr_mail_client/utils/metadata_extensions.dart';
 import 'package:nostr_mail_client/utils/nostr_utils.dart';
@@ -37,6 +36,8 @@ class EmailController extends GetxController {
   bool showRawContent = false;
   bool showRecipients = false;
   late bool showImages;
+  String? rawContent;
+  bool isLoadingRawContent = false;
 
   EmailController() {
     showImages = Get.find<SettingsController>().alwaysLoadImages.value;
@@ -100,6 +101,29 @@ class EmailController extends GetxController {
   bool get isEmailRead {
     if (email == null) return true;
     return Get.find<InboxController>().isEmailRead(email!.id);
+  }
+
+  void toggleShowRawContent() {
+    showRawContent = !showRawContent;
+    update();
+    if (showRawContent) _ensureRawContent();
+  }
+
+  Future<String?> _ensureRawContent() async {
+    if (email == null) return null;
+    if (rawContent != null) return rawContent;
+    if (isLoadingRawContent) return null;
+
+    isLoadingRawContent = true;
+    update();
+    try {
+      final nostrMailService = Get.find<NostrMailService>();
+      rawContent = await nostrMailService.client.getRawMimeText(email!);
+    } finally {
+      isLoadingRawContent = false;
+      update();
+    }
+    return rawContent;
   }
 
   /// Toggle email read/unread status
@@ -293,16 +317,16 @@ class EmailController extends GetxController {
   }
 
   void handleAttachmentTap({
-    required AttachmentDetails attachmentDetails,
+    required AttachmentRef ref,
     bool isImage = false,
     bool isPdf = false,
   }) {
     if (isImage) {
-      showImageViewer(attachmentDetails: attachmentDetails);
+      showImageViewer(ref: ref);
     } else if (isPdf) {
-      showPdfViewer(attachmentDetails: attachmentDetails);
+      showPdfViewer(ref: ref);
     } else {
-      downloadAttachment(attachmentDetails: attachmentDetails);
+      downloadAttachment(ref: ref);
     }
   }
 
@@ -316,7 +340,12 @@ class EmailController extends GetxController {
           : email!.subject!;
       final fileName = subject.replaceAll(RegExp(r'[<>:"/\\|?*]'), '_');
 
-      final bytes = utf8.encode(email!.rawContent);
+      final raw = await _ensureRawContent();
+      if (raw == null) {
+        ToastHelper.error(Get.context!, l.emailRawContentUnavailable);
+        return;
+      }
+      final bytes = utf8.encode(raw);
 
       String result;
       if (PlatformHelper.isAndroid) {
@@ -396,13 +425,14 @@ class EmailController extends GetxController {
     Get.back();
   }
 
-  Future<void> downloadAttachment({
-    required AttachmentDetails attachmentDetails,
-  }) async {
+  Future<void> downloadAttachment({required AttachmentRef ref}) async {
     final l = AppLocalizations.of(Get.context!);
-    final fileData = getAttachmentData(
-      mime: email!.mime,
-      fetchId: attachmentDetails.fetchId,
+    if (email == null) return;
+    final filename = ref.filename ?? 'attachment';
+    final nostrMailService = Get.find<NostrMailService>();
+    final fileData = await nostrMailService.client.getAttachmentBytes(
+      email!,
+      ref,
     );
     if (fileData == null) {
       ToastHelper.error(Get.context!, l.emailAttachmentLoadFailed);
@@ -412,7 +442,7 @@ class EmailController extends GetxController {
     try {
       // Extract file extension
       final extension = p
-          .extension(attachmentDetails.filename)
+          .extension(filename)
           .toLowerCase()
           .replaceFirst('.', '');
 
@@ -420,7 +450,7 @@ class EmailController extends GetxController {
       MimeType mimeType = getMimeType(extension);
 
       // Clean filename (remove path if any)
-      final cleanName = p.basename(attachmentDetails.filename);
+      final cleanName = p.basename(filename);
 
       String result;
       if (PlatformHelper.isAndroid) {
@@ -444,17 +474,18 @@ class EmailController extends GetxController {
     }
   }
 
-  Future<void> downloadAllAttachments(
-    List<AttachmentDetails> attachments,
-  ) async {
+  Future<void> downloadAllAttachments(List<AttachmentRef> attachments) async {
     final l = AppLocalizations.of(Get.context!);
+    if (email == null) return;
     int successCount = 0;
     int failureCount = 0;
+    final nostrMailService = Get.find<NostrMailService>();
 
-    for (final attachment in attachments) {
-      final fileData = getAttachmentData(
-        mime: email!.mime,
-        fetchId: attachment.fetchId,
+    for (final ref in attachments) {
+      final filename = ref.filename ?? 'attachment';
+      final fileData = await nostrMailService.client.getAttachmentBytes(
+        email!,
+        ref,
       );
       if (fileData == null) {
         failureCount++;
@@ -464,7 +495,7 @@ class EmailController extends GetxController {
       try {
         // Extract file extension
         final extension = p
-            .extension(attachment.filename)
+            .extension(filename)
             .toLowerCase()
             .replaceFirst('.', '');
 
@@ -472,7 +503,7 @@ class EmailController extends GetxController {
         MimeType mimeType = getMimeType(extension);
 
         // Clean filename (remove path if any)
-        final cleanName = p.basename(attachment.filename);
+        final cleanName = p.basename(filename);
 
         if (PlatformHelper.isAndroid) {
           await AndroidFileSaver.saveToDownloads(
@@ -509,11 +540,14 @@ class EmailController extends GetxController {
     }
   }
 
-  void showImageViewer({required AttachmentDetails attachmentDetails}) {
+  Future<void> showImageViewer({required AttachmentRef ref}) async {
     final l = AppLocalizations.of(Get.context!);
-    final imageData = getAttachmentData(
-      mime: email!.mime,
-      fetchId: attachmentDetails.fetchId,
+    if (email == null) return;
+    final filename = ref.filename ?? 'image';
+    final nostrMailService = Get.find<NostrMailService>();
+    final imageData = await nostrMailService.client.getAttachmentBytes(
+      email!,
+      ref,
     );
     if (imageData != null) {
       Navigator.of(Get.context!).push(
@@ -527,7 +561,7 @@ class EmailController extends GetxController {
                 onPressed: () => Navigator.of(context).pop(),
               ),
               title: Text(
-                attachmentDetails.filename,
+                filename,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(color: Colors.white),
@@ -535,8 +569,7 @@ class EmailController extends GetxController {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.download, color: Colors.white),
-                  onPressed: () =>
-                      downloadAttachment(attachmentDetails: attachmentDetails),
+                  onPressed: () => downloadAttachment(ref: ref),
                   tooltip: l.emailDownload,
                 ),
               ],
@@ -557,11 +590,14 @@ class EmailController extends GetxController {
     }
   }
 
-  void showPdfViewer({required AttachmentDetails attachmentDetails}) {
+  Future<void> showPdfViewer({required AttachmentRef ref}) async {
     final l = AppLocalizations.of(Get.context!);
-    final pdfData = getAttachmentData(
-      mime: email!.mime,
-      fetchId: attachmentDetails.fetchId,
+    if (email == null) return;
+    final filename = ref.filename ?? 'document.pdf';
+    final nostrMailService = Get.find<NostrMailService>();
+    final pdfData = await nostrMailService.client.getAttachmentBytes(
+      email!,
+      ref,
     );
     if (pdfData != null) {
       Navigator.of(Get.context!).push(
@@ -570,7 +606,7 @@ class EmailController extends GetxController {
             backgroundColor: Colors.white,
             appBar: AppBar(
               title: Text(
-                attachmentDetails.filename,
+                filename,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -581,16 +617,12 @@ class EmailController extends GetxController {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.download),
-                  onPressed: () =>
-                      downloadAttachment(attachmentDetails: attachmentDetails),
+                  onPressed: () => downloadAttachment(ref: ref),
                   tooltip: l.emailDownload,
                 ),
               ],
             ),
-            body: PdfViewer.data(
-              pdfData,
-              sourceName: attachmentDetails.filename,
-            ),
+            body: PdfViewer.data(pdfData, sourceName: filename),
           ),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(opacity: animation, child: child);

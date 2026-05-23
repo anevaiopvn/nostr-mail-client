@@ -56,10 +56,7 @@ class EmailView extends StatelessWidget {
                   tooltip: controller.showRawContent
                       ? l.emailShowFormatted
                       : l.emailShowRaw,
-                  onPressed: () {
-                    controller.showRawContent = !controller.showRawContent;
-                    controller.update();
-                  },
+                  onPressed: controller.toggleShowRawContent,
                 );
               }),
               Obx(() {
@@ -101,14 +98,20 @@ class EmailView extends StatelessWidget {
                             ),
                           ),
                           const Divider(height: 24),
-                          SelectableText(
-                            controller.email!.rawContent,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontFamily: 'monospace',
-                              height: 1.4,
+                          if (controller.isLoadingRawContent)
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              child: Center(child: CircularProgressIndicator()),
+                            )
+                          else
+                            SelectableText(
+                              controller.rawContent ?? '',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontFamily: 'monospace',
+                                height: 1.4,
+                              ),
                             ),
-                          ),
                         ],
                       )
                     : Column(

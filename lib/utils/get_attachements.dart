@@ -1,55 +1,5 @@
-import 'dart:typed_data';
-
-import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
-
-/// Information about an attachment
-class AttachmentDetails {
-  final String filename;
-  final int size;
-  final String fetchId;
-
-  const AttachmentDetails({
-    required this.filename,
-    required this.size,
-    required this.fetchId,
-  });
-}
-
-/// Get list of attachment information from the email
-List<AttachmentDetails> getAttachmentDetails(MimeMessage mime) {
-  final attachments = <AttachmentDetails>[];
-
-  // Use findContentInfo to get all attachments
-  final contentInfos = mime.findContentInfo(
-    disposition: ContentDisposition.attachment,
-  );
-
-  for (final info in contentInfos) {
-    final filename = info.contentDisposition?.filename;
-    final fetchId = info.fetchId;
-
-    if (filename != null && filename.isNotEmpty) {
-      // Try to get the size from the part
-      int size = 0;
-      try {
-        final part = mime.getPart(fetchId);
-        if (part != null) {
-          // Try to decode content to get size
-          final data = part.decodeContentBinary();
-          size = data?.length ?? 0;
-        }
-      } catch (_) {}
-
-      attachments.add(
-        AttachmentDetails(filename: filename, size: size, fetchId: fetchId),
-      );
-    }
-  }
-
-  return attachments;
-}
 
 /// Format file size in human-readable format
 String formatFileSize(int bytes) {
@@ -85,16 +35,6 @@ bool isImageFile(String filename) {
 bool isPdfFile(String filename) {
   final extension = p.extension(filename).toLowerCase();
   return extension == '.pdf';
-}
-
-/// Get the binary data for a specific attachment
-Uint8List? getAttachmentData({
-  required MimeMessage mime,
-  required String fetchId,
-}) {
-  final part = mime.getPart(fetchId);
-  if (part == null) return null;
-  return part.decodeContentBinary();
 }
 
 /// Get the appropriate icon for an attachment based on its file extension

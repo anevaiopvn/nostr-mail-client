@@ -243,6 +243,7 @@
       "error": { "type": "String" }
     }
   },
+  "emailRawContentUnavailable": "Impossibile caricare il contenuto dell'email",
   "emailRepostFailedEvent": "Impossibile recuperare l'evento per il repost",
   "emailRepostSuccess": "Email ripubblicata con successo",
   "emailRepostFailed": "Impossibile ripubblicare l'email: {error}",

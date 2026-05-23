@@ -615,6 +615,10 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get emailRawContentUnavailable =>
+      'Impossible de charger le contenu de l\'e-mail';
+
+  @override
   String get emailRepostFailedEvent =>
       'Impossible de récupérer l\'événement pour la rediffusion';
 

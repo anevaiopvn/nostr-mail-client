@@ -586,6 +586,9 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get emailRawContentUnavailable => '无法加载邮件内容';
+
+  @override
   String get emailRepostFailedEvent => '无法获取用于转发的邮件事件';
 
   @override

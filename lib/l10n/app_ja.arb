@@ -243,6 +243,7 @@
       "error": { "type": "String" }
     }
   },
+  "emailRawContentUnavailable": "メールの内容を読み込めませんでした",
   "emailRepostFailedEvent": "リポスト用のイベントを取得できませんでした",
   "emailRepostSuccess": "メールをリポストしました",
   "emailRepostFailed": "メールのリポストに失敗しました: {error}",

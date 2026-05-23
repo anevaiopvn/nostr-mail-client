@@ -607,6 +607,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get emailRawContentUnavailable => 'Email content could not be loaded';
+
+  @override
   String get emailRepostFailedEvent => 'Failed to get email event for repost';
 
   @override

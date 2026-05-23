@@ -92,19 +92,18 @@ packages:
   blossom_cache:
     dependency: "direct main"
     description:
-      name: blossom_cache
-      sha256: "1a750548a23d8383ba57642f4957a3e449bcef84a4131c2005248cf52fed8d58"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.1.0"
+      path: "../blossom_cache"
+      relative: true
+    source: path
+    version: "0.3.0"
   blossom_upload_queue_shim_for_ndk:
     dependency: "direct main"
     description:
       name: blossom_upload_queue_shim_for_ndk
-      sha256: "2e15eb5227f70c48b5ad2234c625cb3be50f6352975003980ba3f4b6dcc0db30"
+      sha256: d1141aa6afe6946061ddb4f79bec905136193b862e529530cee3001391a8f869
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.0"
+    version: "0.4.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -801,10 +800,10 @@ packages:
     dependency: "direct main"
     description:
       name: ndk
-      sha256: cefda76a8833460a84f08135154ca09da619588035866cf5197c69eb2b76b214
+      sha256: "4d20f57ffcc330fe408fed54966ce6e7c9ac71c10b0364a7b4514e3a3d47f7e0"
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.4-dev.0"
+    version: "0.8.4-dev.1"
   ndk_bip32_keys:
     dependency: transitive
     description:
@@ -817,25 +816,25 @@ packages:
     dependency: "direct main"
     description:
       name: ndk_flutter
-      sha256: "7103718ecf28a85a600cc8c70383277b02331f0544f5e350e56e35535a706838"
+      sha256: d97aefcf5bb1acbd9d5c94b49a3d0d82552eade50bb50120441fa9e017dd37a3
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.3"
+    version: "0.8.4-dev.1"
   nip07_event_signer:
     dependency: transitive
     description:
       name: nip07_event_signer
-      sha256: "6c1786161a2e68a61d2945e5a487a85dfcfd095b90e28cec8077f5f567ba3cd4"
+      sha256: "5cdc14e3ee3ed8978ce4b0e8771535545a2047d8238f5616395380d8d6c6eb5c"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.10"
+    version: "1.1.0-dev.1"
   nostr_mail:
     dependency: "direct main"
     description:
       path: "../nostr-mail-dart"
       relative: true
     source: path
-    version: "1.16.0"
+    version: "2.0.0"
   objective_c:
     dependency: transitive
     description:

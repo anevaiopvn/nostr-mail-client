@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:nostr_mail/nostr_mail.dart';
-import 'package:nostr_mail_client/utils/get_attachements.dart';
 import 'package:nostr_mail_client/views/email/widgets/html_body_view.dart';
 
 import 'attachments_section_view.dart';
@@ -13,7 +12,7 @@ class EmailBodyView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final htmlBody = email.htmlBody;
-    final attachments = getAttachmentDetails(email.mime);
+    final attachments = email.attachmentRefs;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

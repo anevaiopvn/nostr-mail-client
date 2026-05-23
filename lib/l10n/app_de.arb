@@ -243,6 +243,7 @@
       "error": { "type": "String" }
     }
   },
+  "emailRawContentUnavailable": "E-Mail-Inhalt konnte nicht geladen werden",
   "emailRepostFailedEvent": "E-Mail-Ereignis zum Reposten nicht gefunden",
   "emailRepostSuccess": "E-Mail erfolgreich erneut veröffentlicht",
   "emailRepostFailed": "Reposten der E-Mail fehlgeschlagen: {error}",

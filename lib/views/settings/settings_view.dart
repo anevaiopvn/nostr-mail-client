@@ -1007,7 +1007,7 @@ class SettingsView extends StatelessWidget {
         controller.setBackgroundImage(successResult.descriptor!.url);
       } else {
         if (context.mounted) {
-          ToastHelper.error(context, successResult.error ?? 'Upload failed');
+          ToastHelper.error(context, successResult.error ?? l.profileUploadFailed);
         }
       }
     } catch (e) {

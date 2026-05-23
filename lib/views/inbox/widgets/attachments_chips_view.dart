@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:nostr_mail_client/utils/get_attachements.dart';
+import 'package:nostr_mail/nostr_mail.dart';
 
 import 'attachment_chip_view.dart';
 
 class AttachmentsChipsView extends StatelessWidget {
-  final List<AttachmentDetails> attachments;
+  final List<AttachmentRef> attachments;
 
   const AttachmentsChipsView({super.key, required this.attachments});
 

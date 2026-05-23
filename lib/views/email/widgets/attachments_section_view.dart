@@ -7,7 +7,7 @@ import 'package:nostr_mail_client/views/email/widgets/attachment_card_view.dart'
 
 class AttachmentsSectionView extends StatelessWidget {
   final Email email;
-  final List<AttachmentDetails> attachments;
+  final List<AttachmentRef> attachments;
 
   const AttachmentsSectionView({
     super.key,

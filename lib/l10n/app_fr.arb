@@ -243,6 +243,7 @@
       "error": { "type": "String" }
     }
   },
+  "emailRawContentUnavailable": "Impossible de charger le contenu de l'e-mail",
   "emailRepostFailedEvent": "Impossible de récupérer l'événement pour la rediffusion",
   "emailRepostSuccess": "E-mail rediffusé avec succès",
   "emailRepostFailed": "Échec de la rediffusion de l'e-mail : {error}",

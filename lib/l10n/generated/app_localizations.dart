@@ -1228,6 +1228,12 @@ abstract class AppLocalizations {
   /// **'Failed to save email: {error}'**
   String emailSaveFailed(String error);
 
+  /// Error toast when the raw MIME content can't be reconstructed for .eml download
+  ///
+  /// In en, this message translates to:
+  /// **'Email content could not be loaded'**
+  String get emailRawContentUnavailable;
+
   /// Error toast when the underlying rumor event can't be fetched for repost
   ///
   /// In en, this message translates to:
