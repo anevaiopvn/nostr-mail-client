@@ -171,6 +171,18 @@ class AppLocalizationsPt extends AppLocalizations {
       'Isso excluirá todos os dados locais, incluindo configurações e imagens de fundo, e fará logout.\n\nEsta ação não pode ser desfeita.';
 
   @override
+  String get settingsAbout => 'Sobre';
+
+  @override
+  String get settingsVersion => 'Versão';
+
+  @override
+  String get settingsSourceCode => 'Código-fonte';
+
+  @override
+  String get settingsSourceCodeSubtitle => 'Ver no GitHub';
+
+  @override
   String get settingsTheme => 'Tema';
 
   @override

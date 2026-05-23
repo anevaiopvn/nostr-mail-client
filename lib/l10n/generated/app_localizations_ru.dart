@@ -168,6 +168,18 @@ class AppLocalizationsRu extends AppLocalizations {
       'Все локальные данные, включая настройки и фоновые изображения, будут удалены, и вы выйдете из аккаунта.\n\nЭто действие нельзя отменить.';
 
   @override
+  String get settingsAbout => 'О приложении';
+
+  @override
+  String get settingsVersion => 'Версия';
+
+  @override
+  String get settingsSourceCode => 'Исходный код';
+
+  @override
+  String get settingsSourceCodeSubtitle => 'Посмотреть на GitHub';
+
+  @override
   String get settingsTheme => 'Тема';
 
   @override

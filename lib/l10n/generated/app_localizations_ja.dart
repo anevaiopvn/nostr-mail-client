@@ -163,6 +163,18 @@ class AppLocalizationsJa extends AppLocalizations {
       '設定や背景画像を含むすべてのローカルデータが削除され、ログアウトされます。\n\nこの操作は元に戻せません。';
 
   @override
+  String get settingsAbout => 'アプリ情報';
+
+  @override
+  String get settingsVersion => 'バージョン';
+
+  @override
+  String get settingsSourceCode => 'ソースコード';
+
+  @override
+  String get settingsSourceCodeSubtitle => 'GitHubで見る';
+
+  @override
   String get settingsTheme => 'テーマ';
 
   @override

@@ -168,6 +168,18 @@ class AppLocalizationsDe extends AppLocalizations {
       'Dies löscht alle lokalen Daten einschließlich Einstellungen und Hintergrundbilder und meldet dich ab.\n\nDiese Aktion kann nicht rückgängig gemacht werden.';
 
   @override
+  String get settingsAbout => 'Über';
+
+  @override
+  String get settingsVersion => 'Version';
+
+  @override
+  String get settingsSourceCode => 'Quellcode';
+
+  @override
+  String get settingsSourceCodeSubtitle => 'Auf GitHub ansehen';
+
+  @override
   String get settingsTheme => 'Design';
 
   @override

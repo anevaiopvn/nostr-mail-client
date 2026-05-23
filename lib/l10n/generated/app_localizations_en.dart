@@ -168,6 +168,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'This will delete all local data including settings, background images, and log you out.\n\nThis action cannot be undone.';
 
   @override
+  String get settingsAbout => 'About';
+
+  @override
+  String get settingsVersion => 'Version';
+
+  @override
+  String get settingsSourceCode => 'Source code';
+
+  @override
+  String get settingsSourceCodeSubtitle => 'View on GitHub';
+
+  @override
   String get settingsTheme => 'Theme';
 
   @override

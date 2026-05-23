@@ -55,6 +55,11 @@
   "settingsResetApplicationSubtitle": "Удалить все локальные данные",
   "settingsResetConfirmMessage": "Все локальные данные, включая настройки и фоновые изображения, будут удалены, и вы выйдете из аккаунта.\n\nЭто действие нельзя отменить.",
 
+  "settingsAbout": "О приложении",
+  "settingsVersion": "Версия",
+  "settingsSourceCode": "Исходный код",
+  "settingsSourceCodeSubtitle": "Посмотреть на GitHub",
+
   "settingsTheme": "Тема",
   "settingsThemeAuto": "Авто",
   "settingsThemeLight": "Светлая",

@@ -106,6 +106,15 @@
   "settingsResetConfirmMessage": "This will delete all local data including settings, background images, and log you out.\n\nThis action cannot be undone.",
   "@settingsResetConfirmMessage": { "description": "Confirmation message shown before resetting the application" },
 
+  "settingsAbout": "About",
+  "@settingsAbout": { "description": "Settings section header for app info (version, source code)" },
+  "settingsVersion": "Version",
+  "@settingsVersion": { "description": "Tile title for the app version in the About section" },
+  "settingsSourceCode": "Source code",
+  "@settingsSourceCode": { "description": "Tile title for the link to the project's GitHub repository" },
+  "settingsSourceCodeSubtitle": "View on GitHub",
+  "@settingsSourceCodeSubtitle": { "description": "Subtitle for the source code tile, hinting that tapping opens GitHub" },
+
   "settingsTheme": "Theme",
   "@settingsTheme": { "description": "Tile title for the theme mode selector (Auto/Light/Dark)" },
   "settingsThemeAuto": "Auto",

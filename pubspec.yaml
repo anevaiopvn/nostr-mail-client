@@ -32,7 +32,7 @@ dependencies:
   system_theme: ^3.2.0
   flutter_svg: ^2.2.4
   window_manager: ^0.5.1
-  file_picker: ^10.3.10
+  file_picker: ^11.0.2
   enough_mail_plus: ^2.2.4
   introduction_screen: ^4.0.0
   collection: ^1.19.1
@@ -47,6 +47,7 @@ dependencies:
   sqflite_common_ffi: ^2.4.0+3
   broadcast_queue_shim_for_ndk: ^0.2.0
   blossom_upload_queue_shim_for_ndk: ^0.4.0
+  package_info_plus: ^9.0.1
 
 dev_dependencies:
   flutter_test:
@@ -65,3 +66,4 @@ flutter:
   assets:
     - icons/original_transparent_2x.svg
     - icons/original_transparent_3x.png
+    - icons/github.svg

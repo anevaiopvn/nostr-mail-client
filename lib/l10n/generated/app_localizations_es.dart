@@ -170,6 +170,18 @@ class AppLocalizationsEs extends AppLocalizations {
       'Esto eliminará todos los datos locales, incluidos ajustes e imágenes de fondo, y cerrará la sesión.\n\nEsta acción no se puede deshacer.';
 
   @override
+  String get settingsAbout => 'Acerca de';
+
+  @override
+  String get settingsVersion => 'Versión';
+
+  @override
+  String get settingsSourceCode => 'Código fuente';
+
+  @override
+  String get settingsSourceCodeSubtitle => 'Ver en GitHub';
+
+  @override
   String get settingsTheme => 'Tema';
 
   @override

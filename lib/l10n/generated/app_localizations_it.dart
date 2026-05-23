@@ -168,6 +168,18 @@ class AppLocalizationsIt extends AppLocalizations {
       'Verranno eliminati tutti i dati locali, comprese le impostazioni e le immagini di sfondo, e verrai disconnesso.\n\nQuesta azione non può essere annullata.';
 
   @override
+  String get settingsAbout => 'Informazioni';
+
+  @override
+  String get settingsVersion => 'Versione';
+
+  @override
+  String get settingsSourceCode => 'Codice sorgente';
+
+  @override
+  String get settingsSourceCodeSubtitle => 'Vedi su GitHub';
+
+  @override
   String get settingsTheme => 'Tema';
 
   @override

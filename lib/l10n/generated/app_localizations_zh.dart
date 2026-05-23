@@ -163,6 +163,18 @@ class AppLocalizationsZh extends AppLocalizations {
       '这将删除所有本地数据,包括设置和背景图片,并将您注销。\n\n此操作无法撤销。';
 
   @override
+  String get settingsAbout => '关于';
+
+  @override
+  String get settingsVersion => '版本';
+
+  @override
+  String get settingsSourceCode => '源代码';
+
+  @override
+  String get settingsSourceCodeSubtitle => '在 GitHub 上查看';
+
+  @override
   String get settingsTheme => '主题';
 
   @override

@@ -55,6 +55,11 @@
   "settingsResetApplicationSubtitle": "Excluir todos os dados locais",
   "settingsResetConfirmMessage": "Isso excluirá todos os dados locais, incluindo configurações e imagens de fundo, e fará logout.\n\nEsta ação não pode ser desfeita.",
 
+  "settingsAbout": "Sobre",
+  "settingsVersion": "Versão",
+  "settingsSourceCode": "Código-fonte",
+  "settingsSourceCodeSubtitle": "Ver no GitHub",
+
   "settingsTheme": "Tema",
   "settingsThemeAuto": "Auto",
   "settingsThemeLight": "Claro",

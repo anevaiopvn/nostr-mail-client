@@ -23,6 +23,7 @@ import '../../utils/platform_helper.dart';
 import '../../utils/responsive_helper.dart';
 import '../../utils/toast_helper.dart';
 import '../shared/desktop_shell.dart';
+import 'widgets/about_section.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
@@ -157,6 +158,9 @@ class SettingsView extends StatelessWidget {
                 subtitle: Text(l.settingsResetApplicationSubtitle),
                 onTap: () => _showResetConfirmationDialog(context),
               ),
+              const SizedBox(height: 24),
+              _buildSectionHeader(context, l.settingsAbout),
+              const AboutSection(),
               const SizedBox(height: 48),
             ],
           ),
@@ -755,7 +759,7 @@ class SettingsView extends StatelessWidget {
     SettingsController controller,
   ) async {
     final l = AppLocalizations.of(context);
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: FileType.image,
       allowMultiple: false,
     );
@@ -935,7 +939,7 @@ class SettingsView extends StatelessWidget {
     SettingsController controller,
   ) async {
     final l = AppLocalizations.of(context);
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: FileType.image,
       allowMultiple: false,
       withData: true,
@@ -1007,7 +1011,10 @@ class SettingsView extends StatelessWidget {
         controller.setBackgroundImage(successResult.descriptor!.url);
       } else {
         if (context.mounted) {
-          ToastHelper.error(context, successResult.error ?? l.profileUploadFailed);
+          ToastHelper.error(
+            context,
+            successResult.error ?? l.profileUploadFailed,
+          );
         }
       }
     } catch (e) {

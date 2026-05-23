@@ -55,6 +55,11 @@
   "settingsResetApplicationSubtitle": "Eliminar todos los datos locales",
   "settingsResetConfirmMessage": "Esto eliminará todos los datos locales, incluidos ajustes e imágenes de fondo, y cerrará la sesión.\n\nEsta acción no se puede deshacer.",
 
+  "settingsAbout": "Acerca de",
+  "settingsVersion": "Versión",
+  "settingsSourceCode": "Código fuente",
+  "settingsSourceCodeSubtitle": "Ver en GitHub",
+
   "settingsTheme": "Tema",
   "settingsThemeAuto": "Auto",
   "settingsThemeLight": "Claro",

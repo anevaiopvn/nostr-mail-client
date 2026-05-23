@@ -418,6 +418,30 @@ abstract class AppLocalizations {
   /// **'This will delete all local data including settings, background images, and log you out.\n\nThis action cannot be undone.'**
   String get settingsResetConfirmMessage;
 
+  /// Settings section header for app info (version, source code)
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get settingsAbout;
+
+  /// Tile title for the app version in the About section
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get settingsVersion;
+
+  /// Tile title for the link to the project's GitHub repository
+  ///
+  /// In en, this message translates to:
+  /// **'Source code'**
+  String get settingsSourceCode;
+
+  /// Subtitle for the source code tile, hinting that tapping opens GitHub
+  ///
+  /// In en, this message translates to:
+  /// **'View on GitHub'**
+  String get settingsSourceCodeSubtitle;
+
   /// Tile title for the theme mode selector (Auto/Light/Dark)
   ///
   /// In en, this message translates to:

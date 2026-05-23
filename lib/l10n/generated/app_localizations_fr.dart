@@ -171,6 +171,18 @@ class AppLocalizationsFr extends AppLocalizations {
       'Cela supprimera toutes les données locales, y compris les paramètres et les images de fond, et vous déconnectera.\n\nCette action est irréversible.';
 
   @override
+  String get settingsAbout => 'À propos';
+
+  @override
+  String get settingsVersion => 'Version';
+
+  @override
+  String get settingsSourceCode => 'Code source';
+
+  @override
+  String get settingsSourceCodeSubtitle => 'Voir sur GitHub';
+
+  @override
   String get settingsTheme => 'Thème';
 
   @override
