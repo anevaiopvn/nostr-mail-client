@@ -946,6 +946,13 @@ class AppLocalizationsZh extends AppLocalizations {
       '受益于专为隐私设计的现代架构。Nmail 助您平稳过渡到更安全、更具韧性的沟通方式。';
 
   @override
+  String get onboardingPage6Title => '抢先体验';
+
+  @override
+  String get onboardingPage6Body =>
+      'Nmail 及其背后的协议都还很年轻。一切都尽力做到最好，但仍可能出现 bug，有些功能可能显得缓慢或缺失。感谢你成为早期用户。你的耐心将塑造接下来的发展。';
+
+  @override
   String get onboardingSkip => '跳过';
 
   @override

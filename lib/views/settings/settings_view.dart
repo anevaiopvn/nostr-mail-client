@@ -1,3 +1,4 @@
+// TODO: this file is too long - extract _buildX helpers into widgets/ (one widget per file)
 import 'dart:async';
 import 'dart:io';
 

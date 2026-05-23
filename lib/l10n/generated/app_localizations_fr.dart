@@ -1004,6 +1004,13 @@ class AppLocalizationsFr extends AppLocalizations {
       'Profitez d\'une architecture moderne conçue pour la confidentialité. Nmail vous aide à passer en douceur à une communication plus sûre et résiliente.';
 
   @override
+  String get onboardingPage6Title => 'Accès anticipé';
+
+  @override
+  String get onboardingPage6Body =>
+      'Nmail et son protocole sont encore très jeunes. Tout est fait pour que ça fonctionne au mieux, mais des bugs peuvent apparaître et certaines choses peuvent sembler lentes ou manquantes. Merci de faire partie des premiers utilisateurs. Votre patience aide à construire la suite.';
+
+  @override
   String get onboardingSkip => 'Passer';
 
   @override

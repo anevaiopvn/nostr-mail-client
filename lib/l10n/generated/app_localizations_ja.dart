@@ -954,6 +954,13 @@ class AppLocalizationsJa extends AppLocalizations {
       'プライバシーのために設計されたモダンなアーキテクチャの恩恵を受けましょう。Nmail は、より安全で回復力のあるコミュニケーションへの円滑な移行を支援します。';
 
   @override
+  String get onboardingPage6Title => 'アーリーアクセス';
+
+  @override
+  String get onboardingPage6Body =>
+      'Nmail とその基盤となるプロトコルはまだ非常に若いです。可能な限りうまく動くように作られていますが、バグが発生したり、一部の機能が遅く感じられたり、不足していることがあります。早期のユーザーとして使ってくださりありがとうございます。あなたの忍耐がこの先を形づくります。';
+
+  @override
   String get onboardingSkip => 'スキップ';
 
   @override

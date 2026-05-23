@@ -98,6 +98,18 @@ class OnboardingView extends StatelessWidget {
               ),
               decoration: _getPageDecoration(context),
             ),
+            PageViewModel(
+              title: l.onboardingPage6Title,
+              body: l.onboardingPage6Body,
+              image: Center(
+                child: Icon(
+                  Icons.construction_rounded,
+                  size: 100,
+                  color: colorScheme.primary,
+                ),
+              ),
+              decoration: _getPageDecoration(context),
+            ),
           ],
           onDone: _onDone,
           onSkip: _onDone,
@@ -119,6 +131,7 @@ class OnboardingView extends StatelessWidget {
             activeShape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(25.0)),
             ),
+            spacing: const EdgeInsets.symmetric(horizontal: 4.0),
           ),
         ),
       ),

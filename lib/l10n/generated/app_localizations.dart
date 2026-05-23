@@ -1918,6 +1918,18 @@ abstract class AppLocalizations {
   /// **'Benefit from a modern architecture designed for privacy. Nmail helps you transition smoothly to a more secure and resilient way of communicating.'**
   String get onboardingPage5Body;
 
+  /// Onboarding page 6 title (early-access disclaimer)
+  ///
+  /// In en, this message translates to:
+  /// **'Early Access'**
+  String get onboardingPage6Title;
+
+  /// Onboarding page 6 body (early-access disclaimer)
+  ///
+  /// In en, this message translates to:
+  /// **'Nmail and the protocol behind it are very young. Everything is built to work as well as possible, but bugs can happen and some things may feel slow or missing. Thanks for being an early supporter. Your patience helps shape what comes next.'**
+  String get onboardingPage6Body;
+
   /// Skip button label on the onboarding screen
   ///
   /// In en, this message translates to:
