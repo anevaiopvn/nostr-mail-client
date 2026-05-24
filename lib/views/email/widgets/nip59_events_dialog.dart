@@ -84,31 +84,33 @@ class _Nip59EventsContent extends StatelessWidget {
 
   Widget _buildBottomSheet(BuildContext context) {
     final l = AppLocalizations.of(context);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _buildHeader(context),
-        const Divider(height: 1),
-        Flexible(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                EventCard(
-                  event: giftWrap,
-                  kind: 1059,
-                  label: l.emailNip59GiftWrap,
-                ),
-                const SizedBox(height: 12),
-                EventCard(event: seal, kind: 13, label: l.emailNip59Seal),
-                const SizedBox(height: 12),
-                EventCard(event: rumor, kind: 1301, label: l.emailNip59Rumor),
-                const SizedBox(height: 16),
-              ],
+    return SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildHeader(context),
+          const Divider(height: 1),
+          Flexible(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  EventCard(
+                    event: giftWrap,
+                    kind: 1059,
+                    label: l.emailNip59GiftWrap,
+                  ),
+                  const SizedBox(height: 12),
+                  EventCard(event: seal, kind: 13, label: l.emailNip59Seal),
+                  const SizedBox(height: 12),
+                  EventCard(event: rumor, kind: 1301, label: l.emailNip59Rumor),
+                  // const SizedBox(height: 16),
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
