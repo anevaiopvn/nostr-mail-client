@@ -24,6 +24,7 @@ class InboxController extends GetxController with WidgetsBindingObserver {
   final RxSet<String> readEmailIds = <String>{}.obs;
 
   StreamSubscription? _watchSubscription;
+  StreamSubscription? _labelWatchSubscription;
 
   bool get isSearching => searchQuery.value.isNotEmpty;
   int get unreadCount => emails.length - readEmailIds.length;
@@ -154,6 +155,7 @@ class InboxController extends GetxController with WidgetsBindingObserver {
   void onClose() {
     WidgetsBinding.instance.removeObserver(this);
     _watchSubscription?.cancel();
+    _labelWatchSubscription?.cancel();
     super.onClose();
   }
 
@@ -228,16 +230,21 @@ class InboxController extends GetxController with WidgetsBindingObserver {
   }
 
   void _startWatching() {
+    // TODO: debounce both listeners. A bulk sync that surfaces N emails or
+    // N label events triggers N successive _loadEmails() calls (each a
+    // full local query + Rx rebuild). Merge both streams through a small
+    // debounce (e.g. 100ms via rxdart) once the cost becomes noticeable.
     _watchSubscription = _nostrMailService.client.onEmail.listen(
       (_) => _loadEmails(),
-      onError: (e) {
-        // Silent error handling for stream
-      },
+      onError: (e) {},
     );
-    // Note: Cross-device sync for read status is handled through the existing email watch.
-    // When labels change on other devices, they should trigger email events which reload
-    // both the email list and read email IDs. If this doesn't work as expected,
-    // consider adding a manual refresh button or periodic sync.
+    // Cross-device sync: label add/remove events from other devices arrive
+    // via the label subscription in WatchManager. Reload so read/unread,
+    // trash, archive and star state stay in sync without a manual refresh.
+    _labelWatchSubscription = _nostrMailService.client.onLabel.listen(
+      (_) => _loadEmails(),
+      onError: (e) {},
+    );
   }
 
   Future<void> sync() async {
