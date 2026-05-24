@@ -134,7 +134,9 @@ class EmailView extends StatelessWidget {
                                 ),
                               ),
                               child: const DesktopActionsBar(),
-                            ),
+                            )
+                          else
+                            const SizedBox(height: 16),
                           EmailBodyView(email: controller.email!),
                         ],
                       ),
