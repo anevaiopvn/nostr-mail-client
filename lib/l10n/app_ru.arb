@@ -189,7 +189,7 @@
   "inboxEditProfile": "Редактировать профиль",
   "inboxSettings": "Настройки",
   "inboxDeleteOldEmailsTitle": "Удалить старые письма",
-  "inboxDeleteOldEmailsMessage": "Это навсегда удалит {count, plural, one{# письмо} few{# письма} many{# писем} other{# письма}} старше 30 дней.\n\nЭто действие нельзя отменить.",
+  "inboxDeleteOldEmailsMessage": "Это навсегда удалит {count, plural, one{{count} письмо} few{{count} письма} many{{count} писем} other{{count} письма}} старше 30 дней.\n\nЭто действие нельзя отменить.",
   "@inboxDeleteOldEmailsMessage": {
     "placeholders": {
       "count": { "type": "int" }
@@ -202,7 +202,7 @@
       "error": { "type": "String" }
     }
   },
-  "inboxOldEmailsCount": "{count, plural, one{# старое письмо к удалению} few{# старых письма к удалению} many{# старых писем к удалению} other{# старых писем к удалению}}",
+  "inboxOldEmailsCount": "{count, plural, one{{count} старое письмо к удалению} few{{count} старых письма к удалению} many{{count} старых писем к удалению} other{{count} старых писем к удалению}}",
   "@inboxOldEmailsCount": {
     "placeholders": {
       "count": { "type": "int" }
@@ -272,13 +272,13 @@
       "error": { "type": "String" }
     }
   },
-  "emailDownloadedAllSuccess": "{count, plural, one{Скачан # файл} few{Скачано # файла} many{Скачано # файлов} other{Скачано # файла}}",
+  "emailDownloadedAllSuccess": "{count, plural, one{Скачан {count} файл} few{Скачано {count} файла} many{Скачано {count} файлов} other{Скачано {count} файла}}",
   "@emailDownloadedAllSuccess": {
     "placeholders": {
       "count": { "type": "int" }
     }
   },
-  "emailDownloadedAllFailed": "{count, plural, one{Не удалось скачать # файл} few{Не удалось скачать # файла} many{Не удалось скачать # файлов} other{Не удалось скачать # файла}}",
+  "emailDownloadedAllFailed": "{count, plural, one{Не удалось скачать {count} файл} few{Не удалось скачать {count} файла} many{Не удалось скачать {count} файлов} other{Не удалось скачать {count} файла}}",
   "@emailDownloadedAllFailed": {
     "placeholders": {
       "count": { "type": "int" }

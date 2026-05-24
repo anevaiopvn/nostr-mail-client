@@ -189,7 +189,7 @@
   "inboxEditProfile": "Modifica profilo",
   "inboxSettings": "Impostazioni",
   "inboxDeleteOldEmailsTitle": "Elimina email vecchie",
-  "inboxDeleteOldEmailsMessage": "Verranno eliminate definitivamente {count, plural, one{# email} other{# email}} più vecchie di 30 giorni.\n\nQuesta azione non può essere annullata.",
+  "inboxDeleteOldEmailsMessage": "Verranno eliminate definitivamente {count, plural, one{{count} email} other{{count} email}} più vecchie di 30 giorni.\n\nQuesta azione non può essere annullata.",
   "@inboxDeleteOldEmailsMessage": {
     "placeholders": {
       "count": { "type": "int" }
@@ -202,7 +202,7 @@
       "error": { "type": "String" }
     }
   },
-  "inboxOldEmailsCount": "{count, plural, one{# email vecchia da eliminare} other{# email vecchie da eliminare}}",
+  "inboxOldEmailsCount": "{count, plural, one{{count} email vecchia da eliminare} other{{count} email vecchie da eliminare}}",
   "@inboxOldEmailsCount": {
     "placeholders": {
       "count": { "type": "int" }
@@ -272,13 +272,13 @@
       "error": { "type": "String" }
     }
   },
-  "emailDownloadedAllSuccess": "{count, plural, one{Scaricato # file con successo} other{Scaricati # file con successo}}",
+  "emailDownloadedAllSuccess": "{count, plural, one{Scaricato {count} file con successo} other{Scaricati {count} file con successo}}",
   "@emailDownloadedAllSuccess": {
     "placeholders": {
       "count": { "type": "int" }
     }
   },
-  "emailDownloadedAllFailed": "{count, plural, one{Impossibile scaricare # file} other{Impossibile scaricare # file}}",
+  "emailDownloadedAllFailed": "{count, plural, one{Impossibile scaricare {count} file} other{Impossibile scaricare {count} file}}",
   "@emailDownloadedAllFailed": {
     "placeholders": {
       "count": { "type": "int" }

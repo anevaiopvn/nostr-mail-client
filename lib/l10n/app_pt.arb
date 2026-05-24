@@ -189,7 +189,7 @@
   "inboxEditProfile": "Editar perfil",
   "inboxSettings": "Configurações",
   "inboxDeleteOldEmailsTitle": "Excluir e-mails antigos",
-  "inboxDeleteOldEmailsMessage": "Isso excluirá permanentemente {count, plural, one{# e-mail} other{# e-mails}} com mais de 30 dias.\n\nEsta ação não pode ser desfeita.",
+  "inboxDeleteOldEmailsMessage": "Isso excluirá permanentemente {count, plural, one{{count} e-mail} other{{count} e-mails}} com mais de 30 dias.\n\nEsta ação não pode ser desfeita.",
   "@inboxDeleteOldEmailsMessage": {
     "placeholders": {
       "count": { "type": "int" }
@@ -202,7 +202,7 @@
       "error": { "type": "String" }
     }
   },
-  "inboxOldEmailsCount": "{count, plural, one{# e-mail antigo a excluir} other{# e-mails antigos a excluir}}",
+  "inboxOldEmailsCount": "{count, plural, one{{count} e-mail antigo a excluir} other{{count} e-mails antigos a excluir}}",
   "@inboxOldEmailsCount": {
     "placeholders": {
       "count": { "type": "int" }
@@ -272,13 +272,13 @@
       "error": { "type": "String" }
     }
   },
-  "emailDownloadedAllSuccess": "{count, plural, one{# arquivo baixado com sucesso} other{# arquivos baixados com sucesso}}",
+  "emailDownloadedAllSuccess": "{count, plural, one{{count} arquivo baixado com sucesso} other{{count} arquivos baixados com sucesso}}",
   "@emailDownloadedAllSuccess": {
     "placeholders": {
       "count": { "type": "int" }
     }
   },
-  "emailDownloadedAllFailed": "{count, plural, one{Falha ao baixar # arquivo} other{Falha ao baixar # arquivos}}",
+  "emailDownloadedAllFailed": "{count, plural, one{Falha ao baixar {count} arquivo} other{Falha ao baixar {count} arquivos}}",
   "@emailDownloadedAllFailed": {
     "placeholders": {
       "count": { "type": "int" }

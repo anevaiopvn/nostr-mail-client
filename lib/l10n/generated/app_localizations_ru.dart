@@ -522,10 +522,10 @@ class AppLocalizationsRu extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '# письма',
-      many: '# писем',
-      few: '# письма',
-      one: '# письмо',
+      other: '$count письма',
+      many: '$count писем',
+      few: '$count письма',
+      one: '$count письмо',
     );
     return 'Это навсегда удалит $_temp0 старше 30 дней.\n\nЭто действие нельзя отменить.';
   }
@@ -543,10 +543,10 @@ class AppLocalizationsRu extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '# старых писем к удалению',
-      many: '# старых писем к удалению',
-      few: '# старых письма к удалению',
-      one: '# старое письмо к удалению',
+      other: '$count старых писем к удалению',
+      many: '$count старых писем к удалению',
+      few: '$count старых письма к удалению',
+      one: '$count старое письмо к удалению',
     );
     return '$_temp0';
   }
@@ -666,10 +666,10 @@ class AppLocalizationsRu extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Скачано # файла',
-      many: 'Скачано # файлов',
-      few: 'Скачано # файла',
-      one: 'Скачан # файл',
+      other: 'Скачано $count файла',
+      many: 'Скачано $count файлов',
+      few: 'Скачано $count файла',
+      one: 'Скачан $count файл',
     );
     return '$_temp0';
   }
@@ -679,10 +679,10 @@ class AppLocalizationsRu extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Не удалось скачать # файла',
-      many: 'Не удалось скачать # файлов',
-      few: 'Не удалось скачать # файла',
-      one: 'Не удалось скачать # файл',
+      other: 'Не удалось скачать $count файла',
+      many: 'Не удалось скачать $count файлов',
+      few: 'Не удалось скачать $count файла',
+      one: 'Не удалось скачать $count файл',
     );
     return '$_temp0';
   }

@@ -527,8 +527,8 @@ class AppLocalizationsFr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '# e-mails',
-      one: '# e-mail',
+      other: '$count e-mails',
+      one: '$count e-mail',
     );
     return 'Cela supprimera définitivement $_temp0 de plus de 30 jours.\n\nCette action est irréversible.';
   }
@@ -546,8 +546,8 @@ class AppLocalizationsFr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '# anciens e-mails à supprimer',
-      one: '# ancien e-mail à supprimer',
+      other: '$count anciens e-mails à supprimer',
+      one: '$count ancien e-mail à supprimer',
     );
     return '$_temp0';
   }
@@ -668,8 +668,8 @@ class AppLocalizationsFr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '# fichiers téléchargés avec succès',
-      one: '# fichier téléchargé avec succès',
+      other: '$count fichiers téléchargés avec succès',
+      one: '$count fichier téléchargé avec succès',
     );
     return '$_temp0';
   }
@@ -679,8 +679,8 @@ class AppLocalizationsFr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Échec du téléchargement de # fichiers',
-      one: 'Échec du téléchargement de # fichier',
+      other: 'Échec du téléchargement de $count fichiers',
+      one: 'Échec du téléchargement de $count fichier',
     );
     return '$_temp0';
   }

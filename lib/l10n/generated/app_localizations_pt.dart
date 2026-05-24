@@ -524,8 +524,8 @@ class AppLocalizationsPt extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '# e-mails',
-      one: '# e-mail',
+      other: '$count e-mails',
+      one: '$count e-mail',
     );
     return 'Isso excluirá permanentemente $_temp0 com mais de 30 dias.\n\nEsta ação não pode ser desfeita.';
   }
@@ -543,8 +543,8 @@ class AppLocalizationsPt extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '# e-mails antigos a excluir',
-      one: '# e-mail antigo a excluir',
+      other: '$count e-mails antigos a excluir',
+      one: '$count e-mail antigo a excluir',
     );
     return '$_temp0';
   }
@@ -664,8 +664,8 @@ class AppLocalizationsPt extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '# arquivos baixados com sucesso',
-      one: '# arquivo baixado com sucesso',
+      other: '$count arquivos baixados com sucesso',
+      one: '$count arquivo baixado com sucesso',
     );
     return '$_temp0';
   }
@@ -675,8 +675,8 @@ class AppLocalizationsPt extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Falha ao baixar # arquivos',
-      one: 'Falha ao baixar # arquivo',
+      other: 'Falha ao baixar $count arquivos',
+      one: 'Falha ao baixar $count arquivo',
     );
     return '$_temp0';
   }

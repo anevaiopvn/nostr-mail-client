@@ -352,7 +352,7 @@
   "@inboxSettings": { "description": "Tooltip/drawer entry that opens the settings screen" },
   "inboxDeleteOldEmailsTitle": "Delete old emails",
   "@inboxDeleteOldEmailsTitle": { "description": "Confirmation dialog title for permanently deleting old trashed emails" },
-  "inboxDeleteOldEmailsMessage": "This will permanently delete {count, plural, one{# email} other{# emails}} older than 30 days.\n\nThis action cannot be undone.",
+  "inboxDeleteOldEmailsMessage": "This will permanently delete {count, plural, one{{count} email} other{{count} emails}} older than 30 days.\n\nThis action cannot be undone.",
   "@inboxDeleteOldEmailsMessage": {
     "description": "Confirmation message for deleting old trashed emails. Plural-aware on `count`.",
     "placeholders": {
@@ -368,7 +368,7 @@
       "error": { "type": "String" }
     }
   },
-  "inboxOldEmailsCount": "{count, plural, one{# old email to delete} other{# old emails to delete}}",
+  "inboxOldEmailsCount": "{count, plural, one{{count} old email to delete} other{{count} old emails to delete}}",
   "@inboxOldEmailsCount": {
     "description": "Banner text shown in trash folder when old emails are eligible for cleanup. Plural-aware.",
     "placeholders": {
@@ -471,14 +471,14 @@
       "error": { "type": "String" }
     }
   },
-  "emailDownloadedAllSuccess": "{count, plural, one{Downloaded # file successfully} other{Downloaded # files successfully}}",
+  "emailDownloadedAllSuccess": "{count, plural, one{Downloaded {count} file successfully} other{Downloaded {count} files successfully}}",
   "@emailDownloadedAllSuccess": {
     "description": "Success toast after downloading all attachments. Plural-aware.",
     "placeholders": {
       "count": { "type": "int" }
     }
   },
-  "emailDownloadedAllFailed": "{count, plural, one{Failed to download # file} other{Failed to download # files}}",
+  "emailDownloadedAllFailed": "{count, plural, one{Failed to download {count} file} other{Failed to download {count} files}}",
   "@emailDownloadedAllFailed": {
     "description": "Error toast when no attachments were saved. Plural-aware.",
     "placeholders": {

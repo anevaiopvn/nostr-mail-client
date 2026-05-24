@@ -1093,7 +1093,7 @@ abstract class AppLocalizations {
   /// Confirmation message for deleting old trashed emails. Plural-aware on `count`.
   ///
   /// In en, this message translates to:
-  /// **'This will permanently delete {count, plural, one{# email} other{# emails}} older than 30 days.\n\nThis action cannot be undone.'**
+  /// **'This will permanently delete {count, plural, one{{count} email} other{{count} emails}} older than 30 days.\n\nThis action cannot be undone.'**
   String inboxDeleteOldEmailsMessage(int count);
 
   /// Toast title shown when bulk deletion of old emails fails
@@ -1111,7 +1111,7 @@ abstract class AppLocalizations {
   /// Banner text shown in trash folder when old emails are eligible for cleanup. Plural-aware.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, one{# old email to delete} other{# old emails to delete}}'**
+  /// **'{count, plural, one{{count} old email to delete} other{{count} old emails to delete}}'**
   String inboxOldEmailsCount(int count);
 
   /// Button label on the old-emails banner (desktop layout)
@@ -1309,13 +1309,13 @@ abstract class AppLocalizations {
   /// Success toast after downloading all attachments. Plural-aware.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, one{Downloaded # file successfully} other{Downloaded # files successfully}}'**
+  /// **'{count, plural, one{Downloaded {count} file successfully} other{Downloaded {count} files successfully}}'**
   String emailDownloadedAllSuccess(int count);
 
   /// Error toast when no attachments were saved. Plural-aware.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, one{Failed to download # file} other{Failed to download # files}}'**
+  /// **'{count, plural, one{Failed to download {count} file} other{Failed to download {count} files}}'**
   String emailDownloadedAllFailed(int count);
 
   /// Info toast when downloading attachments partially succeeded

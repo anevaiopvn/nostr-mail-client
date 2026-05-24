@@ -523,8 +523,8 @@ class AppLocalizationsIt extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '# email',
-      one: '# email',
+      other: '$count email',
+      one: '$count email',
     );
     return 'Verranno eliminate definitivamente $_temp0 più vecchie di 30 giorni.\n\nQuesta azione non può essere annullata.';
   }
@@ -542,8 +542,8 @@ class AppLocalizationsIt extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '# email vecchie da eliminare',
-      one: '# email vecchia da eliminare',
+      other: '$count email vecchie da eliminare',
+      one: '$count email vecchia da eliminare',
     );
     return '$_temp0';
   }
@@ -664,8 +664,8 @@ class AppLocalizationsIt extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Scaricati # file con successo',
-      one: 'Scaricato # file con successo',
+      other: 'Scaricati $count file con successo',
+      one: 'Scaricato $count file con successo',
     );
     return '$_temp0';
   }
@@ -675,8 +675,8 @@ class AppLocalizationsIt extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Impossibile scaricare # file',
-      one: 'Impossibile scaricare # file',
+      other: 'Impossibile scaricare $count file',
+      one: 'Impossibile scaricare $count file',
     );
     return '$_temp0';
   }

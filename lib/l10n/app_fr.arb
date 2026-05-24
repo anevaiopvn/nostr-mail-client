@@ -189,7 +189,7 @@
   "inboxEditProfile": "Modifier le profil",
   "inboxSettings": "Paramètres",
   "inboxDeleteOldEmailsTitle": "Supprimer les anciens e-mails",
-  "inboxDeleteOldEmailsMessage": "Cela supprimera définitivement {count, plural, one{# e-mail} other{# e-mails}} de plus de 30 jours.\n\nCette action est irréversible.",
+  "inboxDeleteOldEmailsMessage": "Cela supprimera définitivement {count, plural, one{{count} e-mail} other{{count} e-mails}} de plus de 30 jours.\n\nCette action est irréversible.",
   "@inboxDeleteOldEmailsMessage": {
     "placeholders": {
       "count": { "type": "int" }
@@ -202,7 +202,7 @@
       "error": { "type": "String" }
     }
   },
-  "inboxOldEmailsCount": "{count, plural, one{# ancien e-mail à supprimer} other{# anciens e-mails à supprimer}}",
+  "inboxOldEmailsCount": "{count, plural, one{{count} ancien e-mail à supprimer} other{{count} anciens e-mails à supprimer}}",
   "@inboxOldEmailsCount": {
     "placeholders": {
       "count": { "type": "int" }
@@ -272,13 +272,13 @@
       "error": { "type": "String" }
     }
   },
-  "emailDownloadedAllSuccess": "{count, plural, one{# fichier téléchargé avec succès} other{# fichiers téléchargés avec succès}}",
+  "emailDownloadedAllSuccess": "{count, plural, one{{count} fichier téléchargé avec succès} other{{count} fichiers téléchargés avec succès}}",
   "@emailDownloadedAllSuccess": {
     "placeholders": {
       "count": { "type": "int" }
     }
   },
-  "emailDownloadedAllFailed": "{count, plural, one{Échec du téléchargement de # fichier} other{Échec du téléchargement de # fichiers}}",
+  "emailDownloadedAllFailed": "{count, plural, one{Échec du téléchargement de {count} fichier} other{Échec du téléchargement de {count} fichiers}}",
   "@emailDownloadedAllFailed": {
     "placeholders": {
       "count": { "type": "int" }

@@ -189,7 +189,7 @@
   "inboxEditProfile": "Profil bearbeiten",
   "inboxSettings": "Einstellungen",
   "inboxDeleteOldEmailsTitle": "Alte E-Mails löschen",
-  "inboxDeleteOldEmailsMessage": "Dies löscht dauerhaft {count, plural, one{# E-Mail} other{# E-Mails}}, die älter als 30 Tage sind.\n\nDiese Aktion kann nicht rückgängig gemacht werden.",
+  "inboxDeleteOldEmailsMessage": "Dies löscht dauerhaft {count, plural, one{{count} E-Mail} other{{count} E-Mails}}, die älter als 30 Tage sind.\n\nDiese Aktion kann nicht rückgängig gemacht werden.",
   "@inboxDeleteOldEmailsMessage": {
     "placeholders": {
       "count": { "type": "int" }
@@ -202,7 +202,7 @@
       "error": { "type": "String" }
     }
   },
-  "inboxOldEmailsCount": "{count, plural, one{# alte E-Mail zu löschen} other{# alte E-Mails zu löschen}}",
+  "inboxOldEmailsCount": "{count, plural, one{{count} alte E-Mail zu löschen} other{{count} alte E-Mails zu löschen}}",
   "@inboxOldEmailsCount": {
     "placeholders": {
       "count": { "type": "int" }
@@ -272,13 +272,13 @@
       "error": { "type": "String" }
     }
   },
-  "emailDownloadedAllSuccess": "{count, plural, one{# Datei erfolgreich heruntergeladen} other{# Dateien erfolgreich heruntergeladen}}",
+  "emailDownloadedAllSuccess": "{count, plural, one{{count} Datei erfolgreich heruntergeladen} other{{count} Dateien erfolgreich heruntergeladen}}",
   "@emailDownloadedAllSuccess": {
     "placeholders": {
       "count": { "type": "int" }
     }
   },
-  "emailDownloadedAllFailed": "{count, plural, one{# Datei konnte nicht heruntergeladen werden} other{# Dateien konnten nicht heruntergeladen werden}}",
+  "emailDownloadedAllFailed": "{count, plural, one{{count} Datei konnte nicht heruntergeladen werden} other{{count} Dateien konnten nicht heruntergeladen werden}}",
   "@emailDownloadedAllFailed": {
     "placeholders": {
       "count": { "type": "int" }
