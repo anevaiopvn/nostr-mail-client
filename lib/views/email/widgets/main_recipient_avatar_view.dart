@@ -9,19 +9,18 @@ class MainRecipientAvatarView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final contactPubkey = EmailController.to.recipientContactPubkey;
-    if (contactPubkey == null) {
-      return EmailAvatar(
-        mailAddress:
-            EmailController.to.email!.mime.to?.firstOrNull ??
-            MailAddress(null, ''),
+    final email = EmailController.to.email!;
+    // Direct nostr conversation: the recipient pubkey IS the contact.
+    if (!email.isBridged) {
+      return NostrAvatar(
+        pubkey: email.recipientPubkey,
+        metadata: EmailController.to.recipientMetadata,
         radius: 12,
       );
     }
-
-    return NostrAvatar(
-      pubkey: contactPubkey,
-      metadata: EmailController.to.recipientMetadata,
+    // Bridged: the legacy contact lives in the MIME To header.
+    return EmailAvatar(
+      mailAddress: email.mime.to?.firstOrNull ?? MailAddress(null, ''),
       radius: 12,
     );
   }

@@ -12,17 +12,17 @@ class MainSenderAvatarView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final contactPubkey = EmailController.to.senderContactPubkey;
-    if (contactPubkey == null) {
-      return EmailAvatar(
-        mailAddress: email.sender ?? MailAddress(null, ''),
+    // Direct nostr conversation: the sender pubkey IS the contact.
+    if (!email.isBridged) {
+      return NostrAvatar(
+        pubkey: email.senderPubkey,
+        metadata: EmailController.to.senderMetadata,
         radius: 24,
       );
     }
-
-    return NostrAvatar(
-      pubkey: contactPubkey,
-      metadata: EmailController.to.senderMetadata,
+    // Bridged: the legacy contact lives in the MIME From header.
+    return EmailAvatar(
+      mailAddress: email.sender ?? MailAddress(null, ''),
       radius: 24,
     );
   }

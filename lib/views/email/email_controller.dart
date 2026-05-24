@@ -27,10 +27,11 @@ class EmailController extends GetxController {
   static EmailController get to => Get.find();
 
   Email? email;
+  // Always the nostr identity behind the conversation. For not-bridged
+  // emails, this IS the contact; for bridged emails, this is the bridge
+  // that relayed the email (and the actual contact is in the MIME From).
   Metadata? senderMetadata;
-  Metadata? bridgeMetadata; // Bridge for sender
   Metadata? recipientMetadata;
-  Metadata? recipientBridgeMetadata; // Bridge for recipient
   final Map<String, Metadata> recipientsMetadata = {}; // keyed by hex pubkey
   bool isLoading = true;
   bool showRawContent = false;
@@ -44,42 +45,30 @@ class EmailController extends GetxController {
     loadEmail();
   }
 
-  /// Get contact pubkey for sender (from address)
-  String? get senderContactPubkey {
-    if (email == null) return null;
-    final senderAddress = email!.sender?.email;
-    return senderAddress != null
-        ? extractPubkeyFromAddress(senderAddress)
-        : null;
-  }
-
-  /// Get contact pubkey for recipient (to address)
-  String? get recipientContactPubkey {
-    if (email == null) return null;
-    final toAddress = email!.mime.to?.firstOrNull?.email;
-    return toAddress != null ? extractPubkeyFromAddress(toAddress) : null;
-  }
-
-  /// Check if sender has a bridge (for received emails)
-  bool get senderHasBridge => email?.isBridged ?? false;
-
-  /// Check if recipient has a bridge (for sent emails)
-  bool get recipientHasBridge => email?.isBridged ?? false;
-
   String get senderDisplayName {
-    // Always show the from address/name
-    return senderMetadata?.getBestName() ?? email!.sender?.encode() ?? '';
+    // Direct nostr conversation: the sender pubkey IS the contact, so
+    // its nostr profile name is the right thing to show.
+    if (!(email?.isBridged ?? false) && senderMetadata != null) {
+      return senderMetadata!.getBestName();
+    }
+    // Bridged (or metadata not yet loaded): rely on the email headers,
+    // which carry the actual legacy contact.
+    return email!.sender?.encode() ?? '';
   }
 
   String get recipientDisplayName {
-    if (recipientMetadata != null) {
+    if (!(email?.isBridged ?? false) && recipientMetadata != null) {
       return recipientMetadata!.getBestName();
     }
-    final pubkey = recipientContactPubkey ?? email?.recipientPubkey;
+    final to = email!.mime.to?.firstOrNull;
+    if (to != null && to.email.isNotEmpty) {
+      return to.encode();
+    }
+    final pubkey = email?.recipientPubkey;
     if (pubkey != null && pubkey.isNotEmpty) {
       return getAnonName(pubkey);
     }
-    return email!.mime.to?.firstOrNull?.encode() ?? '';
+    return '';
   }
 
   /// Check if Reply All should be shown (multiple recipients or cc/bcc)
@@ -172,31 +161,10 @@ class EmailController extends GetxController {
   Future<void> loadSenderMetadata(Email loadedEmail) async {
     try {
       final ndk = Get.find<Ndk>();
-      final senderAddress = loadedEmail.sender?.email;
-      final contactPubkey = senderAddress != null
-          ? extractPubkeyFromAddress(senderAddress)
-          : null;
-
-      // Always load senderPubkey metadata (the actual Nostr sender)
-      final senderMeta = await ndk.metadata.loadMetadata(
-        loadedEmail.senderPubkey,
-      );
-      if (senderMeta != null) {
-        if (loadedEmail.isBridged) {
-          bridgeMetadata = senderMeta;
-        } else {
-          senderMetadata = senderMeta;
-        }
+      final meta = await ndk.metadata.loadMetadata(loadedEmail.senderPubkey);
+      if (meta != null) {
+        senderMetadata = meta;
         update();
-      }
-
-      // If bridged and we can extract contact pubkey, load it too
-      if (loadedEmail.isBridged && contactPubkey != null) {
-        final contactMeta = await ndk.metadata.loadMetadata(contactPubkey);
-        if (contactMeta != null) {
-          senderMetadata = contactMeta;
-          update();
-        }
       }
     } catch (_) {}
   }
@@ -204,31 +172,10 @@ class EmailController extends GetxController {
   Future<void> loadRecipientMetadata(Email loadedEmail) async {
     try {
       final ndk = Get.find<Ndk>();
-      final toAddress = loadedEmail.mime.to?.firstOrNull?.email;
-      final contactPubkey = toAddress != null
-          ? extractPubkeyFromAddress(toAddress)
-          : null;
-
-      // Always load recipientPubkey metadata (the actual Nostr recipient)
-      final recipientMeta = await ndk.metadata.loadMetadata(
-        loadedEmail.recipientPubkey,
-      );
-      if (recipientMeta != null) {
-        if (loadedEmail.isBridged) {
-          recipientBridgeMetadata = recipientMeta;
-        } else {
-          recipientMetadata = recipientMeta;
-        }
+      final meta = await ndk.metadata.loadMetadata(loadedEmail.recipientPubkey);
+      if (meta != null) {
+        recipientMetadata = meta;
         update();
-      }
-
-      // If bridged and we can extract contact pubkey, load it too
-      if (loadedEmail.isBridged && contactPubkey != null) {
-        final contactMeta = await ndk.metadata.loadMetadata(contactPubkey);
-        if (contactMeta != null) {
-          recipientMetadata = contactMeta;
-          update();
-        }
       }
     } catch (_) {}
   }

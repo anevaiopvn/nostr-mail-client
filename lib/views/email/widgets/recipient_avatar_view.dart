@@ -9,14 +9,15 @@ class RecipientAvatarView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final mainAvatar = MainRecipientAvatarView();
 
-    if (!EmailController.to.recipientHasBridge) {
+    if (!EmailController.to.email!.isBridged) {
       return mainAvatar;
     }
 
-    // Show bridge badge on avatar
+    // Bridged: stack the legacy contact's avatar with a small badge for
+    // the bridge that relayed the email.
+    final colorScheme = Theme.of(context).colorScheme;
     return Stack(
       clipBehavior: Clip.none,
       children: [

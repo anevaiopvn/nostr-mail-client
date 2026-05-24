@@ -10,7 +10,6 @@ import 'package:nostr_mail_client/views/inbox/widgets/unread_indicator.dart';
 import '../../../controllers/auth_controller.dart';
 import '../../../controllers/inbox_controller.dart';
 import '../../../l10n/generated/app_localizations.dart';
-import '../../../utils/nostr_utils.dart';
 import '../../../utils/metadata_extensions.dart';
 import '../../../utils/responsive_helper.dart';
 import '../../../widgets/email_avatar.dart';
@@ -46,13 +45,12 @@ class EmailTile extends StatefulWidget {
 }
 
 class _EmailTileState extends State<EmailTile> {
-  Metadata? _contactMetadata;
   Metadata? _bridgeMetadata;
 
   @override
   void initState() {
     super.initState();
-    _loadMetadata();
+    _loadBridgeMetadata();
   }
 
   /// Check if I am the sender of this email
@@ -61,9 +59,7 @@ class _EmailTileState extends State<EmailTile> {
     return widget.email.senderPubkey == myPubkey;
   }
 
-  //? should _displayAddress return a MailAddress ?
-
-  /// Get the address to display (to for sent emails, from for received)
+  /// Get the address to display (to for sent emails, from for received).
   MailAddress get _displayAddress {
     if (_isSentByMe) {
       return widget.email.mime.to?.firstOrNull ?? MailAddress(null, '');
@@ -72,15 +68,14 @@ class _EmailTileState extends State<EmailTile> {
     }
   }
 
-  /// Get the contact pubkey (extracted from to/from address)
-  String? get _contactPubkey => extractPubkeyFromAddress(_displayAddress.email);
-
-  /// Get the bridge pubkey (recipientPubkey for sent, senderPubkey for received)
+  /// The nostr identity behind this conversation: recipient pubkey for
+  /// sent emails, sender pubkey for received. Always known via the gift
+  /// wrap, regardless of what the MIME headers say.
+  ///
+  /// When the email is not bridged, this IS the contact. When bridged,
+  /// this is the bridge that relayed the email.
   String get _bridgePubkey =>
       _isSentByMe ? widget.email.recipientPubkey : widget.email.senderPubkey;
-
-  /// Check if this email was relayed through a bridge
-  bool get _hasBridge => widget.email.isBridged;
 
   /// Check if this email is unread (only applies to inbox folder)
   bool get isUnread {
@@ -92,39 +87,24 @@ class _EmailTileState extends State<EmailTile> {
     return !controller.isEmailRead(widget.email.id);
   }
 
-  Future<void> _loadMetadata() async {
+  Future<void> _loadBridgeMetadata() async {
     try {
       final ndk = Get.find<Ndk>();
-      final contactPubkey = _contactPubkey;
-      final hasBridge = contactPubkey == null || contactPubkey != _bridgePubkey;
-
-      // Always load bridge metadata
-      final bridgeMeta = await ndk.metadata.loadMetadata(_bridgePubkey);
-      if (mounted && bridgeMeta != null) {
-        setState(() {
-          if (hasBridge) {
-            _bridgeMetadata = bridgeMeta;
-          } else {
-            // No bridge: bridge pubkey IS the contact
-            _contactMetadata = bridgeMeta;
-          }
-        });
-      }
-
-      // If there's a bridge and we can extract contact pubkey, load it too
-      if (hasBridge && contactPubkey != null) {
-        final contactMeta = await ndk.metadata.loadMetadata(contactPubkey);
-        if (mounted && contactMeta != null) {
-          setState(() => _contactMetadata = contactMeta);
-        }
+      final meta = await ndk.metadata.loadMetadata(_bridgePubkey);
+      if (mounted && meta != null) {
+        setState(() => _bridgeMetadata = meta);
       }
     } catch (_) {}
   }
 
   String get _displayName {
-    if (_contactMetadata != null) {
-      return _contactMetadata!.getBestName();
+    // Direct nostr conversation: the bridge pubkey is the contact, so
+    // its nostr profile name is the right thing to show.
+    if (!widget.email.isBridged && _bridgeMetadata != null) {
+      return _bridgeMetadata!.getBestName();
     }
+    // Bridged email (or metadata not yet loaded): rely on the email
+    // headers, which carry the actual legacy contact.
     if (_displayAddress.hasPersonalName) {
       return _displayAddress.personalName!;
     }
@@ -619,18 +599,23 @@ class _EmailTileState extends State<EmailTile> {
   Widget _buildAvatar(BuildContext context, {bool compact = false}) {
     final colorScheme = Theme.of(context).colorScheme;
     final radius = compact ? 14.0 : 20.0;
-    final mainAvatar = _buildMainAvatar(colorScheme, radius: radius);
 
-    if (!_hasBridge) {
-      return mainAvatar;
+    // Direct nostr conversation: the bridge pubkey IS the contact.
+    if (!widget.email.isBridged) {
+      return NostrAvatar(
+        pubkey: _bridgePubkey,
+        metadata: _bridgeMetadata,
+        radius: radius,
+      );
     }
 
-    // Show bridge badge on avatar
+    // Bridged: the legacy contact is in the email headers, the bridge
+    // sits in the corner as a provenance badge.
     final badgeRadius = compact ? 7.0 : 10.0;
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        mainAvatar,
+        EmailAvatar(mailAddress: _displayAddress, radius: radius),
         Positioned(
           right: -4,
           bottom: -4,
@@ -639,31 +624,14 @@ class _EmailTileState extends State<EmailTile> {
               shape: BoxShape.circle,
               border: Border.all(color: colorScheme.surface, width: 2),
             ),
-            child: _buildBridgeBadge(colorScheme, radius: badgeRadius),
+            child: NostrAvatar(
+              pubkey: _bridgePubkey,
+              metadata: _bridgeMetadata,
+              radius: badgeRadius,
+            ),
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildBridgeBadge(ColorScheme colorScheme, {double radius = 10}) {
-    return NostrAvatar(
-      pubkey: _bridgePubkey,
-      metadata: _bridgeMetadata,
-      radius: radius,
-    );
-  }
-
-  Widget _buildMainAvatar(ColorScheme colorScheme, {double radius = 20}) {
-    final contactPubkey = _contactPubkey;
-    if (contactPubkey == null) {
-      return EmailAvatar(mailAddress: _displayAddress, radius: radius);
-    }
-
-    return NostrAvatar(
-      pubkey: contactPubkey,
-      metadata: _contactMetadata,
-      radius: radius,
     );
   }
 
