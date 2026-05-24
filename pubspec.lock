@@ -834,7 +834,7 @@ packages:
       path: "../nostr-mail-dart"
       relative: true
     source: path
-    version: "2.0.0"
+    version: "2.0.1"
   objective_c:
     dependency: transitive
     description:
