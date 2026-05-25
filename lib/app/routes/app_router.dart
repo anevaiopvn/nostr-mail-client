@@ -110,6 +110,16 @@ class AppRouter {
           // Compose
           GoRoute(
             path: AppRoutes.compose,
+            // Dispose the controller when the route actually leaves the
+            // stack (pop, redirect away). go_router does NOT call onExit
+            // on builder rebuilds, so the in-progress draft survives theme
+            // changes / refreshListenable fires.
+            onExit: (_, _) {
+              if (Get.isRegistered<ComposeController>()) {
+                Get.delete<ComposeController>();
+              }
+              return true;
+            },
             builder: (_, state) {
               final extra = state.extra is Map ? state.extra as Map : null;
               _ensureComposeController(
@@ -211,21 +221,16 @@ class AppRouter {
     );
   }
 
-  /// (Re)register ComposeController only when the compose target changes.
-  /// Without this, every builder re-run (theme change, refreshListenable
-  /// fire) wipes the in-progress draft.
+  /// Register ComposeController once per route entry. The compose route's
+  /// `onExit` disposes it on actual exit, so a fresh push always lands here
+  /// with no existing controller. On builder re-runs while the route stays
+  /// on-stack (theme change, refreshListenable fire) the existing controller
+  /// is kept and the in-progress draft is preserved.
   static void _ensureComposeController({
     required Email? sourceEmail,
     required ComposeMode? sourceMode,
   }) {
-    if (Get.isRegistered<ComposeController>()) {
-      final existing = Get.find<ComposeController>();
-      if (existing.sourceEmail?.id == sourceEmail?.id &&
-          existing.sourceMode == sourceMode) {
-        return;
-      }
-      Get.delete<ComposeController>();
-    }
+    if (Get.isRegistered<ComposeController>()) return;
     Get.put(
       ComposeController(sourceEmail: sourceEmail, sourceMode: sourceMode),
     );
