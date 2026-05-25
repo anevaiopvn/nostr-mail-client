@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ndk/ndk.dart';
 
 import '../../../app/routes/app_routes.dart';
@@ -61,8 +62,8 @@ class FromSelectorSheet extends StatelessWidget {
                   if (index == 0) {
                     return _CreateNewIdentityTile(
                       onTap: () {
-                        Get.back();
-                        Get.toNamed(AppRoutes.createIdentity);
+                        Navigator.of(context).pop();
+                        context.push(AppRoutes.settingsIdentitiesNew);
                       },
                     );
                   }

@@ -26,6 +26,10 @@ import '../../l10n/generated/app_localizations.dart';
 class EmailController extends GetxController {
   static EmailController get to => Get.find();
 
+  /// Hex event id of the giftwrap (or any nostr event) this controller renders.
+  /// Passed by the route builder from the URL.
+  final String eventIdHex;
+
   Email? email;
   // Always the nostr identity behind the conversation. For not-bridged
   // emails, this IS the contact; for bridged emails, this is the bridge
@@ -40,7 +44,7 @@ class EmailController extends GetxController {
   String? rawContent;
   bool isLoadingRawContent = false;
 
-  EmailController() {
+  EmailController({required this.eventIdHex}) {
     showImages = Get.find<SettingsController>().alwaysLoadImages.value;
     loadEmail();
   }
@@ -129,14 +133,8 @@ class EmailController extends GetxController {
   }
 
   Future<void> loadEmail() async {
-    final emailId = Get.parameters['id'];
-    if (emailId == null) {
-      Get.back();
-      return;
-    }
-
     final nostrMailService = Get.find<NostrMailService>();
-    final loaded = await nostrMailService.client.getEmail(emailId);
+    final loaded = await nostrMailService.client.getEmail(eventIdHex);
 
     if (loaded != null) {
       loadSenderMetadata(loaded);

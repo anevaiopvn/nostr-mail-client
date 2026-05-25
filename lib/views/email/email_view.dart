@@ -18,8 +18,8 @@ class EmailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(EmailController());
-
+    // EmailController is registered by the /:nostrId route builder with the
+    // path-derived event id, so we just consume it here.
     return GetBuilder<EmailController>(
       builder: (controller) {
         final l = AppLocalizations.of(context);

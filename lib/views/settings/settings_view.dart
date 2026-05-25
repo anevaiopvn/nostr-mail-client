@@ -8,6 +8,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:ndk/ndk.dart';
 import 'package:system_theme/system_theme.dart';
@@ -80,7 +81,7 @@ class SettingsView extends StatelessWidget {
                 title: Text(l.settingsManageIdentities),
                 subtitle: Text(l.settingsManageIdentitiesSubtitle),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () => Get.toNamed(AppRoutes.identities),
+                onTap: () => context.push(AppRoutes.settingsIdentities),
               ),
               const SizedBox(height: 24),
               _buildSectionHeader(context, l.settingsCompose),
@@ -103,7 +104,7 @@ class SettingsView extends StatelessWidget {
                 title: Text(l.settingsHosting),
                 subtitle: Text(l.settingsHostingSubtitle),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () => Get.toNamed(AppRoutes.nostrTechnicalSettings),
+                onTap: () => context.push(AppRoutes.settingsHosting),
               ),
               if (kDebugMode)
                 ListTile(
@@ -111,7 +112,7 @@ class SettingsView extends StatelessWidget {
                   title: Text(l.settingsDebugTools),
                   subtitle: Text(l.settingsDebugToolsSubtitle),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () => Get.toNamed(AppRoutes.debugTools),
+                  onTap: () => context.push(AppRoutes.settingsDebugTools),
                 ),
               const SizedBox(height: 24),
               _buildSectionHeader(context, l.settingsAccount),
@@ -144,7 +145,7 @@ class SettingsView extends StatelessWidget {
                 ),
                 onTap: () {
                   Get.find<AuthController>().logout();
-                  Get.offAllNamed(AppRoutes.login);
+                  context.go(AppRoutes.login);
                 },
               ),
               ListTile(

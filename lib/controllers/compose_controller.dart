@@ -34,6 +34,13 @@ const String _defaultBridgeDomain = 'uid.ovh';
 class ComposeController extends GetxController {
   static ComposeController get to => Get.find();
 
+  /// Optional source email + mode for reply/forward flows.
+  /// Passed by the route builder via GoRouter's `extra`.
+  final Email? sourceEmail;
+  final ComposeMode? sourceMode;
+
+  ComposeController({this.sourceEmail, this.sourceMode});
+
   final _nostrMailService = Get.find<NostrMailService>();
   final _contactsService = Get.find<ContactsService>();
 
@@ -87,12 +94,8 @@ class ComposeController extends GetxController {
   void onReady() {
     super.onReady();
     // Initialize reply/forward async after onInit completes
-    final args = Get.arguments as Map<String, dynamic>?;
-    final email = args?['email'] as Email?;
-    final mode = args?['mode'] as ComposeMode?;
-
-    if (email != null && mode != null) {
-      initFromEmail(email, mode);
+    if (sourceEmail != null && sourceMode != null) {
+      initFromEmail(sourceEmail!, sourceMode!);
     }
   }
 
