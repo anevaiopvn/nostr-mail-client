@@ -52,7 +52,7 @@ class LeftRail extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.settings),
             tooltip: l.leftRailSettings,
-            onPressed: () => context.push(AppRoutes.settings),
+            onPressed: () => context.go(AppRoutes.settings),
           ),
           // Account menu
           const _AccountMenuButton(),
@@ -146,7 +146,7 @@ class _AccountMenuButton extends StatelessWidget {
         const Divider(height: 1),
         MenuItemButton(
           leadingIcon: const Icon(Icons.person_outline),
-          onPressed: () => context.push(AppRoutes.profile),
+          onPressed: () => context.go(AppRoutes.profile),
           child: Text(l.inboxProfile),
         ),
         MenuItemButton(

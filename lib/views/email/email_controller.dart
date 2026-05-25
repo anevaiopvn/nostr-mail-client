@@ -235,7 +235,7 @@ class EmailController extends GetxController {
     } else {
       inboxController.deleteEmail(email!.id);
     }
-    AppRouter.router.pop();
+    AppRouter.popOrGoInbox();
   }
 
   Future<void> showNip59Events() async {
@@ -259,7 +259,7 @@ class EmailController extends GetxController {
     if (email == null) return;
 
     Get.find<InboxController>().restoreFromTrash(email!.id);
-    AppRouter.router.pop();
+    AppRouter.popOrGoInbox();
   }
 
   void handleAttachmentTap({
@@ -362,13 +362,13 @@ class EmailController extends GetxController {
   void archiveEmail() {
     if (email == null) return;
     Get.find<InboxController>().moveToArchive(email!.id);
-    AppRouter.router.pop();
+    AppRouter.popOrGoInbox();
   }
 
   void unarchiveEmail() {
     if (email == null) return;
     Get.find<InboxController>().restoreFromArchive(email!.id);
-    AppRouter.router.pop();
+    AppRouter.popOrGoInbox();
   }
 
   Future<void> downloadAttachment({required AttachmentRef ref}) async {

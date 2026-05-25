@@ -233,7 +233,8 @@ class InboxView extends GetView<InboxController> {
                       () => EmailTile(
                         key: ValueKey(email.id),
                         email: email,
-                        onTap: () => context.push('/${email.id}'),
+                        onTap: () =>
+                            context.go(AppRoutes.emailPath(folder, email.id)),
                         isSelected: controller.isSelected(email.id),
                         onToggleSelect: () =>
                             controller.toggleSelection(email.id),
@@ -338,7 +339,7 @@ class InboxView extends GetView<InboxController> {
                     IconButton(
                       icon: const Icon(Icons.settings),
                       tooltip: l.inboxSettings,
-                      onPressed: () => context.push(AppRoutes.settings),
+                      onPressed: () => context.go(AppRoutes.settings),
                     ),
                     const SizedBox(width: 8),
                     Builder(
@@ -363,7 +364,7 @@ class InboxView extends GetView<InboxController> {
                           const Divider(height: 1),
                           MenuItemButton(
                             leadingIcon: const Icon(Icons.person_outline),
-                            onPressed: () => context.push(AppRoutes.profile),
+                            onPressed: () => context.go(AppRoutes.profile),
                             child: Text(l.inboxProfile),
                           ),
                           MenuItemButton(

@@ -35,7 +35,18 @@ class SettingsView extends StatelessWidget {
     final settingsController = Get.find<SettingsController>();
 
     Widget content = Scaffold(
-      appBar: AppBar(title: Text(l.settingsTitle)),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+          // Reached via `context.go` from inbox/drawer/rail, so there is
+          // typically nothing to pop. Fall back to the inbox.
+          onPressed: () => context.canPop()
+              ? context.pop()
+              : context.go(AppRoutes.inbox),
+        ),
+        title: Text(l.settingsTitle),
+      ),
       body: SingleChildScrollView(
         child: ResponsiveCenter(
           maxWidth: 600,
@@ -79,7 +90,7 @@ class SettingsView extends StatelessWidget {
                 title: Text(l.settingsManageIdentities),
                 subtitle: Text(l.settingsManageIdentitiesSubtitle),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () => context.push(AppRoutes.settingsIdentities),
+                onTap: () => context.go(AppRoutes.settingsIdentities),
               ),
               const SizedBox(height: 24),
               _buildSectionHeader(context, l.settingsCompose),
@@ -102,7 +113,7 @@ class SettingsView extends StatelessWidget {
                 title: Text(l.settingsHosting),
                 subtitle: Text(l.settingsHostingSubtitle),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () => context.push(AppRoutes.settingsHosting),
+                onTap: () => context.go(AppRoutes.settingsHosting),
               ),
               if (kDebugMode)
                 ListTile(
@@ -110,7 +121,7 @@ class SettingsView extends StatelessWidget {
                   title: Text(l.settingsDebugTools),
                   subtitle: Text(l.settingsDebugToolsSubtitle),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () => context.push(AppRoutes.settingsDebugTools),
+                  onTap: () => context.go(AppRoutes.settingsDebugTools),
                 ),
               const SizedBox(height: 24),
               _buildSectionHeader(context, l.settingsAccount),

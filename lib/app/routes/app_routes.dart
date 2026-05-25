@@ -1,3 +1,5 @@
+import '../../controllers/inbox_controller.dart';
+
 /// Path constants for all app routes.
 ///
 /// Folder routes (`/inbox`, `/sent`, `/archive`, `/trash`) drive the
@@ -5,9 +7,13 @@
 /// `context.go` to switch folders, and the route builder syncs
 /// `InboxController.currentFolder` from the URL.
 ///
-/// `/:nostrId` is a root-level dispatcher for any NIP-19 bech32 entity
-/// (nevent, note, npub, nprofile). The view inspects the prefix and
-/// renders the appropriate sub-view.
+/// Email detail is nested under each folder (`/<folder>/email/:id`) so
+/// in-app navigation via `context.go` updates the URL and preserves a
+/// real back-stack to the originating folder.
+///
+/// `/:nostrId` is a root-level dispatcher for share links (NIP-19
+/// bech32 entities: nevent, note, npub, nprofile). The view inspects
+/// the prefix and renders the appropriate sub-view.
 class AppRoutes {
   // Public (no auth required)
   static const login = '/login';
@@ -18,6 +24,9 @@ class AppRoutes {
   static const sent = '/sent';
   static const archive = '/archive';
   static const trash = '/trash';
+
+  // Path segment for the nested email detail route under each folder.
+  static const emailSegment = 'email/:id';
 
   // Actions
   static const compose = '/compose';
@@ -36,4 +45,15 @@ class AppRoutes {
 
   // Root-level NIP-19 dispatcher (handles nevent, note, npub, nprofile)
   static const nostrIdParam = 'nostrId';
+
+  static String folderPath(MailFolder folder) => switch (folder) {
+    MailFolder.inbox => inbox,
+    MailFolder.sent => sent,
+    MailFolder.archive => archive,
+    MailFolder.trash => trash,
+  };
+
+  /// In-app deep-linkable email URL: `/<folder>/email/<hex>`.
+  static String emailPath(MailFolder folder, String id) =>
+      '${folderPath(folder)}/email/$id';
 }

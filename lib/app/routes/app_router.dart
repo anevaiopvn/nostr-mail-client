@@ -52,6 +52,18 @@ class AppRouter {
   /// In widgets, prefer `context.go` / `context.push`.
   static GoRouter get router => _router;
 
+  /// Pop the current route if possible, otherwise fall back to `/inbox`.
+  /// Used by controllers after destructive actions (delete, archive)
+  /// when we don't know whether the user arrived via in-app navigation
+  /// (canPop) or a cold-start deep link (cannot pop).
+  static void popOrGoInbox() {
+    if (_router.canPop()) {
+      _router.pop();
+    } else {
+      _router.go(AppRoutes.inbox);
+    }
+  }
+
   static final GoRouter _router = GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: AppRoutes.inbox,
@@ -80,23 +92,14 @@ class AppRouter {
             redirect: (_, _) => AppRoutes.inbox,
           ),
 
-          // Folder routes (URL drives InboxController.currentFolder)
-          GoRoute(
-            path: AppRoutes.inbox,
-            builder: (_, _) => const InboxView(folder: MailFolder.inbox),
-          ),
-          GoRoute(
-            path: AppRoutes.sent,
-            builder: (_, _) => const InboxView(folder: MailFolder.sent),
-          ),
-          GoRoute(
-            path: AppRoutes.archive,
-            builder: (_, _) => const InboxView(folder: MailFolder.archive),
-          ),
-          GoRoute(
-            path: AppRoutes.trash,
-            builder: (_, _) => const InboxView(folder: MailFolder.trash),
-          ),
+          // Folder routes (URL drives InboxController.currentFolder).
+          // Each folder nests `email/:id` so opening a message via
+          // `context.go('/<folder>/email/<id>')` updates the URL AND
+          // preserves a real back-stack to the folder.
+          _folderRoute(AppRoutes.inbox, MailFolder.inbox),
+          _folderRoute(AppRoutes.sent, MailFolder.sent),
+          _folderRoute(AppRoutes.archive, MailFolder.archive),
+          _folderRoute(AppRoutes.trash, MailFolder.trash),
 
           // Compose
           GoRoute(
@@ -180,6 +183,41 @@ class AppRouter {
     ],
   );
 
+  /// Folder route + nested `email/:id` child. The nested child means
+  /// `context.go('/<folder>/email/<id>')` updates the URL and pushes
+  /// EmailView on top of the folder in the navigator stack, so `pop()`
+  /// returns to the folder naturally.
+  static GoRoute _folderRoute(String path, MailFolder folder) {
+    return GoRoute(
+      path: path,
+      builder: (_, _) => InboxView(folder: folder),
+      routes: [
+        GoRoute(
+          path: AppRoutes.emailSegment,
+          builder: (_, state) {
+            final id = state.pathParameters['id']!;
+            _ensureEmailController(id);
+            return const EmailView();
+          },
+        ),
+      ],
+    );
+  }
+
+  /// (Re)register EmailController for `hex` only when needed.
+  /// Builders can fire on rebuilds (refreshListenable, theme changes);
+  /// we must not nuke an in-flight controller for the same event.
+  static void _ensureEmailController(String hex) {
+    if (Get.isRegistered<EmailController>() &&
+        Get.find<EmailController>().eventIdHex == hex) {
+      return;
+    }
+    if (Get.isRegistered<EmailController>()) {
+      Get.delete<EmailController>();
+    }
+    Get.put(EmailController(eventIdHex: hex));
+  }
+
   static Widget _dispatchNostrId(String id) {
     if (id.startsWith('npub1') || id.startsWith('nprofile1')) {
       return ProfileShareView(bech32: id);
@@ -190,10 +228,7 @@ class AppRouter {
       return const NotFoundView();
     }
 
-    if (Get.isRegistered<EmailController>()) {
-      Get.delete<EmailController>();
-    }
-    Get.put(EmailController(eventIdHex: hex));
+    _ensureEmailController(hex);
     return const EmailView();
   }
 

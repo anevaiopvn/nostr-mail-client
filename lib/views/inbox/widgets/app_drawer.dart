@@ -87,7 +87,7 @@ class AppDrawer extends StatelessWidget {
                           child: GestureDetector(
                             onTap: () {
                               Navigator.pop(context);
-                              context.push(AppRoutes.profile);
+                              context.go(AppRoutes.profile);
                             },
                             child: Stack(
                               children: [
@@ -220,7 +220,7 @@ class AppDrawer extends StatelessWidget {
               ),
               onTap: () {
                 Navigator.pop(context);
-                context.push(AppRoutes.settings);
+                context.go(AppRoutes.settings);
               },
             ),
           ),

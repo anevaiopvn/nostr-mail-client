@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ndk/ndk.dart';
 
+import '../../app/routes/app_routes.dart';
 import '../../controllers/auth_controller.dart';
 import '../../controllers/profile_controller.dart';
 import '../../l10n/generated/app_localizations.dart';
@@ -22,6 +24,15 @@ class ProfileView extends GetView<ProfileController> {
     Widget content = Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+          // Reached via `context.go` from inbox/drawer/rail, so there is
+          // typically nothing to pop. Fall back to the inbox.
+          onPressed: () => context.canPop()
+              ? context.pop()
+              : context.go(AppRoutes.inbox),
+        ),
         title: Text(l.profileEditTitle),
         actionsPadding: const EdgeInsets.only(right: 8),
         actions: [
