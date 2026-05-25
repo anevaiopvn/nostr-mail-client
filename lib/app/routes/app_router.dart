@@ -112,14 +112,9 @@ class AppRouter {
             path: AppRoutes.compose,
             builder: (_, state) {
               final extra = state.extra is Map ? state.extra as Map : null;
-              if (Get.isRegistered<ComposeController>()) {
-                Get.delete<ComposeController>();
-              }
-              Get.put(
-                ComposeController(
-                  sourceEmail: extra?['email'] as Email?,
-                  sourceMode: extra?['mode'] as ComposeMode?,
-                ),
+              _ensureComposeController(
+                sourceEmail: extra?['email'] as Email?,
+                sourceMode: extra?['mode'] as ComposeMode?,
               );
               return const ComposeView();
             },
@@ -213,6 +208,26 @@ class AppRouter {
           },
         ),
       ],
+    );
+  }
+
+  /// (Re)register ComposeController only when the compose target changes.
+  /// Without this, every builder re-run (theme change, refreshListenable
+  /// fire) wipes the in-progress draft.
+  static void _ensureComposeController({
+    required Email? sourceEmail,
+    required ComposeMode? sourceMode,
+  }) {
+    if (Get.isRegistered<ComposeController>()) {
+      final existing = Get.find<ComposeController>();
+      if (existing.sourceEmail?.id == sourceEmail?.id &&
+          existing.sourceMode == sourceMode) {
+        return;
+      }
+      Get.delete<ComposeController>();
+    }
+    Get.put(
+      ComposeController(sourceEmail: sourceEmail, sourceMode: sourceMode),
     );
   }
 
