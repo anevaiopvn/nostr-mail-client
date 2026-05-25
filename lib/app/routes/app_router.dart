@@ -208,7 +208,7 @@ class AppRouter {
           path: AppRoutes.emailSegment,
           builder: (_, state) {
             final id = state.pathParameters['id']!;
-            _ensureEmailController(id);
+            _ensureEmailController(id, folder);
             return const EmailView();
           },
         ),
@@ -218,16 +218,16 @@ class AppRouter {
 
   /// (Re)register EmailController for `hex` only when needed.
   /// Builders can fire on rebuilds (refreshListenable, theme changes);
-  /// we must not nuke an in-flight controller for the same event.
-  static void _ensureEmailController(String hex) {
-    if (Get.isRegistered<EmailController>() &&
-        Get.find<EmailController>().eventIdHex == hex) {
-      return;
-    }
+  /// we must not nuke an in-flight controller for the same event/folder.
+  static void _ensureEmailController(String hex, MailFolder? folder) {
     if (Get.isRegistered<EmailController>()) {
+      final existing = Get.find<EmailController>();
+      if (existing.eventIdHex == hex && existing.folder == folder) {
+        return;
+      }
       Get.delete<EmailController>();
     }
-    Get.put(EmailController(eventIdHex: hex));
+    Get.put(EmailController(eventIdHex: hex, folder: folder));
   }
 
   static Widget _dispatchNostrId(String id) {
@@ -240,7 +240,8 @@ class AppRouter {
       return const NotFoundView();
     }
 
-    _ensureEmailController(hex);
+    // Share-link entry point: folder context is unknown.
+    _ensureEmailController(hex, null);
     return const EmailView();
   }
 

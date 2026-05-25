@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../controllers/inbox_controller.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../email_controller.dart';
 import 'email_actions.dart';
@@ -12,11 +11,8 @@ class MobileActionsBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final actions = buildEmailActions(
-      l,
-      Get.find<EmailController>(),
-      Get.find<InboxController>().currentFolder.value,
-    );
+    final emailController = Get.find<EmailController>();
+    final actions = buildEmailActions(l, emailController, emailController.folder);
 
     const buttonWidth = 68.0;
     // Always reserve space for delete + more_vert buttons (2 buttons).

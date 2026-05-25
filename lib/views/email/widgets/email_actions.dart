@@ -23,14 +23,18 @@ class EmailActions {
   const EmailActions({required this.primary, required this.delete});
 }
 
+/// `folder` is null for share-link entry (`/:nostrId`): no known folder
+/// context, so folder-specific actions (mark-read, archive/unarchive)
+/// are conservatively hidden.
 EmailActions buildEmailActions(
   AppLocalizations l,
   EmailController controller,
-  MailFolder folder,
+  MailFolder? folder,
 ) {
   final isInbox = folder == MailFolder.inbox;
   final isInArchive = folder == MailFolder.archive;
   final isInTrash = folder == MailFolder.trash;
+  final isUnknown = folder == null;
 
   return EmailActions(
     primary: [
@@ -56,7 +60,7 @@ EmailActions buildEmailActions(
           label: l.emailActionUnarchive,
           onPressed: controller.unarchiveEmail,
         )
-      else if (!isInTrash)
+      else if (!isInTrash && !isUnknown)
         EmailAction(
           icon: Icons.archive,
           label: l.emailActionArchive,

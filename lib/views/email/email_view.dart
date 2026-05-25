@@ -18,13 +18,17 @@ import 'widgets/mobile_actions_bar.dart';
 class EmailView extends StatelessWidget {
   const EmailView({super.key});
 
-  /// Dynamic back navigation: pop the navigator if there's prior history
-  /// (came from a folder), otherwise infer the right folder from nostr data.
-  /// Cold-start at `/<event-id>` has no shell-navigator history, so we use
-  /// the email's sender (== me means it's a sent email) as the hint.
+  /// Dynamic back navigation: pop if there's prior history (nested
+  /// `/<folder>/email/<id>` route), otherwise go to the folder we know
+  /// the email lives in. For share-link cold-start (`folder == null`),
+  /// guess from sender pubkey (== me means sent).
   void _goBack(BuildContext context, EmailController controller) {
     if (context.canPop()) {
       context.pop();
+      return;
+    }
+    if (controller.folder != null) {
+      context.go(AppRoutes.folderPath(controller.folder!));
       return;
     }
     final myPubkey = Get.find<AuthController>().publicKey;
@@ -78,19 +82,12 @@ class EmailView extends StatelessWidget {
                   onPressed: controller.toggleShowRawContent,
                 );
               }),
-              Obx(() {
-                final isInTrash =
-                    Get.find<InboxController>().currentFolder.value ==
-                    MailFolder.trash;
-                if (isInTrash) {
-                  return IconButton(
-                    icon: const Icon(Icons.restore_from_trash_outlined),
-                    tooltip: l.emailRestore,
-                    onPressed: controller.restoreEmail,
-                  );
-                }
-                return const SizedBox.shrink();
-              }),
+              if (controller.folder == MailFolder.trash)
+                IconButton(
+                  icon: const Icon(Icons.restore_from_trash_outlined),
+                  tooltip: l.emailRestore,
+                  onPressed: controller.restoreEmail,
+                ),
             ],
           ),
           bottomNavigationBar: !isWide ? const MobileActionsBar() : null,

@@ -31,6 +31,12 @@ class EmailController extends GetxController {
   /// Passed by the route builder from the URL.
   final String eventIdHex;
 
+  /// Folder the email is being viewed from. Null when reached via the
+  /// `/:nostrId` share-link dispatcher (no folder context). Source of
+  /// truth for folder-dependent UI (restore button, mark-as-read on
+  /// open, destructive vs trash semantics).
+  final MailFolder? folder;
+
   Email? email;
   // Always the nostr identity behind the conversation. For not-bridged
   // emails, this IS the contact; for bridged emails, this is the bridge
@@ -45,7 +51,7 @@ class EmailController extends GetxController {
   String? rawContent;
   bool isLoadingRawContent = false;
 
-  EmailController({required this.eventIdHex}) {
+  EmailController({required this.eventIdHex, this.folder}) {
     showImages = Get.find<SettingsController>().alwaysLoadImages.value;
     loadEmail();
   }
@@ -147,13 +153,10 @@ class EmailController extends GetxController {
     isLoading = false;
     update();
 
-    // Auto-mark as read for inbox emails only (non-blocking)
-    if (loaded != null) {
-      final inboxController = Get.find<InboxController>();
-      if (inboxController.currentFolder.value == MailFolder.inbox) {
-        // Non-blocking: mark as read without awaiting
-        inboxController.markAsRead(loaded.id);
-      }
+    // Auto-mark as read for inbox emails only (non-blocking).
+    // Cold-start via share link (folder == null) does not auto-mark.
+    if (loaded != null && folder == MailFolder.inbox) {
+      Get.find<InboxController>().markAsRead(loaded.id);
     }
   }
 
@@ -208,7 +211,7 @@ class EmailController extends GetxController {
 
     final l = AppLocalizations.of(Get.context!);
     final inboxController = Get.find<InboxController>();
-    final isInTrash = inboxController.currentFolder.value == MailFolder.trash;
+    final isInTrash = folder == MailFolder.trash;
 
     if (isInTrash) {
       final confirmed = await Get.dialog<bool>(
