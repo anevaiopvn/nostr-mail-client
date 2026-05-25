@@ -196,7 +196,13 @@ class AppRouter {
   static GoRoute _folderRoute(String path, MailFolder folder) {
     return GoRoute(
       path: path,
-      builder: (_, _) => InboxView(folder: folder),
+      // Folders are lateral peers (tab-like), not a hierarchy. Skip the
+      // default slide so switching between Inbox/Sent/Archive/Trash is
+      // instant. The nested email child keeps the default transition.
+      pageBuilder: (_, state) => NoTransitionPage(
+        key: state.pageKey,
+        child: InboxView(folder: folder),
+      ),
       routes: [
         GoRoute(
           path: AppRoutes.emailSegment,
