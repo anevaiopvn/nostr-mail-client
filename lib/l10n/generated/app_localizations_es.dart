@@ -1118,4 +1118,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get dateYesterday => 'Ayer';
+
+  @override
+  String get notFoundTitle => 'Página no encontrada';
+
+  @override
+  String get notFoundBackToInbox => 'Volver a la bandeja de entrada';
 }

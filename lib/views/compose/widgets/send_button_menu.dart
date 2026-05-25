@@ -61,9 +61,9 @@ class SendButtonMenu extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              _buildModeOption(l, SendMode.normal),
-              _buildModeOption(l, SendMode.signed),
-              _buildModeOption(l, SendMode.public),
+              _buildModeOption(context, l, SendMode.normal),
+              _buildModeOption(context, l, SendMode.signed),
+              _buildModeOption(context, l, SendMode.public),
             ],
           ),
         ),
@@ -76,12 +76,16 @@ class SendButtonMenu extends StatelessWidget {
     }
   }
 
-  Widget _buildModeOption(AppLocalizations l, SendMode mode) {
+  Widget _buildModeOption(
+    BuildContext context,
+    AppLocalizations l,
+    SendMode mode,
+  ) {
     return ListTile(
       leading: Icon(_getModeIcon(mode)),
       title: Text(_getModeLabel(l, mode)),
       subtitle: Text(_getModeDescription(l, mode)),
-      onTap: () => Get.back(result: mode),
+      onTap: () => Navigator.of(context).pop(mode),
     );
   }
 

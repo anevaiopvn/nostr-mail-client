@@ -456,5 +456,8 @@
     }
   },
 
-  "dateYesterday": "昨天"
+  "dateYesterday": "昨天",
+
+  "notFoundTitle": "页面未找到",
+  "notFoundBackToInbox": "返回收件箱"
 }

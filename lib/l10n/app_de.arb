@@ -456,5 +456,8 @@
     }
   },
 
-  "dateYesterday": "Gestern"
+  "dateYesterday": "Gestern",
+
+  "notFoundTitle": "Seite nicht gefunden",
+  "notFoundBackToInbox": "Zurück zum Posteingang"
 }

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ndk/ndk.dart';
 import 'package:nostr_mail_client/views/email/email_controller.dart';
 
+import '../../app/routes/app_routes.dart';
+import '../../controllers/auth_controller.dart';
 import '../../controllers/inbox_controller.dart';
 import '../../controllers/settings_controller.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../utils/responsive_helper.dart';
-import '../shared/desktop_shell.dart';
 import 'widgets/desktop_actions_bar.dart';
 import 'widgets/email_body_view.dart';
 import 'widgets/header_view.dart';
@@ -16,33 +18,54 @@ import 'widgets/mobile_actions_bar.dart';
 class EmailView extends StatelessWidget {
   const EmailView({super.key});
 
+  /// Dynamic back navigation: pop if there's prior history (nested
+  /// `/<folder>/email/<id>` route), otherwise go to the folder we know
+  /// the email lives in. For share-link cold-start (`folder == null`),
+  /// guess from sender pubkey (== me means sent).
+  void _goBack(BuildContext context, EmailController controller) {
+    if (context.canPop()) {
+      context.pop();
+      return;
+    }
+    if (controller.folder != null) {
+      context.go(AppRoutes.folderPath(controller.folder!));
+      return;
+    }
+    final myPubkey = Get.find<AuthController>().publicKey;
+    final isMine = controller.email?.senderPubkey == myPubkey;
+    context.go(isMine ? AppRoutes.sent : AppRoutes.inbox);
+  }
+
   @override
   Widget build(BuildContext context) {
-    Get.put(EmailController());
-
+    // EmailController is registered by the /:nostrId route builder with the
+    // path-derived event id, so we just consume it here.
     return GetBuilder<EmailController>(
       builder: (controller) {
         final l = AppLocalizations.of(context);
         final isWide = ResponsiveHelper.isNotMobile(context);
 
         if (controller.isLoading) {
-          Widget content = Scaffold(
+          return Scaffold(
             appBar: AppBar(),
             body: const Center(child: CircularProgressIndicator()),
           );
-          return isWide ? DesktopShell(body: content) : content;
         }
 
         if (controller.email == null) {
-          Widget content = Scaffold(
+          return Scaffold(
             appBar: AppBar(),
             body: Center(child: Text(l.emailNotFound)),
           );
-          return isWide ? DesktopShell(body: content) : content;
         }
 
         Widget content = Scaffold(
           appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+              onPressed: () => _goBack(context, controller),
+            ),
             actionsPadding: .only(right: 8),
             actions: [
               Obx(() {
@@ -59,19 +82,12 @@ class EmailView extends StatelessWidget {
                   onPressed: controller.toggleShowRawContent,
                 );
               }),
-              Obx(() {
-                final isInTrash =
-                    Get.find<InboxController>().currentFolder.value ==
-                    MailFolder.trash;
-                if (isInTrash) {
-                  return IconButton(
-                    icon: const Icon(Icons.restore_from_trash_outlined),
-                    tooltip: l.emailRestore,
-                    onPressed: controller.restoreEmail,
-                  );
-                }
-                return const SizedBox.shrink();
-              }),
+              if (controller.folder == MailFolder.trash)
+                IconButton(
+                  icon: const Icon(Icons.restore_from_trash_outlined),
+                  tooltip: l.emailRestore,
+                  onPressed: controller.restoreEmail,
+                ),
             ],
           ),
           bottomNavigationBar: !isWide ? const MobileActionsBar() : null,
@@ -145,9 +161,6 @@ class EmailView extends StatelessWidget {
           ),
         );
 
-        if (isWide) {
-          return DesktopShell(body: content);
-        }
         return content;
       },
     );

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 import 'package:nostr_mail/nostr_mail.dart';
+import 'package:nostr_mail_client/app/routes/app_router.dart';
 import 'package:nostr_mail_client/app/routes/app_routes.dart';
 import 'package:nostr_mail_client/controllers/inbox_controller.dart';
 import 'package:nostr_mail_client/models/compose_mode.dart';
@@ -26,6 +27,16 @@ import '../../l10n/generated/app_localizations.dart';
 class EmailController extends GetxController {
   static EmailController get to => Get.find();
 
+  /// Hex event id of the giftwrap (or any nostr event) this controller renders.
+  /// Passed by the route builder from the URL.
+  final String eventIdHex;
+
+  /// Folder the email is being viewed from. Null when reached via the
+  /// `/:nostrId` share-link dispatcher (no folder context). Source of
+  /// truth for folder-dependent UI (restore button, mark-as-read on
+  /// open, destructive vs trash semantics).
+  final MailFolder? folder;
+
   Email? email;
   // Always the nostr identity behind the conversation. For not-bridged
   // emails, this IS the contact; for bridged emails, this is the bridge
@@ -40,7 +51,7 @@ class EmailController extends GetxController {
   String? rawContent;
   bool isLoadingRawContent = false;
 
-  EmailController() {
+  EmailController({required this.eventIdHex, this.folder}) {
     showImages = Get.find<SettingsController>().alwaysLoadImages.value;
     loadEmail();
   }
@@ -129,14 +140,8 @@ class EmailController extends GetxController {
   }
 
   Future<void> loadEmail() async {
-    final emailId = Get.parameters['id'];
-    if (emailId == null) {
-      Get.back();
-      return;
-    }
-
     final nostrMailService = Get.find<NostrMailService>();
-    final loaded = await nostrMailService.client.getEmail(emailId);
+    final loaded = await nostrMailService.client.getEmail(eventIdHex);
 
     if (loaded != null) {
       loadSenderMetadata(loaded);
@@ -148,13 +153,10 @@ class EmailController extends GetxController {
     isLoading = false;
     update();
 
-    // Auto-mark as read for inbox emails only (non-blocking)
-    if (loaded != null) {
-      final inboxController = Get.find<InboxController>();
-      if (inboxController.currentFolder.value == MailFolder.inbox) {
-        // Non-blocking: mark as read without awaiting
-        inboxController.markAsRead(loaded.id);
-      }
+    // Auto-mark as read for inbox emails only (non-blocking).
+    // Cold-start via share link (folder == null) does not auto-mark.
+    if (loaded != null && folder == MailFolder.inbox) {
+      Get.find<InboxController>().markAsRead(loaded.id);
     }
   }
 
@@ -209,7 +211,7 @@ class EmailController extends GetxController {
 
     final l = AppLocalizations.of(Get.context!);
     final inboxController = Get.find<InboxController>();
-    final isInTrash = inboxController.currentFolder.value == MailFolder.trash;
+    final isInTrash = folder == MailFolder.trash;
 
     if (isInTrash) {
       final confirmed = await Get.dialog<bool>(
@@ -236,7 +238,7 @@ class EmailController extends GetxController {
     } else {
       inboxController.deleteEmail(email!.id);
     }
-    Get.back();
+    AppRouter.popOrGoInbox();
   }
 
   Future<void> showNip59Events() async {
@@ -260,7 +262,7 @@ class EmailController extends GetxController {
     if (email == null) return;
 
     Get.find<InboxController>().restoreFromTrash(email!.id);
-    Get.back();
+    AppRouter.popOrGoInbox();
   }
 
   void handleAttachmentTap({
@@ -338,38 +340,38 @@ class EmailController extends GetxController {
 
   void replyEmail() {
     if (email == null) return;
-    Get.toNamed(
+    AppRouter.router.push(
       AppRoutes.compose,
-      arguments: {'email': email, 'mode': ComposeMode.reply},
+      extra: {'email': email, 'mode': ComposeMode.reply},
     );
   }
 
   void replyAllEmail() {
     if (email == null) return;
-    Get.toNamed(
+    AppRouter.router.push(
       AppRoutes.compose,
-      arguments: {'email': email, 'mode': ComposeMode.replyAll},
+      extra: {'email': email, 'mode': ComposeMode.replyAll},
     );
   }
 
   void forwardEmail() {
     if (email == null) return;
-    Get.toNamed(
+    AppRouter.router.push(
       AppRoutes.compose,
-      arguments: {'email': email, 'mode': ComposeMode.forward},
+      extra: {'email': email, 'mode': ComposeMode.forward},
     );
   }
 
   void archiveEmail() {
     if (email == null) return;
     Get.find<InboxController>().moveToArchive(email!.id);
-    Get.back();
+    AppRouter.popOrGoInbox();
   }
 
   void unarchiveEmail() {
     if (email == null) return;
     Get.find<InboxController>().restoreFromArchive(email!.id);
-    Get.back();
+    AppRouter.popOrGoInbox();
   }
 
   Future<void> downloadAttachment({required AttachmentRef ref}) async {

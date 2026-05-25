@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import '../../controllers/create_identity_controller.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../utils/responsive_helper.dart';
-import '../shared/desktop_shell.dart';
 import 'widgets/display_name_field.dart';
 import 'widgets/local_part_section.dart';
 import 'widgets/bridge_section.dart';
@@ -19,7 +18,6 @@ class CreateIdentityView extends GetView<CreateIdentityController> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final isWide = ResponsiveHelper.isNotMobile(context);
 
     Widget content = Scaffold(
       key: _scaffoldKey,
@@ -65,9 +63,6 @@ class CreateIdentityView extends GetView<CreateIdentityController> {
       ),
     );
 
-    if (isWide) {
-      return DesktopShell(body: content);
-    }
     return content;
   }
 }

@@ -8,6 +8,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:ndk/ndk.dart';
 import 'package:system_theme/system_theme.dart';
@@ -23,7 +24,6 @@ import '../../services/nostr_mail_service.dart';
 import '../../utils/platform_helper.dart';
 import '../../utils/responsive_helper.dart';
 import '../../utils/toast_helper.dart';
-import '../shared/desktop_shell.dart';
 import 'widgets/about_section.dart';
 
 class SettingsView extends StatelessWidget {
@@ -33,10 +33,19 @@ class SettingsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final settingsController = Get.find<SettingsController>();
-    final isWide = ResponsiveHelper.isNotMobile(context);
 
     Widget content = Scaffold(
-      appBar: AppBar(title: Text(l.settingsTitle)),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+          // Reached via `context.go` from inbox/drawer/rail, so there is
+          // typically nothing to pop. Fall back to the inbox.
+          onPressed: () =>
+              context.canPop() ? context.pop() : context.go(AppRoutes.inbox),
+        ),
+        title: Text(l.settingsTitle),
+      ),
       body: SingleChildScrollView(
         child: ResponsiveCenter(
           maxWidth: 600,
@@ -80,7 +89,7 @@ class SettingsView extends StatelessWidget {
                 title: Text(l.settingsManageIdentities),
                 subtitle: Text(l.settingsManageIdentitiesSubtitle),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () => Get.toNamed(AppRoutes.identities),
+                onTap: () => context.go(AppRoutes.settingsIdentities),
               ),
               const SizedBox(height: 24),
               _buildSectionHeader(context, l.settingsCompose),
@@ -103,7 +112,7 @@ class SettingsView extends StatelessWidget {
                 title: Text(l.settingsHosting),
                 subtitle: Text(l.settingsHostingSubtitle),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () => Get.toNamed(AppRoutes.nostrTechnicalSettings),
+                onTap: () => context.go(AppRoutes.settingsHosting),
               ),
               if (kDebugMode)
                 ListTile(
@@ -111,7 +120,7 @@ class SettingsView extends StatelessWidget {
                   title: Text(l.settingsDebugTools),
                   subtitle: Text(l.settingsDebugToolsSubtitle),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () => Get.toNamed(AppRoutes.debugTools),
+                  onTap: () => context.go(AppRoutes.settingsDebugTools),
                 ),
               const SizedBox(height: 24),
               _buildSectionHeader(context, l.settingsAccount),
@@ -144,7 +153,7 @@ class SettingsView extends StatelessWidget {
                 ),
                 onTap: () {
                   Get.find<AuthController>().logout();
-                  Get.offAllNamed(AppRoutes.login);
+                  context.go(AppRoutes.login);
                 },
               ),
               ListTile(
@@ -169,9 +178,6 @@ class SettingsView extends StatelessWidget {
       ),
     );
 
-    if (isWide) {
-      return DesktopShell(body: content);
-    }
     return content;
   }
 

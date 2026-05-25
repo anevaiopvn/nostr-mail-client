@@ -2133,6 +2133,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Yesterday'**
   String get dateYesterday;
+
+  /// Heading shown on the 404 page when go_router cannot resolve the requested URL
+  ///
+  /// In en, this message translates to:
+  /// **'Page not found'**
+  String get notFoundTitle;
+
+  /// Button label on the 404 page that returns the user to the inbox
+  ///
+  /// In en, this message translates to:
+  /// **'Back to inbox'**
+  String get notFoundBackToInbox;
 }
 
 class _AppLocalizationsDelegate

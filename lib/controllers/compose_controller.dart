@@ -13,6 +13,7 @@ import 'package:nostr_mail/nostr_mail.dart';
 import 'package:nostr_mail_client/utils/toast_helper.dart';
 import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
 
+import '../app/routes/app_router.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../models/compose_attachment.dart';
 import '../models/compose_mode.dart';
@@ -33,6 +34,13 @@ const String _defaultBridgeDomain = 'uid.ovh';
 
 class ComposeController extends GetxController {
   static ComposeController get to => Get.find();
+
+  /// Optional source email + mode for reply/forward flows.
+  /// Passed by the route builder via GoRouter's `extra`.
+  final Email? sourceEmail;
+  final ComposeMode? sourceMode;
+
+  ComposeController({this.sourceEmail, this.sourceMode});
 
   final _nostrMailService = Get.find<NostrMailService>();
   final _contactsService = Get.find<ContactsService>();
@@ -87,12 +95,8 @@ class ComposeController extends GetxController {
   void onReady() {
     super.onReady();
     // Initialize reply/forward async after onInit completes
-    final args = Get.arguments as Map<String, dynamic>?;
-    final email = args?['email'] as Email?;
-    final mode = args?['mode'] as ComposeMode?;
-
-    if (email != null && mode != null) {
-      initFromEmail(email, mode);
+    if (sourceEmail != null && sourceMode != null) {
+      initFromEmail(sourceEmail!, sourceMode!);
     }
   }
 
@@ -806,7 +810,7 @@ class ComposeController extends GetxController {
     );
 
     if (success) {
-      Get.back();
+      AppRouter.router.pop();
     } else {
       ToastHelper.error(Get.context!, l.composeSendFailed);
     }

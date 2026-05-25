@@ -456,5 +456,8 @@
     }
   },
 
-  "dateYesterday": "Ieri"
+  "dateYesterday": "Ieri",
+
+  "notFoundTitle": "Pagina non trovata",
+  "notFoundBackToInbox": "Torna alla posta in arrivo"
 }

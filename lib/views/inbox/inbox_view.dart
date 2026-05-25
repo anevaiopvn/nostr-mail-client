@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nostr_mail/nostr_mail.dart';
 
 import '../../app/routes/app_routes.dart';
@@ -12,7 +13,6 @@ import '../../utils/toast_helper.dart';
 import '../../utils/metadata_extensions.dart';
 import '../../utils/responsive_helper.dart';
 import '../../widgets/nostr_avatar.dart';
-import '../shared/desktop_shell.dart';
 import 'widgets/app_drawer.dart';
 import 'widgets/email_tile.dart';
 import 'widgets/old_emails_banner.dart';
@@ -20,7 +20,13 @@ import 'widgets/search_field.dart';
 import 'widgets/selection_actions_bar.dart';
 
 class InboxView extends GetView<InboxController> {
-  const InboxView({super.key});
+  /// Folder this route represents (driven by the URL: /inbox, /sent, ...).
+  /// Synced to `InboxController.currentFolder` on build so the rest of the
+  /// view (toolbar title, email list source, action behaviors) stays
+  /// driven by the controller.
+  final MailFolder folder;
+
+  const InboxView({super.key, required this.folder});
 
   String _folderTitle(AppLocalizations l, MailFolder folder) {
     return switch (folder) {
@@ -227,14 +233,13 @@ class InboxView extends GetView<InboxController> {
                       () => EmailTile(
                         key: ValueKey(email.id),
                         email: email,
-                        onTap: () => Get.toNamed(
-                          AppRoutes.email.replaceAll(':id', email.id),
-                        ),
+                        onTap: () =>
+                            context.go(AppRoutes.emailPath(folder, email.id)),
                         isSelected: controller.isSelected(email.id),
                         onToggleSelect: () =>
                             controller.toggleSelection(email.id),
-                        onReply: () => _replyTo(email),
-                        onForward: () => _forward(email),
+                        onReply: () => _replyTo(context, email),
+                        onForward: () => _forward(context, email),
                         onDelete: () => _deleteEmail(context, email),
                         onArchive: () => _archiveEmail(context, email),
                         onRestore: () => _restoreEmail(context, email),
@@ -256,15 +261,21 @@ class InboxView extends GetView<InboxController> {
     final isWide = ResponsiveHelper.isNotMobile(context);
     final colorScheme = Theme.of(context).colorScheme;
 
+    // Sync URL-driven folder to the shared controller after build settles.
+    // Skipping when already aligned avoids redundant notifications.
+    if (controller.currentFolder.value != folder) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.setFolder(folder);
+      });
+    }
+
     if (isWide) {
-      // Desktop: 3-column layout
-      return DesktopShell(
-        body: Column(
-          children: [
-            _buildToolbar(context),
-            Expanded(child: _buildEmailList(context)),
-          ],
-        ),
+      // Desktop: 3-column layout (DesktopShell is provided by AuthShell)
+      return Column(
+        children: [
+          _buildToolbar(context),
+          Expanded(child: _buildEmailList(context)),
+        ],
       );
     }
 
@@ -328,7 +339,7 @@ class InboxView extends GetView<InboxController> {
                     IconButton(
                       icon: const Icon(Icons.settings),
                       tooltip: l.inboxSettings,
-                      onPressed: () => Get.toNamed(AppRoutes.settings),
+                      onPressed: () => context.go(AppRoutes.settings),
                     ),
                     const SizedBox(width: 8),
                     Builder(
@@ -353,7 +364,7 @@ class InboxView extends GetView<InboxController> {
                           const Divider(height: 1),
                           MenuItemButton(
                             leadingIcon: const Icon(Icons.person_outline),
-                            onPressed: () => Get.toNamed(AppRoutes.profile),
+                            onPressed: () => context.go(AppRoutes.profile),
                             child: Text(l.inboxProfile),
                           ),
                           MenuItemButton(
@@ -373,7 +384,7 @@ class InboxView extends GetView<InboxController> {
                             ),
                             onPressed: () {
                               Get.find<AuthController>().logout();
-                              Get.offAllNamed(AppRoutes.login);
+                              context.go(AppRoutes.login);
                             },
                             child: Text(
                               l.inboxLogout,
@@ -415,7 +426,7 @@ class InboxView extends GetView<InboxController> {
       ),
       drawer: const AppDrawer(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.toNamed(AppRoutes.compose),
+        onPressed: () => context.push(AppRoutes.compose),
         tooltip: l.inboxCompose,
         child: const Icon(Icons.edit),
       ),
@@ -435,17 +446,17 @@ class InboxView extends GetView<InboxController> {
     );
   }
 
-  void _replyTo(Email email) {
-    Get.toNamed(
+  void _replyTo(BuildContext context, Email email) {
+    context.push(
       AppRoutes.compose,
-      arguments: {'email': email, 'mode': ComposeMode.reply},
+      extra: {'email': email, 'mode': ComposeMode.reply},
     );
   }
 
-  void _forward(Email email) {
-    Get.toNamed(
+  void _forward(BuildContext context, Email email) {
+    context.push(
       AppRoutes.compose,
-      arguments: {'email': email, 'mode': ComposeMode.forward},
+      extra: {'email': email, 'mode': ComposeMode.forward},
     );
   }
 

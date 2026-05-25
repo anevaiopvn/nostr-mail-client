@@ -793,5 +793,10 @@
   },
 
   "dateYesterday": "Yesterday",
-  "@dateYesterday": { "description": "Relative date label shown in the email list for emails received the day before today" }
+  "@dateYesterday": { "description": "Relative date label shown in the email list for emails received the day before today" },
+
+  "notFoundTitle": "Page not found",
+  "@notFoundTitle": { "description": "Heading shown on the 404 page when go_router cannot resolve the requested URL" },
+  "notFoundBackToInbox": "Back to inbox",
+  "@notFoundBackToInbox": { "description": "Button label on the 404 page that returns the user to the inbox" }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../controllers/inbox_controller.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../email_controller.dart';
 import 'email_actions.dart';
@@ -12,10 +11,11 @@ class DesktopActionsBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final emailController = Get.find<EmailController>();
     final actions = buildEmailActions(
       l,
-      Get.find<EmailController>(),
-      Get.find<InboxController>().currentFolder.value,
+      emailController,
+      emailController.folder,
     );
 
     return LayoutBuilder(

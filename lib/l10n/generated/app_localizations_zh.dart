@@ -1060,4 +1060,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get dateYesterday => '昨天';
+
+  @override
+  String get notFoundTitle => '页面未找到';
+
+  @override
+  String get notFoundBackToInbox => '返回收件箱';
 }

@@ -17,7 +17,7 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 
 import 'app/bindings/initial_binding.dart';
 import 'app/config/nostr_config.dart';
-import 'app/routes/app_routes.dart';
+import 'app/routes/app_router.dart';
 import 'l10n/generated/app_localizations.dart';
 import 'controllers/auth_controller.dart';
 import 'controllers/settings_controller.dart';
@@ -92,6 +92,10 @@ void main() async {
   // Initialize theme service
   await Get.putAsync(() => ThemeService().init(), permanent: true);
 
+  // Run InitialBinding (SettingsController, ContactsService) before the router
+  // boots - the router's redirect reads SettingsController on first navigation.
+  InitialBinding().dependencies();
+
   // Load theme mode before app starts
   final themeModeIndex =
       await storageService.getSetting<int>(SettingsController.themeModeKey) ??
@@ -130,7 +134,7 @@ class MainApp extends StatelessWidget {
       );
 
       return ToastificationWrapper(
-        child: GetMaterialApp(
+        child: MaterialApp.router(
           title: 'Nmail',
           theme: ThemeData.from(
             colorScheme: lightScheme,
@@ -148,12 +152,7 @@ class MainApp extends StatelessWidget {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: AppLocalizations.supportedLocales,
-          initialBinding: InitialBinding(),
-          getPages: AppRoutes.routes,
-          defaultTransition: GetPlatform.isMobile
-              ? null
-              : Transition.noTransition,
-          initialRoute: AppRoutes.inbox,
+          routerConfig: AppRouter.init(),
           builder: (context, child) {
             if (PlatformHelper.isDesktop) {
               return DragToResizeArea(

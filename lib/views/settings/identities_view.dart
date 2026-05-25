@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../app/routes/app_routes.dart';
 import '../../controllers/identities_controller.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../utils/responsive_helper.dart';
-import '../shared/desktop_shell.dart';
 import 'widgets/identities_empty_state.dart';
 import 'widgets/identities_list.dart';
 
@@ -16,7 +16,6 @@ class IdentitiesView extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final controller = Get.find<IdentitiesController>();
-    final isWide = ResponsiveHelper.isNotMobile(context);
 
     final scaffold = Scaffold(
       appBar: AppBar(
@@ -40,7 +39,7 @@ class IdentitiesView extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await Get.toNamed(AppRoutes.createIdentity);
+          await context.push(AppRoutes.settingsIdentitiesNew);
           await controller.loadData();
         },
         tooltip: l.identitiesCreate,
@@ -76,9 +75,6 @@ class IdentitiesView extends StatelessWidget {
       ),
     );
 
-    if (isWide) {
-      return DesktopShell(body: content);
-    }
     return content;
   }
 

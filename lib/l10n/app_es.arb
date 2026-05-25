@@ -456,5 +456,8 @@
     }
   },
 
-  "dateYesterday": "Ayer"
+  "dateYesterday": "Ayer",
+
+  "notFoundTitle": "Página no encontrada",
+  "notFoundBackToInbox": "Volver a la bandeja de entrada"
 }

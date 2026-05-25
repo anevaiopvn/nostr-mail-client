@@ -456,5 +456,8 @@
     }
   },
 
-  "dateYesterday": "Hier"
+  "dateYesterday": "Hier",
+
+  "notFoundTitle": "Page introuvable",
+  "notFoundBackToInbox": "Retour à la boîte de réception"
 }

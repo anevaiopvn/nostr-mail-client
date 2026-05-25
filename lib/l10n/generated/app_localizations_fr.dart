@@ -1122,4 +1122,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get dateYesterday => 'Hier';
+
+  @override
+  String get notFoundTitle => 'Page introuvable';
+
+  @override
+  String get notFoundBackToInbox => 'Retour à la boîte de réception';
 }

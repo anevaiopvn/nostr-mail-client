@@ -456,5 +456,8 @@
     }
   },
 
-  "dateYesterday": "Вчера"
+  "dateYesterday": "Вчера",
+
+  "notFoundTitle": "Страница не найдена",
+  "notFoundBackToInbox": "Вернуться во входящие"
 }
