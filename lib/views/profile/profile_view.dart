@@ -29,9 +29,8 @@ class ProfileView extends GetView<ProfileController> {
           tooltip: MaterialLocalizations.of(context).backButtonTooltip,
           // Reached via `context.go` from inbox/drawer/rail, so there is
           // typically nothing to pop. Fall back to the inbox.
-          onPressed: () => context.canPop()
-              ? context.pop()
-              : context.go(AppRoutes.inbox),
+          onPressed: () =>
+              context.canPop() ? context.pop() : context.go(AppRoutes.inbox),
         ),
         title: Text(l.profileEditTitle),
         actionsPadding: const EdgeInsets.only(right: 8),

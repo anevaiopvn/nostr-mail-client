@@ -21,10 +21,7 @@ class ProfileShareView extends StatelessWidget {
             children: [
               const Icon(Icons.person_outline, size: 64),
               const SizedBox(height: 16),
-              Text(
-                'Profile',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
+              Text('Profile', style: Theme.of(context).textTheme.headlineSmall),
               const SizedBox(height: 8),
               SelectableText(
                 bech32,

@@ -12,7 +12,11 @@ class MobileActionsBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final emailController = Get.find<EmailController>();
-    final actions = buildEmailActions(l, emailController, emailController.folder);
+    final actions = buildEmailActions(
+      l,
+      emailController,
+      emailController.folder,
+    );
 
     const buttonWidth = 68.0;
     // Always reserve space for delete + more_vert buttons (2 buttons).

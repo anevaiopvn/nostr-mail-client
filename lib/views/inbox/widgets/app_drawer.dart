@@ -75,178 +75,178 @@ class AppDrawer extends StatelessWidget {
         context.go(_folderPaths[index]);
       },
       children: [
-          SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Obx(
-                    () => Row(
-                      children: [
-                        Semantics(
-                          label: l.inboxEditProfile,
-                          button: true,
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                              context.go(AppRoutes.profile);
-                            },
-                            child: Stack(
-                              children: [
-                                _buildAvatar(context),
-                                Positioned(
-                                  right: 0,
-                                  bottom: 0,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(2),
-                                    decoration: BoxDecoration(
+        SafeArea(
+          bottom: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Obx(
+                  () => Row(
+                    children: [
+                      Semantics(
+                        label: l.inboxEditProfile,
+                        button: true,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                            context.go(AppRoutes.profile);
+                          },
+                          child: Stack(
+                            children: [
+                              _buildAvatar(context),
+                              Positioned(
+                                right: 0,
+                                bottom: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.surface,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
                                       color: colorScheme.surface,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: colorScheme.surface,
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Icon(
-                                      Icons.edit,
-                                      size: 12,
-                                      color: colorScheme.primary,
+                                      width: 1,
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                _displayName(),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 4),
-                              Semantics(
-                                label: l.inboxCopyNpub,
-                                button: true,
-                                child: InkWell(
-                                  onTap: () => _copyNpub(context),
-                                  borderRadius: BorderRadius.circular(4),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Flexible(
-                                        child: Text(
-                                          _shortNpub(l),
-                                          style: TextStyle(
-                                            color: colorScheme.onSurfaceVariant,
-                                            fontSize: 12,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Icon(
-                                        Icons.copy,
-                                        size: 12,
-                                        color: colorScheme.onSurfaceVariant,
-                                      ),
-                                    ],
+                                  child: Icon(
+                                    Icons.edit,
+                                    size: 12,
+                                    color: colorScheme.primary,
                                   ),
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              _displayName(),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            Semantics(
+                              label: l.inboxCopyNpub,
+                              button: true,
+                              child: InkWell(
+                                onTap: () => _copyNpub(context),
+                                borderRadius: BorderRadius.circular(4),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Flexible(
+                                      child: Text(
+                                        _shortNpub(l),
+                                        style: TextStyle(
+                                          color: colorScheme.onSurfaceVariant,
+                                          fontSize: 12,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Icon(
+                                      Icons.copy,
+                                      size: 12,
+                                      color: colorScheme.onSurfaceVariant,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton.icon(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        context.push(AppRoutes.compose);
-                      },
-                      icon: const Icon(Icons.edit),
-                      label: Text(l.inboxCompose),
-                    ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      context.push(AppRoutes.compose);
+                    },
+                    icon: const Icon(Icons.edit),
+                    label: Text(l.inboxCompose),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Divider(),
-          ),
-          NavigationDrawerDestination(
-            icon: const Icon(Icons.inbox_outlined),
-            selectedIcon: const Icon(Icons.inbox),
-            label: Text(l.folderInbox),
-          ),
-          NavigationDrawerDestination(
-            icon: const Icon(Icons.send_outlined),
-            selectedIcon: const Icon(Icons.send),
-            label: Text(l.folderSent),
-          ),
-          NavigationDrawerDestination(
-            icon: const Icon(Icons.archive_outlined),
-            selectedIcon: const Icon(Icons.archive),
-            label: Text(l.folderArchive),
-          ),
-          NavigationDrawerDestination(
-            icon: const Icon(Icons.delete_outlined),
-            selectedIcon: const Icon(Icons.delete),
-            label: Text(l.folderTrash),
-          ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Divider(),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: ListTile(
-              leading: const Icon(Icons.settings),
-              title: Text(l.inboxSettings),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(28),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                context.go(AppRoutes.settings);
-              },
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Divider(),
+        ),
+        NavigationDrawerDestination(
+          icon: const Icon(Icons.inbox_outlined),
+          selectedIcon: const Icon(Icons.inbox),
+          label: Text(l.folderInbox),
+        ),
+        NavigationDrawerDestination(
+          icon: const Icon(Icons.send_outlined),
+          selectedIcon: const Icon(Icons.send),
+          label: Text(l.folderSent),
+        ),
+        NavigationDrawerDestination(
+          icon: const Icon(Icons.archive_outlined),
+          selectedIcon: const Icon(Icons.archive),
+          label: Text(l.folderArchive),
+        ),
+        NavigationDrawerDestination(
+          icon: const Icon(Icons.delete_outlined),
+          selectedIcon: const Icon(Icons.delete),
+          label: Text(l.folderTrash),
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Divider(),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: ListTile(
+            leading: const Icon(Icons.settings),
+            title: Text(l.inboxSettings),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(28),
             ),
+            onTap: () {
+              Navigator.pop(context);
+              context.go(AppRoutes.settings);
+            },
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: ListTile(
-              leading: Icon(Icons.logout, color: colorScheme.error),
-              title: Text(
-                l.inboxLogout,
-                style: TextStyle(color: colorScheme.error),
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(28),
-              ),
-              onTap: () {
-                Get.find<AuthController>().logout();
-                context.go(AppRoutes.login);
-              },
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: ListTile(
+            leading: Icon(Icons.logout, color: colorScheme.error),
+            title: Text(
+              l.inboxLogout,
+              style: TextStyle(color: colorScheme.error),
             ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(28),
+            ),
+            onTap: () {
+              Get.find<AuthController>().logout();
+              context.go(AppRoutes.login);
+            },
           ),
-          const SizedBox(height: 16),
-        ],
+        ),
+        const SizedBox(height: 16),
+      ],
     );
   }
 }

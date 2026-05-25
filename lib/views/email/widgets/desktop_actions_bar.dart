@@ -12,7 +12,11 @@ class DesktopActionsBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final emailController = Get.find<EmailController>();
-    final actions = buildEmailActions(l, emailController, emailController.folder);
+    final actions = buildEmailActions(
+      l,
+      emailController,
+      emailController.folder,
+    );
 
     return LayoutBuilder(
       builder: (context, constraints) {

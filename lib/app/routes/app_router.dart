@@ -78,10 +78,7 @@ class AppRouter {
     errorBuilder: (_, _) => const NotFoundView(),
     routes: [
       // Public routes (outside shell)
-      GoRoute(
-        path: AppRoutes.login,
-        builder: (_, _) => const LoginView(),
-      ),
+      GoRoute(path: AppRoutes.login, builder: (_, _) => const LoginView()),
       GoRoute(
         path: AppRoutes.onboarding,
         builder: (_, _) => const OnboardingView(),
@@ -93,10 +90,7 @@ class AppRouter {
         builder: (_, _, child) => AuthShell(child: child),
         routes: [
           // Root path inside shell: send to inbox
-          GoRoute(
-            path: '/',
-            redirect: (_, _) => AppRoutes.inbox,
-          ),
+          GoRoute(path: '/', redirect: (_, _) => AppRoutes.inbox),
 
           // Folder routes (URL drives InboxController.currentFolder).
           // Each folder nests `email/:id` so opening a message via
