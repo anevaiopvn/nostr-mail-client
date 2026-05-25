@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ndk/ndk.dart';
 import 'package:nostr_mail_client/views/email/email_controller.dart';
 
+import '../../app/routes/app_routes.dart';
+import '../../controllers/auth_controller.dart';
 import '../../controllers/inbox_controller.dart';
 import '../../controllers/settings_controller.dart';
 import '../../l10n/generated/app_localizations.dart';
@@ -14,6 +17,20 @@ import 'widgets/mobile_actions_bar.dart';
 
 class EmailView extends StatelessWidget {
   const EmailView({super.key});
+
+  /// Dynamic back navigation: pop the navigator if there's prior history
+  /// (came from a folder), otherwise infer the right folder from nostr data.
+  /// Cold-start at `/<event-id>` has no shell-navigator history, so we use
+  /// the email's sender (== me means it's a sent email) as the hint.
+  void _goBack(BuildContext context, EmailController controller) {
+    if (context.canPop()) {
+      context.pop();
+      return;
+    }
+    final myPubkey = Get.find<AuthController>().publicKey;
+    final isMine = controller.email?.senderPubkey == myPubkey;
+    context.go(isMine ? AppRoutes.sent : AppRoutes.inbox);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +57,11 @@ class EmailView extends StatelessWidget {
 
         Widget content = Scaffold(
           appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+              onPressed: () => _goBack(context, controller),
+            ),
             actionsPadding: .only(right: 8),
             actions: [
               Obx(() {
