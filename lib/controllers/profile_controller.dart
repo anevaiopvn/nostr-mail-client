@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 
 import '../app/config/nostr_config.dart';
+import '../app/routes/app_router.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../services/nostr_mail_service.dart';
 import '../utils/toast_helper.dart';
@@ -191,7 +192,7 @@ class ProfileController extends GetxController {
       authController.userMetadata.value = metadata;
       authController.userMetadata.refresh();
 
-      Get.back();
+      AppRouter.router.pop();
     } catch (e) {
       if (!isClosed) {
         isSaving.value = false;

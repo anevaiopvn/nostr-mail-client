@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:toastification/toastification.dart';
 
 import '../../../app/routes/app_routes.dart';
 import '../../../controllers/auth_controller.dart';
-import '../../../controllers/inbox_controller.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../utils/metadata_extensions.dart';
 import '../../../widgets/nostr_avatar.dart';
+
+const _folderPaths = [
+  AppRoutes.inbox,
+  AppRoutes.sent,
+  AppRoutes.archive,
+  AppRoutes.trash,
+];
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -53,32 +60,17 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final controller = Get.isRegistered<InboxController>()
-        ? Get.find<InboxController>()
-        : Get.put(InboxController());
     final colorScheme = Theme.of(context).colorScheme;
+    final loc = GoRouterState.of(context).matchedLocation;
+    final selectedIndex = _folderPaths.indexOf(loc);
 
-    return Obx(() {
-      final selectedIndex = switch (controller.currentFolder.value) {
-        MailFolder.inbox => 0,
-        MailFolder.sent => 1,
-        MailFolder.archive => 2,
-        MailFolder.trash => 3,
-      };
-
-      return NavigationDrawer(
-        selectedIndex: selectedIndex,
-        onDestinationSelected: (index) {
-          final folder = switch (index) {
-            0 => MailFolder.inbox,
-            1 => MailFolder.sent,
-            2 => MailFolder.archive,
-            _ => MailFolder.trash,
-          };
-          controller.setFolder(folder);
-          Navigator.pop(context);
-        },
-        children: [
+    return NavigationDrawer(
+      selectedIndex: selectedIndex >= 0 ? selectedIndex : null,
+      onDestinationSelected: (index) {
+        Navigator.pop(context);
+        context.go(_folderPaths[index]);
+      },
+      children: [
           SafeArea(
             bottom: false,
             child: Padding(
@@ -95,7 +87,7 @@ class AppDrawer extends StatelessWidget {
                           child: GestureDetector(
                             onTap: () {
                               Navigator.pop(context);
-                              Get.toNamed(AppRoutes.profile);
+                              context.push(AppRoutes.profile);
                             },
                             child: Stack(
                               children: [
@@ -180,7 +172,7 @@ class AppDrawer extends StatelessWidget {
                     child: FilledButton.icon(
                       onPressed: () {
                         Navigator.pop(context);
-                        Get.toNamed(AppRoutes.compose);
+                        context.push(AppRoutes.compose);
                       },
                       icon: const Icon(Icons.edit),
                       label: Text(l.inboxCompose),
@@ -228,7 +220,7 @@ class AppDrawer extends StatelessWidget {
               ),
               onTap: () {
                 Navigator.pop(context);
-                Get.toNamed(AppRoutes.settings);
+                context.push(AppRoutes.settings);
               },
             ),
           ),
@@ -245,13 +237,12 @@ class AppDrawer extends StatelessWidget {
               ),
               onTap: () {
                 Get.find<AuthController>().logout();
-                Get.offAllNamed(AppRoutes.login);
+                context.go(AppRoutes.login);
               },
             ),
           ),
           const SizedBox(height: 16),
         ],
-      );
-    });
+    );
   }
 }

@@ -13,6 +13,7 @@ import 'package:nostr_mail/nostr_mail.dart';
 import 'package:nostr_mail_client/utils/toast_helper.dart';
 import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
 
+import '../app/routes/app_router.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../models/compose_attachment.dart';
 import '../models/compose_mode.dart';
@@ -809,7 +810,7 @@ class ComposeController extends GetxController {
     );
 
     if (success) {
-      Get.back();
+      AppRouter.router.pop();
     } else {
       ToastHelper.error(Get.context!, l.composeSendFailed);
     }

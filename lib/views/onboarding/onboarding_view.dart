@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 
 import '../../app/routes/app_routes.dart';
@@ -9,10 +10,10 @@ import '../../services/storage_service.dart';
 class OnboardingView extends StatelessWidget {
   const OnboardingView({super.key});
 
-  Future<void> _onDone() async {
+  Future<void> _onDone(BuildContext context) async {
     final storage = Get.find<StorageService>();
     await storage.saveSetting('has_seen_onboarding', true);
-    Get.offAllNamed(AppRoutes.login);
+    if (context.mounted) context.go(AppRoutes.login);
   }
 
   PageDecoration _getPageDecoration(BuildContext context) {
@@ -111,8 +112,8 @@ class OnboardingView extends StatelessWidget {
               decoration: _getPageDecoration(context),
             ),
           ],
-          onDone: _onDone,
-          onSkip: _onDone,
+          onDone: () => _onDone(context),
+          onSkip: () => _onDone(context),
           showSkipButton: true,
           skip: Text(
             l.onboardingSkip,

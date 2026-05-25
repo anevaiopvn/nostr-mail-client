@@ -237,8 +237,8 @@ class InboxView extends GetView<InboxController> {
                         isSelected: controller.isSelected(email.id),
                         onToggleSelect: () =>
                             controller.toggleSelection(email.id),
-                        onReply: () => _replyTo(email),
-                        onForward: () => _forward(email),
+                        onReply: () => _replyTo(context, email),
+                        onForward: () => _forward(context, email),
                         onDelete: () => _deleteEmail(context, email),
                         onArchive: () => _archiveEmail(context, email),
                         onRestore: () => _restoreEmail(context, email),
@@ -338,7 +338,7 @@ class InboxView extends GetView<InboxController> {
                     IconButton(
                       icon: const Icon(Icons.settings),
                       tooltip: l.inboxSettings,
-                      onPressed: () => Get.toNamed(AppRoutes.settings),
+                      onPressed: () => context.push(AppRoutes.settings),
                     ),
                     const SizedBox(width: 8),
                     Builder(
@@ -363,7 +363,7 @@ class InboxView extends GetView<InboxController> {
                           const Divider(height: 1),
                           MenuItemButton(
                             leadingIcon: const Icon(Icons.person_outline),
-                            onPressed: () => Get.toNamed(AppRoutes.profile),
+                            onPressed: () => context.push(AppRoutes.profile),
                             child: Text(l.inboxProfile),
                           ),
                           MenuItemButton(
@@ -383,7 +383,7 @@ class InboxView extends GetView<InboxController> {
                             ),
                             onPressed: () {
                               Get.find<AuthController>().logout();
-                              Get.offAllNamed(AppRoutes.login);
+                              context.go(AppRoutes.login);
                             },
                             child: Text(
                               l.inboxLogout,
@@ -425,7 +425,7 @@ class InboxView extends GetView<InboxController> {
       ),
       drawer: const AppDrawer(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.toNamed(AppRoutes.compose),
+        onPressed: () => context.push(AppRoutes.compose),
         tooltip: l.inboxCompose,
         child: const Icon(Icons.edit),
       ),
@@ -445,17 +445,17 @@ class InboxView extends GetView<InboxController> {
     );
   }
 
-  void _replyTo(Email email) {
-    Get.toNamed(
+  void _replyTo(BuildContext context, Email email) {
+    context.push(
       AppRoutes.compose,
-      arguments: {'email': email, 'mode': ComposeMode.reply},
+      extra: {'email': email, 'mode': ComposeMode.reply},
     );
   }
 
-  void _forward(Email email) {
-    Get.toNamed(
+  void _forward(BuildContext context, Email email) {
+    context.push(
       AppRoutes.compose,
-      arguments: {'email': email, 'mode': ComposeMode.forward},
+      extra: {'email': email, 'mode': ComposeMode.forward},
     );
   }
 

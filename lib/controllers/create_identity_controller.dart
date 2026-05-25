@@ -2,6 +2,7 @@ import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../app/routes/app_router.dart';
 import '../controllers/auth_controller.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../models/local_part_format.dart';
@@ -154,7 +155,7 @@ class CreateIdentityController extends GetxController {
         identities: updatedIdentities,
       );
 
-      Get.back();
+      AppRouter.router.pop();
     } catch (e) {
       if (Get.context != null) {
         final l = AppLocalizations.of(Get.context!);

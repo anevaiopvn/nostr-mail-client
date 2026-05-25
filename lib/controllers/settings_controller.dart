@@ -7,6 +7,7 @@ import 'package:ndk/ndk.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
+import '../app/routes/app_router.dart';
 import '../app/routes/app_routes.dart';
 import '../controllers/auth_controller.dart';
 import '../services/nostr_mail_service.dart';
@@ -291,6 +292,6 @@ class SettingsController extends GetxController {
     _themeService.clear();
 
     // Navigate to login
-    Get.offAllNamed(AppRoutes.login);
+    AppRouter.router.go(AppRoutes.login);
   }
 }

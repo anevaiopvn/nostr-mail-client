@@ -6,6 +6,7 @@ import 'package:ndk/shared/nips/nip01/bip340.dart';
 import 'package:ndk_flutter/ndk_flutter.dart';
 
 import '../app/config/nostr_config.dart';
+import '../app/routes/app_router.dart';
 import '../app/routes/app_routes.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../services/nostr_mail_service.dart';
@@ -188,7 +189,7 @@ class AuthController extends GetxController {
 
   void continueToInbox() {
     showSyncCodeExplanation.value = false;
-    Get.offAllNamed(AppRoutes.inbox);
+    AppRouter.router.go(AppRoutes.inbox);
   }
 
   Future<void> logout() async {
@@ -205,7 +206,7 @@ class AuthController extends GetxController {
       usernameController.clear();
       showMoreOptions.value = false;
 
-      Get.offAllNamed(AppRoutes.login);
+      AppRouter.router.go(AppRoutes.login);
     } finally {
       isLoading.value = false;
     }

@@ -77,7 +77,7 @@ class FromSelectorSheet extends StatelessWidget {
                     isSelected: isSelected,
                     onTap: () {
                       controller.selectFrom(option);
-                      Get.back();
+                      Navigator.of(context).pop();
                     },
                   );
                 },

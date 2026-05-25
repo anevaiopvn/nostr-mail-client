@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:toastification/toastification.dart';
 
 import '../../app/routes/app_routes.dart';
@@ -51,7 +52,7 @@ class LeftRail extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.settings),
             tooltip: l.leftRailSettings,
-            onPressed: () => Get.toNamed(AppRoutes.settings),
+            onPressed: () => context.push(AppRoutes.settings),
           ),
           // Account menu
           const _AccountMenuButton(),
@@ -145,7 +146,7 @@ class _AccountMenuButton extends StatelessWidget {
         const Divider(height: 1),
         MenuItemButton(
           leadingIcon: const Icon(Icons.person_outline),
-          onPressed: () => Get.toNamed(AppRoutes.profile),
+          onPressed: () => context.push(AppRoutes.profile),
           child: Text(l.inboxProfile),
         ),
         MenuItemButton(
@@ -172,7 +173,7 @@ class _AccountMenuButton extends StatelessWidget {
           ),
           onPressed: () {
             Get.find<AuthController>().logout();
-            Get.offAllNamed(AppRoutes.login);
+            context.go(AppRoutes.login);
           },
           child: Text(
             l.inboxLogout,

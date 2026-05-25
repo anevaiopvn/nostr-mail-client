@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 import 'package:nostr_mail/nostr_mail.dart';
+import 'package:nostr_mail_client/app/routes/app_router.dart';
 import 'package:nostr_mail_client/app/routes/app_routes.dart';
 import 'package:nostr_mail_client/controllers/inbox_controller.dart';
 import 'package:nostr_mail_client/models/compose_mode.dart';
@@ -234,7 +235,7 @@ class EmailController extends GetxController {
     } else {
       inboxController.deleteEmail(email!.id);
     }
-    Get.back();
+    AppRouter.router.pop();
   }
 
   Future<void> showNip59Events() async {
@@ -258,7 +259,7 @@ class EmailController extends GetxController {
     if (email == null) return;
 
     Get.find<InboxController>().restoreFromTrash(email!.id);
-    Get.back();
+    AppRouter.router.pop();
   }
 
   void handleAttachmentTap({
@@ -336,38 +337,38 @@ class EmailController extends GetxController {
 
   void replyEmail() {
     if (email == null) return;
-    Get.toNamed(
+    AppRouter.router.push(
       AppRoutes.compose,
-      arguments: {'email': email, 'mode': ComposeMode.reply},
+      extra: {'email': email, 'mode': ComposeMode.reply},
     );
   }
 
   void replyAllEmail() {
     if (email == null) return;
-    Get.toNamed(
+    AppRouter.router.push(
       AppRoutes.compose,
-      arguments: {'email': email, 'mode': ComposeMode.replyAll},
+      extra: {'email': email, 'mode': ComposeMode.replyAll},
     );
   }
 
   void forwardEmail() {
     if (email == null) return;
-    Get.toNamed(
+    AppRouter.router.push(
       AppRoutes.compose,
-      arguments: {'email': email, 'mode': ComposeMode.forward},
+      extra: {'email': email, 'mode': ComposeMode.forward},
     );
   }
 
   void archiveEmail() {
     if (email == null) return;
     Get.find<InboxController>().moveToArchive(email!.id);
-    Get.back();
+    AppRouter.router.pop();
   }
 
   void unarchiveEmail() {
     if (email == null) return;
     Get.find<InboxController>().restoreFromArchive(email!.id);
-    Get.back();
+    AppRouter.router.pop();
   }
 
   Future<void> downloadAttachment({required AttachmentRef ref}) async {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ndk/ndk.dart';
 import 'package:ndk_flutter/ndk_flutter.dart';
 
@@ -22,7 +23,7 @@ class LoginForm extends GetView<AuthController> {
             ndkFlutter: controller.ndkFlutter,
             onLoggedIn: () async {
               await controller.onLoggedIn();
-              Get.offAllNamed(AppRoutes.inbox);
+              if (context.mounted) context.go(AppRoutes.inbox);
             },
             nsecLabelText: l.authSyncCodeLabel,
             enableNip07Login: false,
@@ -76,7 +77,7 @@ class LoginForm extends GetView<AuthController> {
                   ndkFlutter: controller.ndkFlutter,
                   onLoggedIn: () async {
                     await controller.onLoggedIn();
-                    Get.offAllNamed(AppRoutes.inbox);
+                    if (context.mounted) context.go(AppRoutes.inbox);
                   },
                   enableNsecLogin: false,
                   enablePubkeyLogin: false,

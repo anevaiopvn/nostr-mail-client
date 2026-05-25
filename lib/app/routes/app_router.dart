@@ -47,6 +47,11 @@ class AppRouter {
     return _router;
   }
 
+  /// Global access for controllers that don't have a `BuildContext`
+  /// (e.g. `AuthController` after login, `EmailController` after delete).
+  /// In widgets, prefer `context.go` / `context.push`.
+  static GoRouter get router => _router;
+
   static final GoRouter _router = GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: AppRoutes.inbox,
