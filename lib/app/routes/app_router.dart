@@ -34,6 +34,12 @@ class AppRouter {
 
   /// Shared with GetX so `Get.context`, `Get.dialog`, `Get.snackbar` keep
   /// working without a `GetMaterialApp`. They all read `Get.key.currentContext`.
+  ///
+  /// TODO: drop GetX for navigation entirely. Replace `Get.dialog` with
+  /// `showDialog`, `Get.snackbar` with toastification, and pass `BuildContext`
+  /// through controllers instead of reading `Get.context!`. Once those are
+  /// gone, this aliasing line can be deleted and `_rootNavigatorKey` can
+  /// become a plain `GlobalKey<NavigatorState>()`.
   static final GlobalKey<NavigatorState> _rootNavigatorKey = Get.key;
   static final GlobalKey<NavigatorState> _shellNavigatorKey =
       GlobalKey<NavigatorState>();

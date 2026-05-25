@@ -62,7 +62,11 @@ class AppDrawer extends StatelessWidget {
     final l = AppLocalizations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final loc = GoRouterState.of(context).matchedLocation;
-    final selectedIndex = _folderPaths.indexOf(loc);
+    // Match the folder OR any nested child route, so `/sent/email/<hex>`
+    // keeps Sent highlighted in the drawer.
+    final selectedIndex = _folderPaths.indexWhere(
+      (path) => loc == path || loc.startsWith('$path/'),
+    );
 
     return NavigationDrawer(
       selectedIndex: selectedIndex >= 0 ? selectedIndex : null,

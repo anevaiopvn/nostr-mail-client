@@ -3,8 +3,9 @@ import 'package:go_router/go_router.dart';
 
 /// One folder row in the desktop sidebar.
 /// Selection is derived purely from the current URL: `selected` is true
-/// when `currentLocation` matches `path`, so changing route is enough to
-/// update the visual state.
+/// when `currentLocation` is the folder OR any nested child (e.g.
+/// `/sent/email/<hex>` keeps Sent highlighted). Changing route is
+/// enough to update the visual state.
 class SidebarFolderItem extends StatelessWidget {
   final IconData icon;
   final IconData selectedIcon;
@@ -24,7 +25,8 @@ class SidebarFolderItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final selected = currentLocation == path;
+    final selected =
+        currentLocation == path || currentLocation.startsWith('$path/');
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
