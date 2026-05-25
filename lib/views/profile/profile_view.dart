@@ -8,7 +8,6 @@ import '../../controllers/profile_controller.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../utils/responsive_helper.dart';
 import '../../widgets/nostr_avatar.dart';
-import '../shared/desktop_shell.dart';
 
 class ProfileView extends GetView<ProfileController> {
   const ProfileView({super.key});
@@ -19,7 +18,6 @@ class ProfileView extends GetView<ProfileController> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final isWide = ResponsiveHelper.isNotMobile(context);
 
     Widget content = Scaffold(
       key: _scaffoldKey,
@@ -132,9 +130,6 @@ class ProfileView extends GetView<ProfileController> {
       ),
     );
 
-    if (isWide) {
-      return DesktopShell(body: content);
-    }
     return content;
   }
 

@@ -5,7 +5,6 @@ import 'package:nostr_mail_client/views/compose/widgets/send_button_menu.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../../utils/responsive_helper.dart';
-import '../shared/desktop_shell.dart';
 
 class ComposeView extends StatelessWidget {
   const ComposeView({super.key});
@@ -36,9 +35,6 @@ class ComposeView extends StatelessWidget {
       ),
     );
 
-    if (isWide) {
-      return DesktopShell(body: content);
-    }
     return content;
   }
 }

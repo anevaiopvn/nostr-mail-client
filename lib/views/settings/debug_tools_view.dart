@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import '../../controllers/debug_tools_controller.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../utils/responsive_helper.dart';
-import '../shared/desktop_shell.dart';
 
 class DebugToolsView extends StatelessWidget {
   const DebugToolsView({super.key});
@@ -13,7 +12,6 @@ class DebugToolsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final controller = Get.put(DebugToolsController());
-    final isWide = ResponsiveHelper.isNotMobile(context);
 
     Widget content = Scaffold(
       appBar: AppBar(title: Text(l.settingsDebugTools)),
@@ -60,9 +58,6 @@ class DebugToolsView extends StatelessWidget {
       ),
     );
 
-    if (isWide) {
-      return DesktopShell(body: content);
-    }
     return content;
   }
 }

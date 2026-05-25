@@ -7,7 +7,6 @@ import '../../controllers/inbox_controller.dart';
 import '../../controllers/settings_controller.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../utils/responsive_helper.dart';
-import '../shared/desktop_shell.dart';
 import 'widgets/desktop_actions_bar.dart';
 import 'widgets/email_body_view.dart';
 import 'widgets/header_view.dart';
@@ -26,19 +25,17 @@ class EmailView extends StatelessWidget {
         final isWide = ResponsiveHelper.isNotMobile(context);
 
         if (controller.isLoading) {
-          Widget content = Scaffold(
+          return Scaffold(
             appBar: AppBar(),
             body: const Center(child: CircularProgressIndicator()),
           );
-          return isWide ? DesktopShell(body: content) : content;
         }
 
         if (controller.email == null) {
-          Widget content = Scaffold(
+          return Scaffold(
             appBar: AppBar(),
             body: Center(child: Text(l.emailNotFound)),
           );
-          return isWide ? DesktopShell(body: content) : content;
         }
 
         Widget content = Scaffold(
@@ -145,9 +142,6 @@ class EmailView extends StatelessWidget {
           ),
         );
 
-        if (isWide) {
-          return DesktopShell(body: content);
-        }
         return content;
       },
     );
