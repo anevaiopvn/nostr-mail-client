@@ -1068,4 +1068,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get dateYesterday => '昨日';
+
+  @override
+  String get notFoundTitle => 'ページが見つかりません';
+
+  @override
+  String get notFoundBackToInbox => '受信トレイに戻る';
 }

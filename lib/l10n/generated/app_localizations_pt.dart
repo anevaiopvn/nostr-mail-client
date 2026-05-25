@@ -1116,4 +1116,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get dateYesterday => 'Ontem';
+
+  @override
+  String get notFoundTitle => 'Página não encontrada';
+
+  @override
+  String get notFoundBackToInbox => 'Voltar para a caixa de entrada';
 }

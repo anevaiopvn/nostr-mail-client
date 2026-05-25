@@ -456,5 +456,8 @@
     }
   },
 
-  "dateYesterday": "昨日"
+  "dateYesterday": "昨日",
+
+  "notFoundTitle": "ページが見つかりません",
+  "notFoundBackToInbox": "受信トレイに戻る"
 }

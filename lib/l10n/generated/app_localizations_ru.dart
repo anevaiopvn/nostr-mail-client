@@ -1121,4 +1121,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get dateYesterday => 'Вчера';
+
+  @override
+  String get notFoundTitle => 'Страница не найдена';
+
+  @override
+  String get notFoundBackToInbox => 'Вернуться во входящие';
 }

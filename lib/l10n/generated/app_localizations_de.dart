@@ -1116,4 +1116,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get dateYesterday => 'Gestern';
+
+  @override
+  String get notFoundTitle => 'Seite nicht gefunden';
+
+  @override
+  String get notFoundBackToInbox => 'Zurück zum Posteingang';
 }
