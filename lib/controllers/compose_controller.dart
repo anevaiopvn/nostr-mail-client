@@ -4,9 +4,11 @@ import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:flutter_quill/quill_delta.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:markdown_quill/markdown_quill.dart';
 import 'package:mime/mime.dart';
 import 'package:ndk/ndk.dart';
 import 'package:nostr_mail/nostr_mail.dart';
@@ -373,14 +375,11 @@ class ComposeController extends GetxController {
       // Convert Delta to HTML
       final converter = QuillDeltaToHtmlConverter(
         document.toDelta().toJson().cast<Map<String, dynamic>>(),
-        ConverterOptions(
-          converterOptions: OpConverterOptions(inlineStylesFlag: true),
-        ),
+        ConverterOptions.forEmail(),
       );
       final htmlBody = converter.convert();
 
-      // Get plain text from document
-      final plainText = document.toPlainText();
+      final plainText = DeltaToMarkdown().convert(document.toDelta());
 
       // Build MIME message using MessageBuilder.
       // With attachments, the root must be multipart/mixed; the text/html
@@ -707,13 +706,21 @@ class ComposeController extends GetxController {
     switch (mode) {
       case ComposeMode.reply:
       case ComposeMode.replyAll:
-        final quotedBody = email.body
-            .split('\n')
-            .map((line) => '> $line')
-            .join('\n');
-        final bodyText =
-            '$signatureBlock\n\nOn ${dateFormat.format(email.date)}, $senderDisplay wrote:\n$quotedBody';
-        setQuillContent(bodyText);
+        final header =
+            '$signatureBlock\n\nOn ${dateFormat.format(email.date)}, $senderDisplay wrote:\n';
+        final delta = Delta()..insert(header);
+        final quotePrefix = RegExp(r'^(>+ ?)+');
+        for (final rawLine in email.body.split('\n')) {
+          final line = rawLine.replaceFirst(quotePrefix, '');
+          if (line.isNotEmpty) delta.insert(line);
+          delta.insert('\n', {Attribute.blockQuote.key: true});
+        }
+        delta.insert('\n');
+        quillController.document = Document.fromDelta(delta);
+        quillController.updateSelection(
+          const TextSelection.collapsed(offset: 0),
+          ChangeSource.local,
+        );
       case ComposeMode.forward:
         final bodyText =
             '$signatureBlock\n\n---------- Forwarded message ----------\n'
