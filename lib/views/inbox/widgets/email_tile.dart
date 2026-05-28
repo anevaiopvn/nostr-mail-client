@@ -77,6 +77,19 @@ class _EmailTileState extends State<EmailTile> {
   String get _bridgePubkey =>
       _isSentByMe ? widget.email.recipientPubkey : widget.email.senderPubkey;
 
+  /// Number of additional recipients beyond the one whose avatar is shown.
+  /// Only meaningful for sent emails (in inbox, you are the sole recipient
+  /// of your gift-wrap copy, even if cc/bcc were used).
+  int get _extraRecipientCount {
+    if (!_isSentByMe) return 0;
+    final mime = widget.email.mime;
+    final total =
+        (mime.to?.length ?? 0) +
+        (mime.cc?.length ?? 0) +
+        (mime.bcc?.length ?? 0);
+    return total > 1 ? total - 1 : 0;
+  }
+
   /// Check if this email is unread (only applies to inbox folder)
   bool get isUnread {
     final controller = Get.find<InboxController>();
@@ -598,40 +611,56 @@ class _EmailTileState extends State<EmailTile> {
 
   Widget _buildAvatar(BuildContext context, {bool compact = false}) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l = AppLocalizations.of(context);
     final radius = compact ? 14.0 : 20.0;
 
-    // Direct nostr conversation: the bridge pubkey IS the contact.
+    Widget baseAvatar;
     if (!widget.email.isBridged) {
-      return NostrAvatar(
+      // Direct nostr conversation: the bridge pubkey IS the contact.
+      baseAvatar = NostrAvatar(
         pubkey: _bridgePubkey,
         metadata: _bridgeMetadata,
         radius: radius,
       );
-    }
-
-    // Bridged: the legacy contact is in the email headers, the bridge
-    // sits in the corner as a provenance badge.
-    final badgeRadius = compact ? 7.0 : 10.0;
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        EmailAvatar(mailAddress: _displayAddress, radius: radius),
-        Positioned(
-          right: -4,
-          bottom: -4,
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: colorScheme.surface, width: 2),
-            ),
-            child: NostrAvatar(
-              pubkey: _bridgePubkey,
-              metadata: _bridgeMetadata,
-              radius: badgeRadius,
+    } else {
+      // Bridged: the legacy contact is in the email headers, the bridge
+      // sits in the corner as a provenance badge.
+      final badgeRadius = compact ? 7.0 : 10.0;
+      baseAvatar = Stack(
+        clipBehavior: Clip.none,
+        children: [
+          EmailAvatar(mailAddress: _displayAddress, radius: radius),
+          Positioned(
+            right: -4,
+            bottom: -4,
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: colorScheme.surface, width: 2),
+              ),
+              child: NostrAvatar(
+                pubkey: _bridgePubkey,
+                metadata: _bridgeMetadata,
+                radius: badgeRadius,
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      );
+    }
+
+    final extra = _extraRecipientCount;
+    if (extra == 0) return baseAvatar;
+
+    return Semantics(
+      label: l.emailExtraRecipients(extra),
+      container: true,
+      child: Badge(
+        label: ExcludeSemantics(child: Text('+$extra')),
+        backgroundColor: colorScheme.primaryContainer,
+        textColor: colorScheme.onPrimaryContainer,
+        child: baseAvatar,
+      ),
     );
   }
 

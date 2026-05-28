@@ -600,6 +600,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String get emailNoSubject => '(Без темы)';
 
   @override
+  String emailExtraRecipients(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ещё $count получателя',
+      many: 'ещё $count получателей',
+      few: 'ещё $count получателя',
+      one: 'ещё $count получатель',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get emailNotFound => 'Письмо не найдено';
 
   @override

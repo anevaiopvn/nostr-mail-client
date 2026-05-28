@@ -1210,6 +1210,12 @@ abstract class AppLocalizations {
   /// **'(No subject)'**
   String get emailNoSubject;
 
+  /// Semantics label on the +N badge over a sent-email avatar, announced by screen readers to indicate the count of additional recipients beyond the one whose avatar is shown
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} more recipient} other{{count} more recipients}}'**
+  String emailExtraRecipients(int count);
+
   /// Error shown on the email screen when the email id does not resolve
   ///
   /// In en, this message translates to:

@@ -225,6 +225,7 @@
   "emailRestore": "Restaurer",
   "emailDeletePermanently": "Supprimer définitivement",
   "emailNoSubject": "(Aucun sujet)",
+  "emailExtraRecipients": "{count, plural, one{{count} autre destinataire} other{{count} autres destinataires}}",
 
   "emailNotFound": "E-mail introuvable",
   "emailShowFormatted": "Afficher la version formatée",

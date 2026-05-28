@@ -225,6 +225,7 @@
   "emailRestore": "Восстановить",
   "emailDeletePermanently": "Удалить навсегда",
   "emailNoSubject": "(Без темы)",
+  "emailExtraRecipients": "{count, plural, one{ещё {count} получатель} few{ещё {count} получателя} many{ещё {count} получателей} other{ещё {count} получателя}}",
 
   "emailNotFound": "Письмо не найдено",
   "emailShowFormatted": "Показать форматированное",

@@ -572,6 +572,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get emailNoSubject => '(无主题)';
 
   @override
+  String emailExtraRecipients(int count) {
+    return '另外 $count 位收件人';
+  }
+
+  @override
   String get emailNotFound => '未找到邮件';
 
   @override

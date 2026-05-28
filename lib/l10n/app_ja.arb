@@ -225,6 +225,7 @@
   "emailRestore": "復元",
   "emailDeletePermanently": "完全に削除",
   "emailNoSubject": "(件名なし)",
+  "emailExtraRecipients": "他に {count} 人の受信者",
 
   "emailNotFound": "メールが見つかりません",
   "emailShowFormatted": "整形表示",

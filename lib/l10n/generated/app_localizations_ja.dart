@@ -572,6 +572,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get emailNoSubject => '(件名なし)';
 
   @override
+  String emailExtraRecipients(int count) {
+    return '他に $count 人の受信者';
+  }
+
+  @override
   String get emailNotFound => 'メールが見つかりません';
 
   @override

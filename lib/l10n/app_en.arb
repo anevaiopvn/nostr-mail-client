@@ -408,6 +408,13 @@
   "@emailDeletePermanently": { "description": "Destructive context-menu entry that permanently deletes an email from trash" },
   "emailNoSubject": "(No subject)",
   "@emailNoSubject": { "description": "Placeholder shown when an email has no subject" },
+  "emailExtraRecipients": "{count, plural, one{{count} more recipient} other{{count} more recipients}}",
+  "@emailExtraRecipients": {
+    "description": "Semantics label on the +N badge over a sent-email avatar, announced by screen readers to indicate the count of additional recipients beyond the one whose avatar is shown",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
 
   "emailNotFound": "Email not found",
   "@emailNotFound": { "description": "Error shown on the email screen when the email id does not resolve" },

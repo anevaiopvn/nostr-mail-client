@@ -601,6 +601,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get emailNoSubject => '(Aucun sujet)';
 
   @override
+  String emailExtraRecipients(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count autres destinataires',
+      one: '$count autre destinataire',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get emailNotFound => 'E-mail introuvable';
 
   @override
