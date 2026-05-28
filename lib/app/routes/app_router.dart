@@ -293,10 +293,13 @@ class AppRouter {
     }
 
     // 2. Guest paths: don't force auth on /login or /onboarding,
-    // but kick logged-in users off /login.
+    // but kick logged-in users off /login. Exception: after a fresh signup
+    // we want LoginView to render SyncCodeExplanationView (nsec backup).
     const publicPaths = {AppRoutes.login, AppRoutes.onboarding};
     if (publicPaths.contains(loc)) {
-      if (auth.isLoggedIn.value && loc == AppRoutes.login) {
+      if (auth.isLoggedIn.value &&
+          loc == AppRoutes.login &&
+          !auth.showSyncCodeExplanation.value) {
         return AppRoutes.inbox;
       }
       return null;

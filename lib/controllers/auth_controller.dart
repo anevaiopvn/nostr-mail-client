@@ -174,6 +174,10 @@ class AuthController extends GetxController {
     await ndk.config.cache.saveEvent(signedBlossom);
     await broadcastQueue.broadcast(signedBlossom, relays: signalingTargets);
 
+    // Must be set BEFORE onLoggedIn flips isLoggedIn, otherwise the router's
+    // refreshListenable bounces the user off /login before this screen renders.
+    showSyncCodeExplanation.value = true;
+
     await onLoggedIn();
 
     // Clear registration state
@@ -182,9 +186,6 @@ class AuthController extends GetxController {
     isRegistering.value = false;
 
     isLoading.value = false;
-
-    // Show sync code explanation screen
-    showSyncCodeExplanation.value = true;
   }
 
   void continueToInbox() {
