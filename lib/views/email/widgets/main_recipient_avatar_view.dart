@@ -12,11 +12,7 @@ class MainRecipientAvatarView extends StatelessWidget {
     final email = EmailController.to.email!;
     // Direct nostr conversation: the recipient pubkey IS the contact.
     if (!email.isBridged) {
-      return NostrAvatar(
-        pubkey: email.recipientPubkey,
-        metadata: EmailController.to.recipientMetadata,
-        radius: 12,
-      );
+      return NostrAvatar(pubkey: email.recipientPubkey, radius: 12);
     }
     // Bridged: the legacy contact lives in the MIME To header.
     return EmailAvatar(

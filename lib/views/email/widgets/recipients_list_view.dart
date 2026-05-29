@@ -1,6 +1,5 @@
 import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:flutter/material.dart';
-import 'package:ndk/ndk.dart';
 import 'package:nostr_mail_client/l10n/generated/app_localizations.dart';
 import 'package:nostr_mail_client/utils/metadata_extensions.dart';
 import 'package:nostr_mail_client/utils/nostr_utils.dart';
@@ -103,7 +102,7 @@ class RecipientsListView extends StatelessWidget {
       shape: const StadiumBorder(),
       backgroundColor: colorScheme.primaryContainer,
       side: BorderSide(color: colorScheme.primary.withValues(alpha: 0.3)),
-      avatar: _buildAvatar(recipient, pubkey, metadata),
+      avatar: _buildAvatar(recipient, pubkey),
       label: Text(
         label,
         style: TextStyle(
@@ -127,15 +126,11 @@ class RecipientsListView extends StatelessWidget {
     );
   }
 
-  Widget _buildAvatar(
-    MailAddress recipient,
-    String? pubkey,
-    Metadata? metadata,
-  ) {
+  Widget _buildAvatar(MailAddress recipient, String? pubkey) {
     if (pubkey == null) {
       return EmailAvatar(mailAddress: recipient, radius: 12);
     }
 
-    return NostrAvatar(pubkey: pubkey, metadata: metadata, radius: 12);
+    return NostrAvatar(pubkey: pubkey, radius: 12);
   }
 }
