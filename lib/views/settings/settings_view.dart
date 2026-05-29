@@ -25,6 +25,7 @@ import '../../utils/platform_helper.dart';
 import '../../utils/responsive_helper.dart';
 import '../../utils/toast_helper.dart';
 import 'widgets/about_section.dart';
+import 'widgets/language_tile.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
@@ -64,6 +65,7 @@ class SettingsView extends StatelessWidget {
                 ),
               ),
               _buildBackgroundGallery(context, settingsController),
+              const LanguageTile(),
               const SizedBox(height: 16),
               _buildSectionHeader(context, l.settingsAdvancedOptions),
               Obx(

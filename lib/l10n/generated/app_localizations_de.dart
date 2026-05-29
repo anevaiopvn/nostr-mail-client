@@ -88,6 +88,15 @@ class AppLocalizationsDe extends AppLocalizations {
       'Farben aus dem Hintergrundbild erzeugen';
 
   @override
+  String get settingsLanguage => 'Sprache';
+
+  @override
+  String get settingsLanguageSystem => 'Systemsprache';
+
+  @override
+  String get settingsLanguageDialogTitle => 'Sprache wählen';
+
+  @override
   String get settingsAdvancedOptions => 'Erweiterte Optionen';
 
   @override

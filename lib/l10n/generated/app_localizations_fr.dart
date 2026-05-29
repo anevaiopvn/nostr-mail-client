@@ -88,6 +88,15 @@ class AppLocalizationsFr extends AppLocalizations {
       'Générer les couleurs à partir de l\'image de fond';
 
   @override
+  String get settingsLanguage => 'Langue';
+
+  @override
+  String get settingsLanguageSystem => 'Langue du système';
+
+  @override
+  String get settingsLanguageDialogTitle => 'Choisir une langue';
+
+  @override
   String get settingsAdvancedOptions => 'Options avancées';
 
   @override

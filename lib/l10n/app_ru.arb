@@ -27,6 +27,9 @@
 
   "settingsTitle": "Настройки",
   "settingsAppearance": "Внешний вид",
+  "settingsLanguage": "Язык",
+  "settingsLanguageSystem": "Язык системы",
+  "settingsLanguageDialogTitle": "Выберите язык",
   "settingsDynamicTheme": "Динамическая тема",
   "settingsDynamicThemeSubtitle": "Создавать цвета из фонового изображения",
   "settingsAdvancedOptions": "Дополнительные параметры",

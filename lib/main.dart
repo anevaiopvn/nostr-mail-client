@@ -92,27 +92,24 @@ void main() async {
   // Initialize theme service
   await Get.putAsync(() => ThemeService().init(), permanent: true);
 
-  // Run InitialBinding (SettingsController, ContactsService) before the router
-  // boots - the router's redirect reads SettingsController on first navigation.
+  // SettingsController is awaited (not put inside InitialBinding) so the
+  // saved theme mode and locale are available before the first frame.
+  await Get.putAsync(() => SettingsController().init(), permanent: true);
+
+  // Run InitialBinding (ContactsService) before the router boots - the
+  // router's redirect reads SettingsController on first navigation.
   InitialBinding().dependencies();
 
-  // Load theme mode before app starts
-  final themeModeIndex =
-      await storageService.getSetting<int>(SettingsController.themeModeKey) ??
-      0;
-  final initialThemeMode = ThemeMode.values[themeModeIndex];
-
-  runApp(MainApp(initialThemeMode: initialThemeMode));
+  runApp(const MainApp());
 }
 
 class MainApp extends StatelessWidget {
-  final ThemeMode initialThemeMode;
-
-  const MainApp({super.key, required this.initialThemeMode});
+  const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     final themeService = Get.find<ThemeService>();
+    final settingsController = Get.find<SettingsController>();
 
     return Obx(() {
       final systemAccent = kIsWeb
@@ -136,13 +133,14 @@ class MainApp extends StatelessWidget {
       return ToastificationWrapper(
         child: MaterialApp.router(
           title: 'Nmail',
+          locale: settingsController.locale.value,
           theme: ThemeData.from(
             colorScheme: lightScheme,
           ).copyWith(inputDecorationTheme: sharedInputDecorationTheme),
           darkTheme: ThemeData.from(
             colorScheme: darkScheme,
           ).copyWith(inputDecorationTheme: sharedInputDecorationTheme),
-          themeMode: initialThemeMode,
+          themeMode: settingsController.themeMode.value,
           localizationsDelegates: [
             AppLocalizations.delegate,
             ndk_flutter.AppLocalizations.delegate,

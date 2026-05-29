@@ -27,6 +27,9 @@
 
   "settingsTitle": "設定",
   "settingsAppearance": "外観",
+  "settingsLanguage": "言語",
+  "settingsLanguageSystem": "システムの既定",
+  "settingsLanguageDialogTitle": "言語を選択",
   "settingsDynamicTheme": "ダイナミックテーマ",
   "settingsDynamicThemeSubtitle": "背景画像から色を生成",
   "settingsAdvancedOptions": "詳細設定",

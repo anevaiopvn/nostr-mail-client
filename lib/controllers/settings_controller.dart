@@ -25,6 +25,7 @@ class SettingsController extends GetxController {
   static const _alwaysLoadImagesKey = 'always_load_images';
   static const _backgroundImageKey = 'background_image';
   static const themeModeKey = 'theme_mode';
+  static const localeKey = 'locale';
   static const backgroundsDirName = 'backgrounds';
   static const _defaultSignature = '--\nSent with Nmail\nhttps://nostrmail.org';
 
@@ -33,6 +34,7 @@ class SettingsController extends GetxController {
   final emailSignature = _defaultSignature.obs;
   final backgroundImage = Rxn<String>();
   final themeMode = ThemeMode.system.obs;
+  final locale = Rxn<Locale>();
   final dynamicTheme = true.obs;
   final lightColorScheme = Rxn<ColorScheme>();
   final darkColorScheme = Rxn<ColorScheme>();
@@ -44,10 +46,20 @@ class SettingsController extends GetxController {
   String get _backgroundKey =>
       _pubkey != null ? '${_backgroundImageKey}_$_pubkey' : _backgroundImageKey;
 
+  /// Awaitable initialisation. Call this once via `Get.putAsync` before
+  /// `runApp` so the first frame already has the saved theme mode and locale -
+  /// otherwise MaterialApp would briefly render with the defaults before
+  /// `_loadSettings` finishes.
+  Future<SettingsController> init() async {
+    await _loadSettings();
+    return this;
+  }
+
   @override
   void onInit() {
     super.onInit();
-    _loadSettings();
+    // _loadSettings ran in init() above; here we only wire the auth listener
+    // so settings refresh on login/logout.
     _authSubscription = Get.find<Ndk>().accounts.authStateChanges.listen(
       (_) => _loadSettings(),
     );
@@ -68,6 +80,7 @@ class SettingsController extends GetxController {
       _storageService.getSetting<bool>(ThemeService.dynamicThemeKey),
       _storageService.getSetting<String>(ThemeService.colorSchemeKeyLight),
       _storageService.getSetting<String>(ThemeService.colorSchemeKeyDark),
+      _storageService.getSetting<String>(localeKey),
     ]);
 
     showRawEmail.value = (results[0] as bool?) ?? false;
@@ -87,6 +100,9 @@ class SettingsController extends GetxController {
     if (savedDarkScheme != null) {
       darkColorScheme.value = colorSchemeFromJson(savedDarkScheme);
     }
+
+    final savedLocale = results[7] as String?;
+    locale.value = savedLocale != null ? Locale(savedLocale) : null;
 
     _refreshSignatureFromRelays();
   }
@@ -158,8 +174,17 @@ class SettingsController extends GetxController {
 
   Future<void> setThemeMode(ThemeMode value) async {
     themeMode.value = value;
-    Get.changeThemeMode(value);
     await _storageService.saveSetting(themeModeKey, value.index);
+  }
+
+  /// Set the app locale, or pass null to follow the system locale.
+  Future<void> setLocale(Locale? value) async {
+    locale.value = value;
+    if (value == null) {
+      await _storageService.deleteSetting(localeKey);
+    } else {
+      await _storageService.saveSetting(localeKey, value.languageCode);
+    }
   }
 
   Future<void> setDynamicTheme(bool value) async {
@@ -278,6 +303,7 @@ class SettingsController extends GetxController {
     emailSignature.value = _defaultSignature;
     backgroundImage.value = null;
     themeMode.value = ThemeMode.system;
+    locale.value = null;
     dynamicTheme.value = true;
     lightColorScheme.value = null;
     darkColorScheme.value = null;

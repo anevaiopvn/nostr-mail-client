@@ -268,6 +268,24 @@ abstract class AppLocalizations {
   /// **'Generate colors from background image'**
   String get settingsDynamicThemeSubtitle;
 
+  /// Settings tile title for the app language selector
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get settingsLanguage;
+
+  /// Language picker option that follows the device language
+  ///
+  /// In en, this message translates to:
+  /// **'System default'**
+  String get settingsLanguageSystem;
+
+  /// Title of the dialog that lets the user pick the app language
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a language'**
+  String get settingsLanguageDialogTitle;
+
   /// Settings section header for advanced/developer toggles
   ///
   /// In en, this message translates to:

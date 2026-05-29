@@ -88,6 +88,15 @@ class AppLocalizationsPt extends AppLocalizations {
       'Gerar cores a partir da imagem de fundo';
 
   @override
+  String get settingsLanguage => 'Idioma';
+
+  @override
+  String get settingsLanguageSystem => 'Padrão do sistema';
+
+  @override
+  String get settingsLanguageDialogTitle => 'Escolher um idioma';
+
+  @override
   String get settingsAdvancedOptions => 'Opções avançadas';
 
   @override

@@ -27,6 +27,9 @@
 
   "settingsTitle": "设置",
   "settingsAppearance": "外观",
+  "settingsLanguage": "语言",
+  "settingsLanguageSystem": "系统默认",
+  "settingsLanguageDialogTitle": "选择语言",
   "settingsDynamicTheme": "动态主题",
   "settingsDynamicThemeSubtitle": "根据背景图片生成颜色",
   "settingsAdvancedOptions": "高级选项",

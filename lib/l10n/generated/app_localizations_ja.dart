@@ -87,6 +87,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingsDynamicThemeSubtitle => '背景画像から色を生成';
 
   @override
+  String get settingsLanguage => '言語';
+
+  @override
+  String get settingsLanguageSystem => 'システムの既定';
+
+  @override
+  String get settingsLanguageDialogTitle => '言語を選択';
+
+  @override
   String get settingsAdvancedOptions => '詳細設定';
 
   @override

@@ -27,6 +27,9 @@
 
   "settingsTitle": "Ajustes",
   "settingsAppearance": "Apariencia",
+  "settingsLanguage": "Idioma",
+  "settingsLanguageSystem": "Predeterminado del sistema",
+  "settingsLanguageDialogTitle": "Elegir un idioma",
   "settingsDynamicTheme": "Tema dinámico",
   "settingsDynamicThemeSubtitle": "Generar colores a partir de la imagen de fondo",
   "settingsAdvancedOptions": "Opciones avanzadas",

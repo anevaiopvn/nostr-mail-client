@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 
-import '../../controllers/settings_controller.dart';
 import '../../services/contacts_service.dart';
 
 class InitialBinding extends Bindings {
@@ -10,8 +9,8 @@ class InitialBinding extends Bindings {
     // - StorageService
     // - NostrMailService
     // - AuthController
+    // - SettingsController (via Get.putAsync, awaited before runApp)
 
-    Get.put(SettingsController(), permanent: true);
     Get.lazyPut(() => ContactsService());
   }
 }

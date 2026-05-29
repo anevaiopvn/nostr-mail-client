@@ -87,6 +87,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsDynamicThemeSubtitle => '根据背景图片生成颜色';
 
   @override
+  String get settingsLanguage => '语言';
+
+  @override
+  String get settingsLanguageSystem => '系统默认';
+
+  @override
+  String get settingsLanguageDialogTitle => '选择语言';
+
+  @override
   String get settingsAdvancedOptions => '高级选项';
 
   @override

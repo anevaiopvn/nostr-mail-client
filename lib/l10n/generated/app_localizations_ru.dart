@@ -88,6 +88,15 @@ class AppLocalizationsRu extends AppLocalizations {
       'Создавать цвета из фонового изображения';
 
   @override
+  String get settingsLanguage => 'Язык';
+
+  @override
+  String get settingsLanguageSystem => 'Язык системы';
+
+  @override
+  String get settingsLanguageDialogTitle => 'Выберите язык';
+
+  @override
   String get settingsAdvancedOptions => 'Дополнительные параметры';
 
   @override
