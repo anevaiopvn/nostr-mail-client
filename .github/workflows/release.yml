@@ -48,16 +48,24 @@ jobs:
           VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Build Android APK
+      - name: Build Android APK (universal)
         run: flutter build apk --release
+
+      - name: Rename universal APK
+        run: |
+          VERSION=${{ steps.get_version.outputs.version }}
+          cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/nmail-${VERSION}-android-universal.apk
+
+      - name: Build Android APK (arm64)
+        run: flutter build apk --release --target-platform android-arm64
+
+      - name: Rename arm64 APK
+        run: |
+          VERSION=${{ steps.get_version.outputs.version }}
+          cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/nmail-${VERSION}-android-arm64.apk
 
       - name: Build Android App Bundle
         run: flutter build appbundle --release
-
-      - name: Rename APK
-        run: |
-          VERSION=${{ steps.get_version.outputs.version }}
-          cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/nmail-${VERSION}-android.apk
 
       - name: Rename AAB
         run: |
@@ -68,7 +76,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: nmail-apk
-          path: build/app/outputs/flutter-apk/nmail-${{ steps.get_version.outputs.version }}-android.apk
+          path: build/app/outputs/flutter-apk/nmail-${{ steps.get_version.outputs.version }}-android-*.apk
 
       - name: Upload AAB
         uses: actions/upload-artifact@v7
