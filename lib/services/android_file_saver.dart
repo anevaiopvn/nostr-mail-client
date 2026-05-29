@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 
 class AndroidFileSaver {
-  static const platform = MethodChannel('app.nostrmail.client/file_saver');
+  static const platform = MethodChannel('app.nostrmail.client/native');
 
   static Future<String> saveToDownloads({
     required String fileName,

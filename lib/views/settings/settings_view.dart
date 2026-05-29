@@ -6,7 +6,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
@@ -21,6 +20,7 @@ import '../../controllers/auth_controller.dart';
 import '../../controllers/settings_controller.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../services/nostr_mail_service.dart';
+import '../../services/sensitive_clipboard.dart';
 import '../../utils/platform_helper.dart';
 import '../../utils/responsive_helper.dart';
 import '../../utils/toast_helper.dart';
@@ -136,7 +136,7 @@ class SettingsView extends StatelessWidget {
                     title: Text(l.settingsCopySyncCode),
                     subtitle: Text(l.settingsCopySyncCodeSubtitle),
                     onTap: () async {
-                      await Clipboard.setData(ClipboardData(text: nsec));
+                      await SensitiveClipboard.copy(nsec, label: 'sync code');
                       if (!PlatformHelper.isAndroid && context.mounted) {
                         ToastHelper.success(context, l.settingsSyncCodeCopied);
                       }

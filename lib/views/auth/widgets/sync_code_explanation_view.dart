@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../controllers/auth_controller.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../../../services/sensitive_clipboard.dart';
 import '../../../utils/toast_helper.dart';
 
 class SyncCodeExplanationView extends StatelessWidget {
@@ -23,7 +23,7 @@ class SyncCodeExplanationView extends StatelessWidget {
       return;
     }
 
-    Clipboard.setData(ClipboardData(text: nsec));
+    SensitiveClipboard.copy(nsec, label: 'sync code');
     _hasCopied.value = true;
 
     Future.delayed(const Duration(seconds: 2), () {
