@@ -9,7 +9,6 @@ class RecipientBridgeBadgeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return NostrAvatar(
       pubkey: EmailController.to.email!.recipientPubkey,
-      metadata: EmailController.to.recipientMetadata,
       radius: 7,
     );
   }

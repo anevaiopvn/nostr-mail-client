@@ -1,7 +1,6 @@
 import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ndk/ndk.dart';
 import 'package:nostr_mail/nostr_mail.dart';
 import 'package:nostr_mail_client/utils/format_date.dart';
 import 'package:nostr_mail_client/views/inbox/widgets/attachments_chips_view.dart';
@@ -10,6 +9,7 @@ import 'package:nostr_mail_client/views/inbox/widgets/unread_indicator.dart';
 import '../../../controllers/auth_controller.dart';
 import '../../../controllers/inbox_controller.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../../../services/metadata_service.dart';
 import '../../../utils/metadata_extensions.dart';
 import '../../../utils/nostr_utils.dart';
 import '../../../utils/responsive_helper.dart';
@@ -46,14 +46,6 @@ class EmailTile extends StatefulWidget {
 }
 
 class _EmailTileState extends State<EmailTile> {
-  Metadata? _nostrMetadata;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadNostrMetadata();
-  }
-
   /// Check if I am the sender of this email
   bool get _isSentByMe {
     final myPubkey = Get.find<AuthController>().publicKey;
@@ -96,13 +88,6 @@ class _EmailTileState extends State<EmailTile> {
     return widget.email.isBridged ? widget.email.senderPubkey : '';
   }
 
-  /// The single nostr pubkey we need metadata for, to render whichever
-  /// `NostrAvatar` appears (main avatar or bridge badge). At most one
-  /// of `_otherSidePubkey` / `_bridgePubkey` is non-empty across all
-  /// cases, so a single slot suffices.
-  String get _nostrPubkey =>
-      _otherSidePubkey.isNotEmpty ? _otherSidePubkey : _bridgePubkey;
-
   /// Number of additional recipients beyond the one whose avatar is shown.
   /// Only meaningful for sent emails (in inbox, you are the sole recipient
   /// of your gift-wrap copy, even if cc/bcc were used).
@@ -126,22 +111,13 @@ class _EmailTileState extends State<EmailTile> {
     return !controller.isEmailRead(widget.email.id);
   }
 
-  Future<void> _loadNostrMetadata() async {
-    final pubkey = _nostrPubkey;
-    if (pubkey.isEmpty) return;
-    try {
-      final ndk = Get.find<Ndk>();
-      final meta = await ndk.metadata.loadMetadata(pubkey);
-      if (mounted && meta != null) {
-        setState(() => _nostrMetadata = meta);
-      }
-    } catch (_) {}
-  }
-
   String get _displayName {
-    // Other side is a nostr identity: prefer the nostr profile name.
-    if (_otherSidePubkey.isNotEmpty && _nostrMetadata != null) {
-      return _nostrMetadata!.getBestName();
+    // Other side is a nostr identity: prefer the nostr profile name,
+    // resolved reactively from the in-RAM cache. Read inside the Obx that
+    // wraps the tile, so the name updates in place once metadata loads.
+    if (_otherSidePubkey.isNotEmpty) {
+      final metadata = Get.find<MetadataService>().of(_otherSidePubkey).value;
+      if (metadata != null) return metadata.getBestName();
     }
     // Legacy contact (or nostr metadata not yet loaded): rely on the
     // email headers, which carry the actual contact.
@@ -645,11 +621,7 @@ class _EmailTileState extends State<EmailTile> {
     // legacy MIME address. Decided per-address, not from isBridged.
     final mainAvatar = _otherSidePubkey.isEmpty
         ? EmailAvatar(mailAddress: _displayAddress, radius: radius)
-        : NostrAvatar(
-            pubkey: _otherSidePubkey,
-            metadata: _nostrMetadata,
-            radius: radius,
-          );
+        : NostrAvatar(pubkey: _otherSidePubkey, radius: radius);
 
     // Bridge badge: provenance marker, only when the bridge pubkey is
     // known (received bridged emails).
@@ -670,11 +642,7 @@ class _EmailTileState extends State<EmailTile> {
                 shape: BoxShape.circle,
                 border: Border.all(color: colorScheme.surface, width: 2),
               ),
-              child: NostrAvatar(
-                pubkey: _bridgePubkey,
-                metadata: _nostrMetadata,
-                radius: badgeRadius,
-              ),
+              child: NostrAvatar(pubkey: _bridgePubkey, radius: badgeRadius),
             ),
           ),
         ],

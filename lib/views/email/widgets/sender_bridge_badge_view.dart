@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:nostr_mail/nostr_mail.dart';
-import 'package:nostr_mail_client/views/email/email_controller.dart';
 import 'package:nostr_mail_client/widgets/nostr_avatar.dart';
 
 class SenderBridgeBadgeView extends StatelessWidget {
@@ -10,10 +9,6 @@ class SenderBridgeBadgeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NostrAvatar(
-      pubkey: email.senderPubkey,
-      metadata: EmailController.to.senderMetadata,
-      radius: 12,
-    );
+    return NostrAvatar(pubkey: email.senderPubkey, radius: 12);
   }
 }

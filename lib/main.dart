@@ -24,6 +24,7 @@ import 'controllers/settings_controller.dart';
 import 'services/blossom_cache_factory_io.dart'
     if (dart.library.html) 'services/blossom_cache_factory_web.dart'
     as blossom_cache_factory;
+import 'services/metadata_service.dart';
 import 'services/ndk_cache_service.dart';
 import 'services/nostr_mail_service.dart';
 import 'services/storage_service.dart';
@@ -66,6 +67,9 @@ void main() async {
   Get.put(ndk, permanent: true);
   final ndkFlutter = NdkFlutter(ndk: ndk);
   Get.put(ndkFlutter, permanent: true);
+
+  // Reactive in-RAM metadata cache so avatars/names resolve without flashing.
+  Get.put(MetadataService(), permanent: true);
 
   // Initialize Blossom cache and offline queues as app-level singletons.
   // These persist across login/logout — they hold pending work in storageService.db.
