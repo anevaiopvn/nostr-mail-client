@@ -46,6 +46,7 @@ jobs:
         id: get_version
         run: |
           VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          VERSION=${VERSION%+*}
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Build Android APK (universal)
@@ -114,6 +115,7 @@ jobs:
         id: get_version
         run: |
           VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          VERSION=${VERSION%+*}
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Build Linux packages
