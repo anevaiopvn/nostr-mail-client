@@ -11,9 +11,9 @@ String getAnonName(String pubkey) {
 }
 
 extension MetadataExtension on Metadata {
-  /// Returns the best available name for a user according to NIP-XX.
-  /// Priority: display_name > name > nip05 local part > anon_xxxxxxxx
-  String getBestName() {
+  /// The name the user actually set, or null if none.
+  /// Priority: display_name > name > nip05 local part.
+  String? get realName {
     if (displayName != null && displayName!.trim().isNotEmpty) {
       return displayName!.trim();
     }
@@ -29,6 +29,10 @@ extension MetadataExtension on Metadata {
       }
     }
 
-    return getAnonName(pubKey);
+    return null;
   }
+
+  /// Returns the best available name for a user according to NIP-XX.
+  /// Priority: display_name > name > nip05 local part > anon_xxxxxxxx
+  String getBestName() => realName ?? getAnonName(pubKey);
 }

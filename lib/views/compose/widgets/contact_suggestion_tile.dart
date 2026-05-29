@@ -1,6 +1,5 @@
 import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:flutter/material.dart';
-import 'package:ndk/ndk.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../models/contact.dart';
@@ -81,15 +80,7 @@ class ContactSuggestionTile extends StatelessWidget {
       );
     }
 
-    return NostrAvatar(
-      pubkey: pubkey,
-      metadata: Metadata(
-        pubKey: pubkey,
-        picture: contact.picture,
-        displayName: contact.displayName,
-      ),
-      radius: 18,
-    );
+    return NostrAvatar(pubkey: pubkey, radius: 18);
   }
 
   Widget _buildSourceIndicator(BuildContext context) {

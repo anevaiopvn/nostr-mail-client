@@ -48,7 +48,7 @@ NostrAvatarColor getAvatarColorFromPubkey(String pubkey) {
 
 /// Derives a single initial from metadata or pubkey fallback.
 String getInitialFromMetadata(String pubkey, Metadata? metadata) {
-  final name = metadata?.getBestName();
+  final name = metadata?.realName;
   if (name != null && name.isNotEmpty) {
     return name[0].toUpperCase();
   }

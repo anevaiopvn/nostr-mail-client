@@ -1,6 +1,5 @@
 import 'package:enough_mail_plus/enough_mail.dart';
 import 'package:flutter/material.dart';
-import 'package:ndk/ndk.dart';
 
 import '../../../models/recipient.dart';
 import '../../../widgets/email_avatar.dart';
@@ -69,15 +68,7 @@ class RecipientChip extends StatelessWidget {
       );
     }
 
-    return NostrAvatar(
-      pubkey: pubkey,
-      metadata: Metadata(
-        pubKey: pubkey,
-        picture: recipient.picture,
-        displayName: recipient.displayName,
-      ),
-      radius: 12,
-    );
+    return NostrAvatar(pubkey: pubkey, radius: 12);
   }
 
   Widget _buildLegacyChip(BuildContext context) {
