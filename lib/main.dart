@@ -151,7 +151,9 @@ class MainApp extends StatelessWidget {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: AppLocalizations.supportedLocales,
+          supportedLocales: AppLocalizations.supportedLocales.toList()
+            ..remove(const Locale('en'))
+            ..insert(0, const Locale('en')),
           routerConfig: AppRouter.init(),
           builder: (context, child) {
             if (PlatformHelper.isDesktop) {
