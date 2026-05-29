@@ -11,6 +11,7 @@ import '../../../controllers/auth_controller.dart';
 import '../../../controllers/inbox_controller.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../utils/metadata_extensions.dart';
+import '../../../utils/nostr_utils.dart';
 import '../../../utils/responsive_helper.dart';
 import '../../../widgets/email_avatar.dart';
 import '../../../widgets/nostr_avatar.dart';
@@ -45,12 +46,12 @@ class EmailTile extends StatefulWidget {
 }
 
 class _EmailTileState extends State<EmailTile> {
-  Metadata? _bridgeMetadata;
+  Metadata? _nostrMetadata;
 
   @override
   void initState() {
     super.initState();
-    _loadBridgeMetadata();
+    _loadNostrMetadata();
   }
 
   /// Check if I am the sender of this email
@@ -68,14 +69,39 @@ class _EmailTileState extends State<EmailTile> {
     }
   }
 
-  /// The nostr identity behind this conversation: recipient pubkey for
-  /// sent emails, sender pubkey for received. Always known via the gift
-  /// wrap, regardless of what the MIME headers say.
+  /// Pubkey of the contact (other side of the conversation) when they
+  /// are a nostr identity. Empty for legacy (SMTP) contacts.
   ///
-  /// When the email is not bridged, this IS the contact. When bridged,
-  /// this is the bridge that relayed the email.
-  String get _bridgePubkey =>
-      _isSentByMe ? widget.email.recipientPubkey : widget.email.senderPubkey;
+  /// - Received: gift-wrap sender, only when not bridged. A bridged
+  ///   received email has a legacy contact in the MIME From header.
+  /// - Sent: derived from the To.first address itself (`<npub>@nostr`).
+  ///   `isBridged` is ignored: delivery is per-recipient (one rumor per
+  ///   target pubkey), so the displayed recipient's address is what
+  ///   determines whether the avatar is nostr or legacy, not the
+  ///   global flag.
+  String get _otherSidePubkey {
+    if (!_isSentByMe) {
+      return widget.email.isBridged ? '' : widget.email.senderPubkey;
+    }
+    final to = widget.email.mime.to?.firstOrNull;
+    if (to == null) return '';
+    return extractPubkeyFromAddress(to.email) ?? '';
+  }
+
+  /// Pubkey of the bridge that relayed this email, when known. Only
+  /// available for received bridged emails (gift-wrap sender = bridge).
+  /// Outgoing bridged emails don't persist the bridge locally.
+  String get _bridgePubkey {
+    if (_isSentByMe) return '';
+    return widget.email.isBridged ? widget.email.senderPubkey : '';
+  }
+
+  /// The single nostr pubkey we need metadata for, to render whichever
+  /// `NostrAvatar` appears (main avatar or bridge badge). At most one
+  /// of `_otherSidePubkey` / `_bridgePubkey` is non-empty across all
+  /// cases, so a single slot suffices.
+  String get _nostrPubkey =>
+      _otherSidePubkey.isNotEmpty ? _otherSidePubkey : _bridgePubkey;
 
   /// Number of additional recipients beyond the one whose avatar is shown.
   /// Only meaningful for sent emails (in inbox, you are the sole recipient
@@ -100,24 +126,25 @@ class _EmailTileState extends State<EmailTile> {
     return !controller.isEmailRead(widget.email.id);
   }
 
-  Future<void> _loadBridgeMetadata() async {
+  Future<void> _loadNostrMetadata() async {
+    final pubkey = _nostrPubkey;
+    if (pubkey.isEmpty) return;
     try {
       final ndk = Get.find<Ndk>();
-      final meta = await ndk.metadata.loadMetadata(_bridgePubkey);
+      final meta = await ndk.metadata.loadMetadata(pubkey);
       if (mounted && meta != null) {
-        setState(() => _bridgeMetadata = meta);
+        setState(() => _nostrMetadata = meta);
       }
     } catch (_) {}
   }
 
   String get _displayName {
-    // Direct nostr conversation: the bridge pubkey is the contact, so
-    // its nostr profile name is the right thing to show.
-    if (!widget.email.isBridged && _bridgeMetadata != null) {
-      return _bridgeMetadata!.getBestName();
+    // Other side is a nostr identity: prefer the nostr profile name.
+    if (_otherSidePubkey.isNotEmpty && _nostrMetadata != null) {
+      return _nostrMetadata!.getBestName();
     }
-    // Bridged email (or metadata not yet loaded): rely on the email
-    // headers, which carry the actual legacy contact.
+    // Legacy contact (or nostr metadata not yet loaded): rely on the
+    // email headers, which carry the actual contact.
     if (_displayAddress.hasPersonalName) {
       return _displayAddress.personalName!;
     }
@@ -614,22 +641,27 @@ class _EmailTileState extends State<EmailTile> {
     final l = AppLocalizations.of(context);
     final radius = compact ? 14.0 : 20.0;
 
+    // Main avatar: nostr identity if the contact is one, else the
+    // legacy MIME address. Decided per-address, not from isBridged.
+    final mainAvatar = _otherSidePubkey.isEmpty
+        ? EmailAvatar(mailAddress: _displayAddress, radius: radius)
+        : NostrAvatar(
+            pubkey: _otherSidePubkey,
+            metadata: _nostrMetadata,
+            radius: radius,
+          );
+
+    // Bridge badge: provenance marker, only when the bridge pubkey is
+    // known (received bridged emails).
     Widget baseAvatar;
-    if (!widget.email.isBridged) {
-      // Direct nostr conversation: the bridge pubkey IS the contact.
-      baseAvatar = NostrAvatar(
-        pubkey: _bridgePubkey,
-        metadata: _bridgeMetadata,
-        radius: radius,
-      );
+    if (_bridgePubkey.isEmpty) {
+      baseAvatar = mainAvatar;
     } else {
-      // Bridged: the legacy contact is in the email headers, the bridge
-      // sits in the corner as a provenance badge.
       final badgeRadius = compact ? 7.0 : 10.0;
       baseAvatar = Stack(
         clipBehavior: Clip.none,
         children: [
-          EmailAvatar(mailAddress: _displayAddress, radius: radius),
+          mainAvatar,
           Positioned(
             right: -4,
             bottom: -4,
@@ -640,7 +672,7 @@ class _EmailTileState extends State<EmailTile> {
               ),
               child: NostrAvatar(
                 pubkey: _bridgePubkey,
-                metadata: _bridgeMetadata,
+                metadata: _nostrMetadata,
                 radius: badgeRadius,
               ),
             ),
