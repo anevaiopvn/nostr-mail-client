@@ -71,7 +71,7 @@ class ComposeController extends GetxController {
     super.onInit();
     _contactsService.loadContacts();
 
-    final signature = Get.find<SettingsController>().currentSignature;
+    final signature = Get.find<SettingsController>().emailSignature.value;
 
     toController = TextEditingController();
     ccController = TextEditingController();
@@ -645,7 +645,7 @@ class ComposeController extends GetxController {
 
   Future<void> initFromEmail(Email email, ComposeMode mode) async {
     final myPubkey = _nostrMailService.getPublicKey()!;
-    final signature = Get.find<SettingsController>().currentSignature;
+    final signature = Get.find<SettingsController>().emailSignature.value;
     final signatureBlock = signature.isEmpty ? '' : '\n\n$signature';
 
     // Get user's MailAddress from selectedFrom or fallback

@@ -12,6 +12,7 @@ import '../l10n/generated/app_localizations.dart';
 import '../services/nostr_mail_service.dart';
 import '../utils/toast_helper.dart';
 import 'package:flutter/material.dart';
+import 'settings_controller.dart';
 
 class AuthController extends GetxController {
   final _nostrMailService = Get.find<NostrMailService>();
@@ -80,6 +81,11 @@ class AuthController extends GetxController {
     await _nostrMailService.initClient();
     isLoggedIn.value = true;
     loadUserMetadata();
+    // authStateChanges fires before initClient() runs, so SettingsController's
+    // listener sees an uninitialized client and can't read the synced
+    // signature. Now that the Nostr client is up (and its private-settings
+    // cache primed by NostrMailClient.create()), pull it into the Rx.
+    await Get.find<SettingsController>().reloadSyncedSettings();
   }
 
   Future<void> register() async {

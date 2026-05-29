@@ -72,10 +72,7 @@ class SettingsController extends GetxController {
 
     showRawEmail.value = (results[0] as bool?) ?? false;
     alwaysLoadImages.value = (results[1] as bool?) ?? false;
-
-    // Signature starts as default, will be updated by _loadSignatureFromNostr
-    // if a synced value is available
-    emailSignature.value = _defaultSignature;
+    emailSignature.value = _cachedSignature;
 
     backgroundImage.value = results[2] as String?;
     themeMode.value = ThemeMode.values[(results[3] as int?) ?? 0];
@@ -91,41 +88,36 @@ class SettingsController extends GetxController {
       darkColorScheme.value = colorSchemeFromJson(savedDarkScheme);
     }
 
-    // Fetch synced signature async (non-blocking)
-    _loadSignatureFromNostr();
+    _refreshSignatureFromRelays();
   }
 
-  /// Fetch signature from Nostr private settings (synced across devices).
-  Future<void> _loadSignatureFromNostr() async {
+  /// Read the signature from the Nostr private-settings cache (primed by
+  /// `NostrMailClient.create()`), falling back to the default.
+  String get _cachedSignature {
+    if (!_nostrMailService.isClientInitialized) return _defaultSignature;
+    final sig = _nostrMailService.client.cachedPrivateSettings?.signature;
+    return (sig != null && sig.isNotEmpty) ? sig : _defaultSignature;
+  }
+
+  Future<void> _refreshSignatureFromRelays() async {
     if (!_nostrMailService.isClientInitialized) return;
-
-    // First try the local decrypted cache (no signer/network needed)
-    final cached = await _nostrMailService.client.getCachedPrivateSettings();
-    if (cached?.signature != null && cached!.signature!.isNotEmpty) {
-      emailSignature.value = cached.signature!;
-    }
-
-    // Then refresh from relays (requires signer)
     try {
-      final settings = await _nostrMailService.client.getPrivateSettings();
-      final syncedSignature = settings?.signature;
-      if (syncedSignature != null && syncedSignature.isNotEmpty) {
-        emailSignature.value = syncedSignature;
+      final remote =
+          (await _nostrMailService.client.getPrivateSettings())?.signature;
+      if (remote != null && remote.isNotEmpty) {
+        emailSignature.value = remote;
       }
     } catch (e) {
       debugPrint('Failed to fetch signature from Nostr: $e');
     }
   }
 
-  /// Get the current email signature.
-  ///
-  /// Returns the cached Nostr-synced signature if available, otherwise
-  /// falls back to the local reactive value or default.
-  String get currentSignature {
-    final cached = _nostrMailService.isClientInitialized
-        ? _nostrMailService.client.cachedPrivateSettings?.signature
-        : null;
-    return cached ?? emailSignature.value;
+  /// Pull the synced signature into the reactive value. Called by
+  /// `AuthController.onLoggedIn` after `initClient()` completes, since
+  /// `authStateChanges` fires before the Nostr client is constructed.
+  Future<void> reloadSyncedSettings() async {
+    emailSignature.value = _cachedSignature;
+    await _refreshSignatureFromRelays();
   }
 
   Future<void> setShowRawEmail(bool value) async {
