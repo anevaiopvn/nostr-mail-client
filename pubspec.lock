@@ -99,11 +99,10 @@ packages:
   blossom_upload_queue_shim_for_ndk:
     dependency: "direct main"
     description:
-      name: blossom_upload_queue_shim_for_ndk
-      sha256: d1141aa6afe6946061ddb4f79bec905136193b862e529530cee3001391a8f869
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.4.0"
+      path: "../blossom_upload_queue_shim_for_ndk"
+      relative: true
+    source: path
+    version: "0.4.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -115,11 +114,10 @@ packages:
   broadcast_queue_shim_for_ndk:
     dependency: "direct main"
     description:
-      name: broadcast_queue_shim_for_ndk
-      sha256: "542fcb5531192c8b3ae30686748349b93e13702026e54ed69104c9925176d391"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.0"
+      path: "../broadcast_queue_shim_for_ndk"
+      relative: true
+    source: path
+    version: "0.2.1"
   bs58check:
     dependency: transitive
     description:
