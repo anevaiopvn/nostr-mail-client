@@ -8,7 +8,6 @@ import 'package:toastification/toastification.dart';
 import '../../app/routes/app_routes.dart';
 import '../../controllers/auth_controller.dart';
 import '../../l10n/generated/app_localizations.dart';
-import '../../utils/platform_helper.dart';
 import '../../utils/metadata_extensions.dart';
 import '../../widgets/nostr_avatar.dart';
 import 'layout_constants.dart';
@@ -19,14 +18,11 @@ class LeftRail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final isDesktop = PlatformHelper.isDesktop;
 
-    return Container(
+    return SizedBox(
       width: LayoutConstants.railWidth,
-      color: Colors.transparent,
       child: Column(
         children: [
-          SizedBox(height: isDesktop ? 0 : LayoutConstants.shellPadding),
           // Logo
           Padding(
             padding: const EdgeInsets.all(8),
@@ -56,7 +52,6 @@ class LeftRail extends StatelessWidget {
           ),
           // Account menu
           const _AccountMenuButton(),
-          const SizedBox(height: LayoutConstants.shellPadding),
         ],
       ),
     );

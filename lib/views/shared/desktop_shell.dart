@@ -1,14 +1,16 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nostr_mail_client/views/shared/layouts/wide_layout.dart';
 
 import '../../controllers/settings_controller.dart';
 import '../../utils/platform_helper.dart';
 import '../../utils/responsive_helper.dart';
 import '../inbox/widgets/app_drawer.dart';
-import 'layout_constants.dart';
+import 'layouts/shell_desktop.dart';
+import 'layouts/shell_fold.dart';
+import 'layouts/shell_web.dart';
 
 class DesktopShell extends StatelessWidget {
   final Widget body;
@@ -53,25 +55,21 @@ class DesktopShell extends StatelessWidget {
   Widget build(BuildContext context) {
     final isWide = ResponsiveHelper.isNotMobile(context);
 
-    final isDesktop = PlatformHelper.isDesktop;
-
     if (isWide) {
-      Widget content = Scaffold(
+      return Scaffold(
         body: Stack(
           fit: StackFit.expand,
           children: [
             _buildBackground(context),
-            Padding(
-              padding: EdgeInsets.only(
-                top: isDesktop ? LayoutConstants.windowCaptionHeight : 0,
-              ),
-              child: WideLayout(body: body),
-            ),
+            if (PlatformHelper.isDesktop)
+              ShellDesktop(body: body)
+            else if (kIsWeb)
+              ShellWeb(body: body)
+            else
+              ShellFold(body: body),
           ],
         ),
       );
-
-      return content;
     }
 
     // Mobile layout with drawer
