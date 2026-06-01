@@ -21,6 +21,7 @@ class LanguageTile extends StatelessWidget {
     'zh': '中文',
     'ja': '日本語',
     'ru': 'Русский',
+    'fi': 'Suomi',
   };
 
   @override
