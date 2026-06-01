@@ -89,7 +89,7 @@
   "@settingsSynchronization": { "description": "Settings section header for sync/hosting options" },
   "settingsHosting": "Palvelimet",
   "@settingsHosting": { "description": "Settings tile and screen title for relays/blossom/bridges" },
-  "settingsHostingSubtitle": "Nostr-palvelimet, blossom-palvelimet, yhteydet",
+  "settingsHostingSubtitle": "Nostr-palvelimet, Blossom-palvelimet, yhteydet",
   "@settingsHostingSubtitle": { "description": "Subtitle for the hosting settings tile" },
   "settingsDebugTools": "Kehittäjätyökalut",
   "@settingsDebugTools": { "description": "Debug tools tile/screen title (debug builds only)" },
