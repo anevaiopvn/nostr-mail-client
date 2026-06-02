@@ -192,7 +192,7 @@
   "inboxEditProfile": "Muokkaa profiilia",
   "inboxSettings": "Asetukset",
   "inboxDeleteOldEmailsTitle": "Poista vanha posti",
-  "inboxDeleteOldEmailsMessage": "Yli kuukauden vanhat sähköpostit poistetaan pysyvästi.\n\nToimintoa ei voi kumota.",
+  "inboxDeleteOldEmailsMessage": "Poistetaan pysyvästi {count, plural, one{{count} yli kuukauden vanha viesti} other{{count} yli kuukauden vanhaa viestiä}}.\n\nToimintoa ei voi kumota.",
   "@inboxDeleteOldEmailsMessage": {
     "placeholders": {
       "count": { "type": "int" }
@@ -468,5 +468,5 @@
   "dateYesterday": "Eilen",
 
   "notFoundTitle": "Sivua ei löydy",
-  "notFoundBackToInbox": "Palaa saapuneisiin",
+  "notFoundBackToInbox": "Palaa saapuneisiin"
 }
