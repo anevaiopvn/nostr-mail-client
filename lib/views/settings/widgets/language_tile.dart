@@ -18,10 +18,10 @@ class LanguageTile extends StatelessWidget {
     'fr': 'Français',
     'it': 'Italiano',
     'pt': 'Português',
+    'fi': 'Suomi',
     'zh': '中文',
     'ja': '日本語',
     'ru': 'Русский',
-    'fi': 'Suomi',
   };
 
   @override
